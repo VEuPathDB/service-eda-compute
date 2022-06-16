@@ -34,7 +34,7 @@ val EdaCommonRAMLURL = "https://raw.githubusercontent.com/VEuPathDB/EdaCommon/v$
 containerBuild {
 
   // Change if debugging the build process is necessary.
-  logLevel = Level.Trace
+  logLevel = Level.Info
 
   // General project level configuration.
   project {
@@ -116,7 +116,7 @@ dependencies {
 
   implementation("org.veupathdb.lib:jaxrs-container-core:6.5.1")
   implementation("org.veupathdb.service.eda:eda-common:$EdaCommonVersion")
-  implementation("org.veupathdb.lib:compute-platform:1.0-SNAPSHOT") { isChanging = true }
+  implementation("org.veupathdb.lib:compute-platform:1.0.0")
 
   // Jersey
   implementation("org.glassfish.jersey.core:jersey-server:3.0.4")
