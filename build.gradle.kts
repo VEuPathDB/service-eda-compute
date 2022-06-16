@@ -1,10 +1,34 @@
 import org.veupathdb.lib.gradle.container.util.Logger.Level
+import java.net.URL
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
 
 plugins {
+  kotlin("jvm") version "1.7.0"
   java
-  id("org.veupathdb.lib.gradle.container.container-utils") version "3.4.0"
+
+  id("org.veupathdb.lib.gradle.container.container-utils") version "3.4.1"
   id("com.github.johnrengelman.shadow") version "7.1.2"
 }
+
+
+// ╔═════════════════════════════════════════════════════════════════════════╗//
+// ║                                                                         ║//
+// ║  Constants                                                              ║//
+// ║                                                                         ║//
+// ╚═════════════════════════════════════════════════════════════════════════╝//
+
+val EdaCommonVersion = "8.1.0"
+val EdaCommonRAMLURL = "https://raw.githubusercontent.com/VEuPathDB/EdaCommon/v${EdaCommonVersion}/schema/library.raml"
+
+
+
+// ╔═════════════════════════════════════════════════════════════════════════╗//
+// ║                                                                         ║//
+// ║  Container Project Configuration                                        ║//
+// ║                                                                         ║//
+// ╚═════════════════════════════════════════════════════════════════════════╝//
+
 
 // configure VEupathDB container plugin
 containerBuild {
@@ -25,10 +49,10 @@ containerBuild {
     version = "1.0.0"
 
     // Project Root Package
-    projectPackage = "org.veupathdb.service.demo"
+    projectPackage = "org.veupathdb.service.eda"
 
     // Main Class Name
-    mainClassName = "Main"
+    mainClassName = "compute.Main"
   }
 
   // Docker build configuration.
@@ -56,16 +80,13 @@ containerBuild {
   }
 }
 
-java {
-  toolchain {
-    languageVersion.set(JavaLanguageVersion.of(17))
-  }
-}
 
-tasks.shadowJar {
-  exclude("**/Log4j2Plugins.dat")
-  archiveFileName.set("service.jar")
-}
+// ╔═════════════════════════════════════════════════════════════════════════╗//
+// ║                                                                         ║//
+// ║  Dependency Management                                                  ║//
+// ║                                                                         ║//
+// ╚═════════════════════════════════════════════════════════════════════════╝//
+
 
 repositories {
   mavenCentral()
@@ -89,19 +110,19 @@ configurations.all {
 
 dependencies {
 
-  // Required Dependencies
-  //
-  // These dependencies are required for all projects based on this example
-  // repository:
+  implementation(kotlin("stdlib"))
+  implementation(kotlin("stdlib-jdk7"))
+  implementation(kotlin("stdlib-jdk8"))
 
-  // Core lib
   implementation("org.veupathdb.lib:jaxrs-container-core:6.5.1")
+  implementation("org.veupathdb.service.eda:eda-common:$EdaCommonVersion")
+  implementation("org.veupathdb.lib:compute-platform:1.0-SNAPSHOT") { isChanging = true }
 
   // Jersey
   implementation("org.glassfish.jersey.core:jersey-server:3.0.4")
 
-  // Async platform core
-  implementation("org.veupathdb.lib:compute-platform:1.0-SNAPSHOT") { isChanging = true }
+  // Pico CLI
+  implementation("info.picocli:picocli:4.6.3")
 
   // Job IDs
   implementation("org.veupathdb.lib:hash-id:1.0.2")
@@ -111,31 +132,8 @@ dependencies {
   implementation("org.apache.logging.log4j:log4j-core:2.17.2")
   runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:2.17.2")
 
-
-  // Example Dependencies
-  //
-  // These dependencies were added for the demo/example project and may not be
-  // needed
-
-  // Pico CLI
-  // Only required if your project adds custom CLI/environment options, see
-  // the "MyOptions" class in the demo source code.
-  implementation("info.picocli:picocli:4.6.3")
-
-  // Multipart/Form-Data Jersey Plugin
-  // Only required if your project will be handling multipart/form-data HTTP
-  // requests.
-  implementation("org.glassfish.jersey.media:jersey-media-multipart:3.0.4")
-
   // Jackson
-  // Only required if you are going to be directly using Jackson's JSON api.
   implementation("org.veupathdb.lib:jackson-singleton:3.0.0")
-
-  // Prometheus Metrics Gathering
-  // Only required if your project will be doing custom metric reporting outside
-  // of the metrics provided by the container core library.
-  implementation("io.prometheus:simpleclient:0.15.0")
-  implementation("io.prometheus:simpleclient_common:0.15.0")
 
 
   // Recommended Dependencies
@@ -148,4 +146,41 @@ dependencies {
 
   // Mockito Test Mocking
   testImplementation("org.mockito:mockito-core:4.6.1")
+}
+
+
+// ╔═════════════════════════════════════════════════════════════════════════╗//
+// ║                                                                         ║//
+// ║  JVM & Compile Configuration                                            ║//
+// ║                                                                         ║//
+// ╚═════════════════════════════════════════════════════════════════════════╝//
+
+
+java {
+  toolchain {
+    languageVersion.set(JavaLanguageVersion.of(17))
+  }
+}
+
+kotlin {
+  jvmToolchain {
+    languageVersion.set(JavaLanguageVersion.of(17))
+  }
+}
+
+
+// ╔═════════════════════════════════════════════════════════════════════════╗//
+// ║                                                                         ║//
+// ║  Task Configurations                                                    ║//
+// ║                                                                         ║//
+// ╚═════════════════════════════════════════════════════════════════════════╝//
+
+
+tasks.shadowJar {
+  exclude("**/Log4j2Plugins.dat")
+  archiveFileName.set("service.jar")
+}
+
+tasks.register("fetch-eda-common-schema") {
+  URL(EdaCommonRAMLURL).openStream().use { it.transferTo(System.out) }
 }

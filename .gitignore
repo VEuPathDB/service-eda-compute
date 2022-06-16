@@ -26,3 +26,4 @@ local.properties
 .settings
 *~
 .*~
+schema/eda-common-lib.raml
