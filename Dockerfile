@@ -31,7 +31,7 @@ RUN make install-dev-env
 RUN ./gradlew dependencies
 
 # copy remaining files
-COPY . .
+COPY .. .
 
 # build the project
 RUN make jar
@@ -51,7 +51,7 @@ RUN apk add --no-cache tzdata \
 
 ENV JAVA_HOME=/opt/jdk \
     PATH=/opt/jdk/bin:$PATH \
-    JVM_MEM_ARGS="-Xms32m -Xmx256m" \
+    JVM_MEM_ARGS="-Xms32M -Xmx256M" \
     JVM_ARGS=""
 
 COPY --from=prep /jlinked /opt/jdk
