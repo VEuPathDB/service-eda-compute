@@ -7,25 +7,7 @@
 ################################################################################
 
 types:
-  ReverseRequest:
-    type: object
-    additionalProperties: false
-    properties:
-      input: string
-  JobResponse:
-    type: object
-    additionalProperties: false
-    properties:
-      jobID:
-        type: string
-        pattern: ^[\dA-Fa-f]{32}$
-        minLength: 32
-        maxLength: 32
-      status: JobStatus
-      queuePosition?:
-        type: integer
-        format: int32
-  JobDataResponse: any
+  JobID: !include https://raw.githubusercontent.com/VEuPathDB/lib-hash-id/v1.1.0/schema/hash-id.raml
   JobStatus:
     type: string
     enum:
@@ -34,6 +16,32 @@ types:
       - complete
       - failed
       - expired
+  JobResponse:
+    type: object
+    properties:
+      jobID: JobID
+      status: JobStatus
+      queuePosition:
+        type: integer
+        required: false
+        format: int32
+  ComputeRequestBase:
+    type: object
+    properties:
+      studyId: string
+      config: object
+      derivedVariables:
+        type: array
+        items: DerivedVariable
+  ComputeRequestExtension:
+    type: ComputeRequestBase
+    properties:
+      config:
+        type: ExampleComputeConfig
+  ExampleComputeConfig:
+    type: object
+    properties:
+      foo: string
   VariableSpec:
     type: object
     additionalProperties: false

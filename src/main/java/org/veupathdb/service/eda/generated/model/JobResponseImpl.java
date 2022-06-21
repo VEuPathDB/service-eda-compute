@@ -1,8 +1,12 @@
 package org.veupathdb.service.eda.generated.model;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -19,6 +23,9 @@ public class JobResponseImpl implements JobResponse {
 
   @JsonProperty("queuePosition")
   private Integer queuePosition;
+
+  @JsonIgnore
+  private Map<String, Object> additionalProperties = new ExcludingMap();
 
   @JsonProperty("jobID")
   public String getJobID() {
@@ -48,5 +55,15 @@ public class JobResponseImpl implements JobResponse {
   @JsonProperty("queuePosition")
   public void setQueuePosition(Integer queuePosition) {
     this.queuePosition = queuePosition;
+  }
+
+  @JsonAnyGetter
+  public Map<String, Object> getAdditionalProperties() {
+    return additionalProperties;
+  }
+
+  @JsonAnySetter
+  public void setAdditionalProperties(String key, Object value) {
+    this.additionalProperties.put(key, value);
   }
 }

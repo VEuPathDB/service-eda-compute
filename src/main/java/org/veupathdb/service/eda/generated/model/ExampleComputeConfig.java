@@ -7,26 +7,14 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.Map;
 
 @JsonDeserialize(
-    as = JobResponseImpl.class
+    as = ExampleComputeConfigImpl.class
 )
-public interface JobResponse {
-  @JsonProperty("jobID")
-  String getJobID();
+public interface ExampleComputeConfig {
+  @JsonProperty("foo")
+  String getFoo();
 
-  @JsonProperty("jobID")
-  void setJobID(String jobID);
-
-  @JsonProperty("status")
-  JobStatus getStatus();
-
-  @JsonProperty("status")
-  void setStatus(JobStatus status);
-
-  @JsonProperty("queuePosition")
-  Integer getQueuePosition();
-
-  @JsonProperty("queuePosition")
-  void setQueuePosition(Integer queuePosition);
+  @JsonProperty("foo")
+  void setFoo(String foo);
 
   @JsonAnyGetter
   Map<String, Object> getAdditionalProperties();

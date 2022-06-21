@@ -1,18 +1,25 @@
-package org.veupathdb.service.eda.compute.plugin
+package org.veupathdb.service.eda.compute.plugins
 
 import com.fasterxml.jackson.databind.JsonNode
 import org.slf4j.LoggerFactory
 import org.veupathdb.service.eda.common.model.ReferenceMetadata
+import org.veupathdb.service.eda.generated.model.APIStudyDetail
+import org.veupathdb.service.eda.generated.model.ComputeRequestBase
 import org.veupathdb.service.eda.generated.model.DerivedVariable
 import java.util.Collections
 
 
-abstract class AbstractPlugin<T> {
+abstract class AbstractPlugin<R : ComputeRequestBase, C> {
 
   private val Log = LoggerFactory.getLogger(javaClass)
 
+  fun getStudyDetail(config: R): APIStudyDetail {
+    TODO("Should this be here?  Should this be provided some other way?")
+  }
+
 
   /**
+   * TODO: Maybe this should be part of the context?
    * TODO: is this passed in or lazily loaded on call?
    *       If it's lazily loaded we will need a handle on the derived variables
    *       at least...
@@ -29,8 +36,8 @@ abstract class AbstractPlugin<T> {
    *       Maybe there should be a method on this class that gets them from the
    *       config?
    */
-  fun getReferenceMetadata(): ReferenceMetadata {
-    TODO()
+  fun getReferenceMetadata(config: R): ReferenceMetadata {
+    TODO("")
   }
 
 
@@ -43,6 +50,10 @@ abstract class AbstractPlugin<T> {
   // ║                                                                     ║//
   // ╚═════════════════════════════════════════════════════════════════════╝//
 
+  @Suppress("UNCHECKED_CAST")
+  open fun getConfig(request: R): C {
+    return request.config as C
+  }
 
   /**
    * Display name for this plugin.
@@ -50,11 +61,6 @@ abstract class AbstractPlugin<T> {
    * Defaults to [Class.getSimpleName].
    */
   open val displayName = javaClass.simpleName
-
-  /**
-   * Optional description of this plugin.
-   */
-  open val description = ""
 
   /**
    * Parses any [DerivedVariable]s out of the given input configuration.
@@ -66,7 +72,7 @@ abstract class AbstractPlugin<T> {
    *
    * @return A list of derived variables.
    */
-  open fun getDerivedVariables(config: T): List<DerivedVariable> {
+  open fun getDerivedVariables(config: R): List<DerivedVariable> {
     return emptyList()
   }
 
@@ -81,9 +87,9 @@ abstract class AbstractPlugin<T> {
   // ╚═════════════════════════════════════════════════════════════════════╝//
 
 
-  protected abstract fun execute(config: T)
+  protected abstract fun execute(config: R)
 
-  abstract fun parseConfig(configJson: JsonNode): T
+  abstract fun parseConfig(configJson: JsonNode): R
 
 
   // ╔═════════════════════════════════════════════════════════════════════╗//
@@ -95,7 +101,8 @@ abstract class AbstractPlugin<T> {
   // ║                                                                     ║//
   // ╚═════════════════════════════════════════════════════════════════════╝//
 
-  final fun run(config: T) {
+  final fun run(config: R) {
     Log.info("Executing plugin {}", displayName)
+
   }
 }

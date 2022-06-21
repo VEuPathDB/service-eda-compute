@@ -135,10 +135,10 @@ dependencies {
   // Jackson
   implementation("org.veupathdb.lib:jackson-singleton:3.0.0")
 
+  // Prometheus Metrics
+  implementation("io.prometheus:simpleclient:0.15.0")
+  implementation("io.prometheus:simpleclient_common:0.15.0")
 
-  // Recommended Dependencies
-  //
-  // These dependencies are not required, but are recommended.
 
   // JUnit 5
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")

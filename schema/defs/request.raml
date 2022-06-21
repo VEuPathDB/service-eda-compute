@@ -1,0 +1,32 @@
+#%RAML 1.0 Library
+
+uses:
+  eda: ../eda-common-lib.raml
+
+types:
+  ComputeRequestBase:
+    type: object
+    properties:
+      studyId:
+        type: string
+      config:
+        type: object
+      derivedVariables:
+        type: array
+        items:
+          type: eda.DerivedVariable
+    additionalProperties: false
+
+  # TODO: remove this.  It's just a dummy type showing you can override properties defined on parent types.
+  ComputeRequestExtension:
+    type: ComputeRequestBase
+    properties:
+      config:
+        type: ExampleComputeConfig
+
+  # TODO: remove this
+  ExampleComputeConfig:
+    type: object
+    properties:
+      foo:
+        type: string
