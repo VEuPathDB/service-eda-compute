@@ -7,6 +7,8 @@
 ** Data service has an RServe client wrapping RServe functionality, should this
    type be moved to common or something similar constructed for eda-compute?
 ** Where does RServe live?
+*** *_Answer_*: RServe lives in a separate container which is available through
+    the docker compose stack.
 
 * What are some simple example specs that I can use for testing?
 
@@ -53,6 +55,11 @@ types:
    line.  It includes several fields that are needed to make requests to the
    other EDA services.
 
+* Looking at the EDA Data Service's docker-compose file, it looks like it spins
+  up its own, owned instances of EDA Subsetting, EDA Merging, RServe, EDA User,
+  Dataset Access, and Dataset Download. +
+  *_Question_*: Is this the structure in production or is this just the local
+  stack definition?
 
 
 == Request workflow
