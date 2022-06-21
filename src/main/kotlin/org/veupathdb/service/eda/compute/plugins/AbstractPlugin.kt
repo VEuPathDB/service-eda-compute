@@ -2,6 +2,7 @@ package org.veupathdb.service.eda.compute.plugins
 
 import com.fasterxml.jackson.databind.JsonNode
 import org.slf4j.LoggerFactory
+import org.veupathdb.service.eda.common.client.EdaSubsettingClient
 import org.veupathdb.service.eda.common.model.ReferenceMetadata
 import org.veupathdb.service.eda.generated.model.APIStudyDetail
 import org.veupathdb.service.eda.generated.model.ComputeRequestBase
@@ -9,12 +10,18 @@ import org.veupathdb.service.eda.generated.model.DerivedVariable
 import java.util.Collections
 
 
-abstract class AbstractPlugin<R : ComputeRequestBase, C> {
+abstract class AbstractPlugin<R : ComputeRequestBase, C>(
+  val request: R,
+  val config: C,
+) {
 
   private val Log = LoggerFactory.getLogger(javaClass)
 
   fun getStudyDetail(config: R): APIStudyDetail {
-    TODO("Should this be here?  Should this be provided some other way?")
+    // Should this be here?  Should this be provided some other way?
+
+    EdaSubsettingClient()
+
   }
 
 

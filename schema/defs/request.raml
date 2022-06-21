@@ -9,12 +9,20 @@ types:
     properties:
       studyId:
         type: string
-      config:
-        type: object
+      filters:
+        type: array
+        items:
+          type: eda.API_Filter
+        required: false
       derivedVariables:
         type: array
         items:
           type: eda.DerivedVariable
+      config:
+        # Stand-in property just to have the methods present on the parent type
+        # in java.  This field is to be overridden by specific plugin request
+        # types.
+        type: object
     additionalProperties: false
 
   # TODO: remove this.  It's just a dummy type showing you can override properties defined on parent types.

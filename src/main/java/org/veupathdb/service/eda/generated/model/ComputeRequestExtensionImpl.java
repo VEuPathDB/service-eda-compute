@@ -1,32 +1,29 @@
 package org.veupathdb.service.eda.generated.model;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.util.List;
-import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "studyId",
-    "config",
-    "derivedVariables"
+    "filters",
+    "derivedVariables",
+    "config"
 })
 public class ComputeRequestExtensionImpl implements ComputeRequestExtension {
   @JsonProperty("studyId")
   private String studyId;
 
-  @JsonProperty("config")
-  private ExampleComputeConfig config;
+  @JsonProperty("filters")
+  private List<APIFilter> filters;
 
   @JsonProperty("derivedVariables")
   private List<DerivedVariable> derivedVariables;
 
-  @JsonIgnore
-  private Map<String, Object> additionalProperties = new ExcludingMap();
+  @JsonProperty("config")
+  private ExampleComputeConfig config;
 
   @JsonProperty("studyId")
   public String getStudyId() {
@@ -38,14 +35,14 @@ public class ComputeRequestExtensionImpl implements ComputeRequestExtension {
     this.studyId = studyId;
   }
 
-  @JsonProperty("config")
-  public ExampleComputeConfig getConfig() {
-    return this.config;
+  @JsonProperty("filters")
+  public List<APIFilter> getFilters() {
+    return this.filters;
   }
 
-  @JsonProperty("config")
-  public void setConfig(ExampleComputeConfig config) {
-    this.config = config;
+  @JsonProperty("filters")
+  public void setFilters(List<APIFilter> filters) {
+    this.filters = filters;
   }
 
   @JsonProperty("derivedVariables")
@@ -58,13 +55,13 @@ public class ComputeRequestExtensionImpl implements ComputeRequestExtension {
     this.derivedVariables = derivedVariables;
   }
 
-  @JsonAnyGetter
-  public Map<String, Object> getAdditionalProperties() {
-    return additionalProperties;
+  @JsonProperty("config")
+  public ExampleComputeConfig getConfig() {
+    return this.config;
   }
 
-  @JsonAnySetter
-  public void setAdditionalProperties(String key, Object value) {
-    this.additionalProperties.put(key, value);
+  @JsonProperty("config")
+  public void setConfig(ExampleComputeConfig config) {
+    this.config = config;
   }
 }

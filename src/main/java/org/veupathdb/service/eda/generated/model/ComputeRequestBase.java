@@ -1,11 +1,8 @@
 package org.veupathdb.service.eda.generated.model;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.List;
-import java.util.Map;
 
 @JsonDeserialize(
     as = ComputeRequestBaseImpl.class
@@ -17,11 +14,11 @@ public interface ComputeRequestBase {
   @JsonProperty("studyId")
   void setStudyId(String studyId);
 
-  @JsonProperty("config")
-  Object getConfig();
+  @JsonProperty("filters")
+  List<APIFilter> getFilters();
 
-  @JsonProperty("config")
-  void setConfig(Object config);
+  @JsonProperty("filters")
+  void setFilters(List<APIFilter> filters);
 
   @JsonProperty("derivedVariables")
   List<DerivedVariable> getDerivedVariables();
@@ -29,9 +26,9 @@ public interface ComputeRequestBase {
   @JsonProperty("derivedVariables")
   void setDerivedVariables(List<DerivedVariable> derivedVariables);
 
-  @JsonAnyGetter
-  Map<String, java.lang.Object> getAdditionalProperties();
+  @JsonProperty("config")
+  Object getConfig();
 
-  @JsonAnySetter
-  void setAdditionalProperties(String key, java.lang.Object value);
+  @JsonProperty("config")
+  void setConfig(Object config);
 }
