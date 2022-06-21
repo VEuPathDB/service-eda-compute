@@ -179,6 +179,12 @@ tasks.shadowJar {
   archiveFileName.set("service.jar")
 }
 
+/**
+ * Fetch EDA Common Schema
+ *
+ * Custom task that fetches the contents of the EDA Common RAML library file and
+ * spits it out on STDOUT.
+ */
 tasks.register("fetch-eda-common-schema") {
   URL(EdaCommonRAMLURL).openStream().use { it.transferTo(System.out) }
 }
