@@ -1,7 +1,5 @@
 import org.veupathdb.lib.gradle.container.util.Logger.Level
 import java.net.URL
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
 
 plugins {
   kotlin("jvm") version "1.7.0"
