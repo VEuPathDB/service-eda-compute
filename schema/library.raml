@@ -24,6 +24,18 @@ types:
         type: integer
         required: false
         format: int32
+  PluginList:
+    displayName: Plugin Listing
+    type: array
+    items: PluginOverview
+  PluginOverview:
+    displayName: Plugin Overview
+    type: object
+    additionalProperties: false
+    properties:
+      name: string
+      displayName: string
+      description: string
   ComputeRequestBase:
     type: object
     additionalProperties: false

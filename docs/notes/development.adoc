@@ -61,6 +61,17 @@ types:
   *_Question_*: Is this the structure in production or is this just the local
   stack definition?
 
+* How does one instantiate an `EdaSubsettingClient` instance?
+** *_Answer_*: Seems like it is done on a per-request basis, passing in the auth
+  headers from the original request.  This means the auth headers will need to
+  be forwarded to the compute service from other services.
+
+* `ConstraintSpec`: What is it, and is it relevant to compute? (in otherwords
+  should compute have something similar or should this be in common or something?)
+
+* How does the data service handle validation of inputs?  Is it via the
+  `ConstraintSpec` deal?
+
 
 == Request workflow
 

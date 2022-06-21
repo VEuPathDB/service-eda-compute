@@ -12,7 +12,6 @@ import java.util.Collections
 
 abstract class AbstractPlugin<R : ComputeRequestBase, C>(
   val request: R,
-  val config: C,
 ) {
 
   private val Log = LoggerFactory.getLogger(javaClass)
