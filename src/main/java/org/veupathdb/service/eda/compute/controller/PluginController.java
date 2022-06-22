@@ -5,7 +5,7 @@ import org.glassfish.jersey.server.ContainerRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.veupathdb.lib.container.jaxrs.providers.UserProvider;
-import org.veupathdb.service.eda.compute.exec.EDACompute;
+import org.veupathdb.service.eda.compute.exec.EDA;
 import org.veupathdb.service.eda.compute.plugins.PluginProvider;
 import org.veupathdb.service.eda.compute.plugins.PluginRegistry;
 import org.veupathdb.service.eda.compute.plugins.example.ExamplePluginProvider;
@@ -47,6 +47,6 @@ public class PluginController implements Plugins {
   // ╚═════════════════════════════════════════════════════════════════════╝//
 
   private <R extends ComputeRequestBase, C> JobResponse submitJob(PluginProvider<R, C> plugin, R entity) {
-    return EDACompute.submitComputeJob(plugin, entity, UserProvider.getSubmittedAuth(request).orElseThrow());
+    return EDA.submitComputeJob(plugin, entity, UserProvider.getSubmittedAuth(request).orElseThrow());
   }
 }
