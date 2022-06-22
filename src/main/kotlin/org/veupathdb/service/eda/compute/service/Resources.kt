@@ -1,0 +1,9 @@
+package org.veupathdb.service.eda.compute.service
+
+import org.veupathdb.lib.container.jaxrs.server.ContainerResources
+
+class Resources : ContainerResources(ServiceOptions) {
+  override fun resources(): Array<Any> = arrayOf(
+
+  )
+}

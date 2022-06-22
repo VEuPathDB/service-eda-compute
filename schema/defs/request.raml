@@ -24,17 +24,3 @@ types:
         # types.
         type: object
     additionalProperties: false
-
-  # TODO: remove this.  It's just a dummy type showing you can override properties defined on parent types.
-  ComputeRequestExtension:
-    type: ComputeRequestBase
-    properties:
-      config:
-        type: ExampleComputeConfig
-
-  # TODO: remove this
-  ExampleComputeConfig:
-    type: object
-    properties:
-      foo:
-        type: string

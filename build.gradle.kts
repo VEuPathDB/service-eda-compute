@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.veupathdb.lib.gradle.container.util.Logger.Level
 import java.net.URL
 
@@ -133,10 +134,12 @@ dependencies {
   // Jackson
   implementation("org.veupathdb.lib:jackson-singleton:3.0.0")
 
+  // FgpUtil
+  implementation("org.gusdb:fgputil-client:2.5-jakarta")
+
   // Prometheus Metrics
   implementation("io.prometheus:simpleclient:0.15.0")
   implementation("io.prometheus:simpleclient_common:0.15.0")
-
 
   // JUnit 5
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
@@ -163,6 +166,15 @@ java {
 kotlin {
   jvmToolchain {
     languageVersion.set(JavaLanguageVersion.of(17))
+  }
+}
+
+tasks.withType<KotlinCompile> {
+  kotlinOptions {
+    jvmTarget = "17"
+    freeCompilerArgs = listOf(
+      "-Xjvm-default=all"
+    )
   }
 }
 

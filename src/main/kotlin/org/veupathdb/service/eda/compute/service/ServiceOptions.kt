@@ -15,6 +15,11 @@ private const val DefaultQueueDBPoolSize = 10
 
 // Job Queue Defaults
 private const val DefaultJobQueuePort = 5672
+private const val DefaultSlowQueueName = "slow-jobs"
+private const val DefaultSlowQueueWorkers = 5
+private const val DefaultFastQueueName = "fast-jobs"
+private const val DefaultFastQueueWorkers = 5
+
 
 // S3 Defaults
 private const val DefaultS3Port = 80
@@ -144,6 +149,42 @@ object ServiceOptions : Options() {
     arity = "1"
   )
   var jobQueuePort = DefaultJobQueuePort
+    private set
+
+  @Option(
+    names = ["--slow-queue-name"],
+    defaultValue = "\${env:SLOW_QUEUE_NAME}",
+    description = ["Name of the slow jobs queue."],
+    arity = "1"
+  )
+  var slowQueueName = DefaultSlowQueueName
+    private set
+
+  @Option(
+    names = ["--slow-queue-workers"],
+    defaultValue = "\${env:SLOW_QUEUE_WORKERS}",
+    description = ["Number of worker threads used by the slow job queue."],
+    arity = "1"
+  )
+  var slowQueueWorkers = DefaultSlowQueueWorkers
+    private set
+
+  @Option(
+    names = ["--fast-queue-name"],
+    defaultValue = "\${env:FAST_QUEUE_NAME}",
+    description = ["Name of the fast jobs queue."],
+    arity = "1"
+  )
+  var fastQueueName = DefaultFastQueueName
+    private set
+
+  @Option(
+    names = ["--fast-queue-workers"],
+    defaultValue = "\${env:FAST_QUEUE_WORKERS}",
+    description = ["Number of worker threads used by the fast job queue."],
+    arity = "1"
+  )
+  var fastQueueWorkers = DefaultFastQueueWorkers
     private set
 
   // endregion RabbitMQ

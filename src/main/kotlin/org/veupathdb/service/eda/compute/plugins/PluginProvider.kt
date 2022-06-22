@@ -42,8 +42,10 @@ interface PluginProvider<R : ComputeRequestBase, C> {
   /**
    * Creates a new instance of this plugin
    */
-  fun getPlugin(request: R): AbstractPlugin<R, C>
+  fun createPlugin(ctx: PluginContext<R, C>): AbstractPlugin<R, C>
 
-  fun getValidator(): PluginConfigValidator<R>
+  @Suppress("UNCHECKED_CAST")
+  fun createValidator(): PluginConfigValidator<R> =
+    NoopPluginConfigValidator() as PluginConfigValidator<R>
 
 }

@@ -94,7 +94,8 @@ gen-jaxrs: raml-gen-code
 
 .PHONY: raml-gen-code
 raml-gen-code: api.raml merge-raml
-	@./gradlew generate-jaxrs
+	@rm -rf src/main/java/org/veupathdb/service/eda/generated
+	@./gradlew --quiet generate-jaxrs
 	@$(BIN_DIR)/generate-jaxrs-streams.sh $(APP_PACKAGE)
 	@$(BIN_DIR)/generate-jaxrs-postgen-mods.sh $(APP_PACKAGE)
 	@grep -Rl javax src | xargs -I{} sed -i 's/javax.ws/jakarta.ws/g' {}
