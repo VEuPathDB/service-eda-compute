@@ -5,7 +5,7 @@ import org.glassfish.jersey.server.ContainerRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.veupathdb.lib.container.jaxrs.providers.UserProvider;
-import org.veupathdb.service.eda.compute.exec.EDA;
+import org.veupathdb.service.eda.compute.EDA;
 import org.veupathdb.service.eda.compute.plugins.PluginProvider;
 import org.veupathdb.service.eda.compute.plugins.PluginRegistry;
 import org.veupathdb.service.eda.compute.plugins.example.ExamplePluginProvider;

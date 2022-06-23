@@ -10,4 +10,5 @@ object Const {
   const val OutputFileMeta = "output-meta"
   const val OutputFileTabular = "output-data"
   const val OutputFileErrors = "error.log"
+  const val OutputFileException = "exception.log"
 }

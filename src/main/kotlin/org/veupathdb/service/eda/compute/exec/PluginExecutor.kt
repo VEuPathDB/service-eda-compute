@@ -6,73 +6,60 @@ import org.veupathdb.lib.compute.platform.job.JobContext
 import org.veupathdb.lib.compute.platform.job.JobExecutor
 import org.veupathdb.lib.compute.platform.job.JobResult
 import org.veupathdb.lib.jackson.Json
-import org.veupathdb.service.eda.common.client.EdaSubsettingClient
+import org.veupathdb.service.eda.compute.EDA
 import org.veupathdb.service.eda.compute.jobs.Const
-import org.veupathdb.service.eda.compute.plugins.PluginProvider
 import org.veupathdb.service.eda.compute.plugins.PluginRegistry
-import org.veupathdb.service.eda.compute.service.ServiceOptions
-import org.veupathdb.service.eda.compute.util.AuthHeader
-import org.veupathdb.service.eda.generated.model.APIStudyDetail
 import org.veupathdb.service.eda.generated.model.ComputeRequestBase
 
 private val OutputFiles = arrayOf(
   Const.OutputFileMeta,
   Const.OutputFileStats,
   Const.OutputFileTabular,
+  Const.OutputFileErrors,
+  Const.OutputFileException
 )
+
+private const val ThreadContextKey = "JOB_ID"
 
 class PluginExecutor : JobExecutor {
 
   private val Log = LogManager.getLogger(javaClass)
 
-  /**
-   *
-   *
-   * At this point:
-   *
-   * * we have a local workspace for our job
-   */
   override fun execute(ctx: JobContext): JobResult {
-    ThreadContext.put("JOB_ID", ctx.jobID.string)
-    // TODO: Add log4j config with job_id in logging
-
+    ThreadContext.put(ThreadContextKey, ctx.jobID.string)
     Log.info("Executing job {}", ctx.jobID)
 
-    Log.trace("parsing payload from queue message")
+    // Parse the raw job payload from the queue message
     val jobPayload = Json.parse<PluginJobPayload>(ctx.config!!)
 
-    Log.trace("getting plugin provider")
-    val provider = PluginRegistry.get(jobPayload.plugin)
+    // Get the plugin provider for the job
+    val provider = PluginRegistry.get<ComputeRequestBase, Any>(jobPayload.plugin)
 
-    Log.trace()
+    // Deserialize the
     val request = Json.parse(jobPayload.request, provider.requestClass)
 
-    val studyDetail = fetchStudyDetails(jobPayload.authHeader, request)
+    // Fetch the study metadata and write it out to the local workspace
+    Log.debug("retrieving api study details")
+    val studyDetail = EDA.requireAPIStudyDetail(request.studyId, jobPayload.authHeader)
     ctx.workspace.write(Const.InputFileMeta, Json.convert(studyDetail))
 
+    // Fetch the tabular data and write it out to the local workspace
+    Log.debug("retrieving tabular study data")
+    ctx.workspace.write(Const.InputFileTabular, EDA.getMergeData(jobPayload.authHeader))
 
+    // Build the plugin context
+    val context = provider.buildContext().also {
+      it.request = request
+      it.workspace = ctx.workspace
+      it.jobContext = ComputeJobContext(ctx.jobID)
+      it.pluginMeta = provider
+    }.build()
 
-    // TODO: fetch the tabular data
-    // TODO: write the tabular data out to file
-    // TODO: construct the context
+    // Run the plugin.
+    Log.debug("running plugin")
+    provider.createPlugin().run(context)
 
-    val context =
-
-    (provider as PluginProvider<ComputeRequestBase, Any>).createPlugin()
-
-    TODO("Not yet implemented")
-
+    ThreadContext.remove(ThreadContextKey)
     return JobResult.success(*OutputFiles)
   }
-
-  // TODO: Move me
-  private fun fetchStudyDetails(auth: AuthHeader, request: ComputeRequestBase): APIStudyDetail {
-    return EdaSubsettingClient(ServiceOptions.edaSubsettingHost, auth.asMapEntry())
-      .getStudy(request.studyId)
-      .orElseThrow { IllegalStateException() }
-  }
-
-  // TODO: Move me
-  private fun
-
 }

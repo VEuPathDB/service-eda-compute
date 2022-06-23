@@ -12,3 +12,20 @@ ifdef::env-github[]
 endif::[]
 Elizabeth Paige Harper <epharper@upenn.edu>
 v1.0.0
+
+
+== Development
+
+=== Adding a Plugin
+
+TODO!!
+
+link:src/main/java/org/veupathdb/service/eda/compute/plugins/example[Example Plugin]
+
+link:src/main/java/org/veupathdb/service/eda/compute/plugins/PluginRegistry.java[Plugin Registry]
+
+.TODO
+* what needs to be implemented
+* where it needs to go
+* adding the plugin to the registry
+* adding an endpoint for the plugin

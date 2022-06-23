@@ -2,8 +2,8 @@ package org.veupathdb.service.eda.compute.plugins.example;
 
 import org.jetbrains.annotations.NotNull;
 import org.veupathdb.service.eda.compute.plugins.AbstractPlugin;
-import org.veupathdb.service.eda.compute.plugins.PluginContext;
 import org.veupathdb.service.eda.compute.plugins.PluginProvider;
+import org.veupathdb.service.eda.compute.plugins.PluginQueue;
 import org.veupathdb.service.eda.generated.model.ExamplePluginConfig;
 import org.veupathdb.service.eda.generated.model.ExamplePluginRequest;
 
@@ -11,26 +11,30 @@ public class ExamplePluginProvider implements PluginProvider<ExamplePluginReques
   @NotNull
   @Override
   public String getUrlSegment() {
-    return null;
+    return "example";
   }
 
   @NotNull
   @Override
   public String getDisplayName() {
-    return null;
+    return "Example";
+  }
+
+  @NotNull
+  @Override
+  public PluginQueue getTargetQueue() {
+    return PluginQueue.Fast;
   }
 
   @NotNull
   @Override
   public Class<ExamplePluginRequest> getRequestClass() {
-    return null;
+    return ExamplePluginRequest.class;
   }
 
   @NotNull
   @Override
-  public AbstractPlugin<ExamplePluginRequest, ExamplePluginConfig> createPlugin(
-    @NotNull PluginContext<ExamplePluginRequest, ExamplePluginConfig> ctx
-  ) {
+  public AbstractPlugin<ExamplePluginRequest, ExamplePluginConfig> createPlugin() {
     return null;
   }
 }

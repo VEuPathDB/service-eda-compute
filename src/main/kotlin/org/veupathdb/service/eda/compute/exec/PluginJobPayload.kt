@@ -2,7 +2,7 @@ package org.veupathdb.service.eda.compute.exec
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.JsonNode
-import org.veupathdb.service.eda.compute.util.AuthHeader
+import org.gusdb.fgputil.Tuples.TwoTuple
 
 internal data class PluginJobPayload(
   /**
@@ -21,5 +21,5 @@ internal data class PluginJobPayload(
    * Auth Header passed in with the HTTP request.
    */
   @JsonProperty("authHeader")
-  val authHeader: AuthHeader
+  val authHeader: TwoTuple<String, String>
 )

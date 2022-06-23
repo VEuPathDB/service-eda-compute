@@ -1,11 +1,13 @@
 package org.veupathdb.service.eda.compute.plugins
 
-import org.slf4j.LoggerFactory
+import org.apache.logging.log4j.LogManager
+import org.veupathdb.service.eda.compute.jobs.Const
+import org.veupathdb.service.eda.compute.metrics.PluginMetrics
 import org.veupathdb.service.eda.generated.model.ComputeRequestBase
 
-abstract class AbstractPlugin<R : ComputeRequestBase, C>(val context: PluginContext<R, C>) {
+abstract class AbstractPlugin<R : ComputeRequestBase, C> {
 
-  private val Log = LoggerFactory.getLogger(javaClass)
+  private val Log = LogManager.getLogger(javaClass)
 
   // ╔═════════════════════════════════════════════════════════════════════╗//
   // ║                                                                     ║//
@@ -16,8 +18,8 @@ abstract class AbstractPlugin<R : ComputeRequestBase, C>(val context: PluginCont
   // ║                                                                     ║//
   // ╚═════════════════════════════════════════════════════════════════════╝//
 
+  protected abstract fun execute(context: PluginContext<R, C>)
 
-  protected abstract fun execute(config: R)
 
   // ╔═════════════════════════════════════════════════════════════════════╗//
   // ║                                                                     ║//
@@ -28,8 +30,31 @@ abstract class AbstractPlugin<R : ComputeRequestBase, C>(val context: PluginCont
   // ║                                                                     ║//
   // ╚═════════════════════════════════════════════════════════════════════╝//
 
-  final fun run(config: R) {
-    Log.info("Executing plugin {}", javaClass.simpleName)
+  fun run(context: PluginContext<R, C>) {
+    Log.info("Executing plugin {}", { context.pluginMeta.urlSegment })
 
+    try {
+      // Start a timer to time the plugin execution.
+      val tim = PluginMetrics.execTime
+        .labels(context.pluginMeta.urlSegment)
+        .startTimer()
+
+      // execute the plugin
+      execute(context)
+
+      // Record the plugin execution time in the metrics
+      tim.observeDuration()
+
+      // Record the job success in the metrics
+      PluginMetrics.successes.labels(context.pluginMeta.urlSegment).inc()
+    } catch (e: Throwable) {
+      Log.warn("Plugin execution failed", e)
+
+      // Record the job failure in the metrics
+      PluginMetrics.failures.labels(context.pluginMeta.urlSegment).inc()
+
+      // Write the stacktrace to file to be persisted in S3
+      e.printStackTrace(context.workspace.touch(Const.OutputFileException).toFile().printWriter())
+    }
   }
 }
