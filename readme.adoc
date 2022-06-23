@@ -22,10 +22,19 @@ TODO!!
 
 link:src/main/java/org/veupathdb/service/eda/compute/plugins/example[Example Plugin]
 
-link:src/main/java/org/veupathdb/service/eda/compute/plugins/PluginRegistry.java[Plugin Registry]
 
 .TODO
+* adding to the RAML spec
+** link:schema/defs/plugins[Plugins Schema Directory]
+*** link:schema/defs/plugins/example.raml[Example Plugin Schema]
 * what needs to be implemented
+** link:src/main/kotlin/org/veupathdb/service/eda/compute/plugins/PluginProvider.kt[Plugin Provider]
+*** link:src/main/java/org/veupathdb/service/eda/compute/plugins/example/ExamplePluginProvider.java[Example Plugin Provider Implementation]
+** link:src/main/kotlin/org/veupathdb/service/eda/compute/plugins/AbstractPlugin.kt[Abstract Plugin]
+*** link:src/main/java/org/veupathdb/service/eda/compute/plugins/example/ExamplePlugin.java[Example Plugin Implementation]
 * where it needs to go
+** link:src/main/java/org/veupathdb/service/eda/compute/plugins/[Plugins Package]
 * adding the plugin to the registry
+** link:src/main/java/org/veupathdb/service/eda/compute/plugins/PluginRegistry.java[Plugin Registry]
 * adding an endpoint for the plugin
+** link:src/main/java/org/veupathdb/service/eda/compute/controller/PluginController.java[Plugin Controller]
