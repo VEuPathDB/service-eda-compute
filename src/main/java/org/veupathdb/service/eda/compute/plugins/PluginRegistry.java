@@ -13,12 +13,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-public class PluginRegistry {
+/**
+ * Plugin Registry
+ * <p>
+ * Singleton container class where all plugins are registered.
+ * <p>
+ * Provides methods for looking up plugins by url segment and getting an
+ * overview of the registered plugins.
+ *
+ * @author Elizabeth Paige Harper - https://github.com/foxcapades
+ * @since 1.0.0
+ */
+public final class PluginRegistry {
 
   private static final Logger Log = LogManager.getLogger(PluginRegistry.class);
 
-  private static final Map<String, PluginProvider<? extends ComputeRequestBase, ?>> Registry;
+  private static final Map<String, PluginProvider<?, ?>> Registry;
 
   static {
     //
@@ -26,9 +36,11 @@ public class PluginRegistry {
     //
     // Add new plugins here.
     //
+
     var pluginList = List.<PluginProvider<?, ?>>of(
       new ExamplePluginProvider()
     );
+
     //
     // End Plugin List
     //
@@ -39,13 +51,29 @@ public class PluginRegistry {
       Registry.put(plugin.getUrlSegment(), plugin);
   }
 
+  /**
+   * Returns the {@link PluginProvider} registered with the given url segment.
+   * <p>
+   * The returned provider is cast to its most basic allowed generic types as
+   * the real generic types are unknown and shouldn't actually matter at run
+   * time.
+   *
+   * @param urlSegment URL segment of the plugin to return.
+   *
+   * @return The target {@code PluginProvider}.
+   *
+   * @throws IllegalArgumentException If the given url segment does not match
+   * any currently registered plugin.
+   */
   @NotNull
   @SuppressWarnings("unchecked")
-  public static PluginProvider<ComputeRequestBase, Object> get(String name) {
-    var raw = Registry.get(name);
+  public static PluginProvider<ComputeRequestBase, Object> get(String urlSegment) {
+    Log.trace("looking up plugin {}", urlSegment);
+
+    var raw = Registry.get(urlSegment);
 
     if (raw == null)
-      throw new IllegalArgumentException("Unrecognized plugin name \"$name\".");
+      throw new IllegalArgumentException("Unrecognized plugin url segment \"" + urlSegment + "\"");
 
     return (PluginProvider<ComputeRequestBase, Object>) raw;
   }
@@ -54,10 +82,13 @@ public class PluginRegistry {
    * Builds an overview of details about the plugins currently registered with
    * the service.
    *
-   * @return
+   * @return A {@code List} of  {@link PluginOverview} objects describing the
+   * plugins currently registered.
    */
   @NotNull
   public static List<PluginOverview> getPluginOverview() {
+    Log.trace("building plugin overview list");
+
     var out = new ArrayList<PluginOverview>(Registry.size());
 
     for (var it : Registry.values()) {
@@ -70,4 +101,6 @@ public class PluginRegistry {
 
     return out;
   }
+
+  private PluginRegistry() {}
 }

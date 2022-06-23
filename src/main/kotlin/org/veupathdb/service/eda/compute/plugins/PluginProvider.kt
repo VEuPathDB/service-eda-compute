@@ -17,7 +17,7 @@ interface PluginProvider<R : ComputeRequestBase, C> : PluginMeta<R> {
   /**
    * Creates a new instance of this plugin
    */
-  fun createPlugin(): AbstractPlugin<R, C>
+  fun createPlugin(context: PluginContext<R, C>): AbstractPlugin<R, C>
 
   @Suppress("UNCHECKED_CAST")
   fun createValidator(): PluginConfigValidator<R> =

@@ -1,11 +1,17 @@
 package org.veupathdb.service.eda.compute.plugins
 
 import org.apache.logging.log4j.LogManager
+import org.veupathdb.service.eda.common.client.spec.StreamSpec
 import org.veupathdb.service.eda.compute.jobs.Const
 import org.veupathdb.service.eda.compute.metrics.PluginMetrics
 import org.veupathdb.service.eda.generated.model.ComputeRequestBase
 
-abstract class AbstractPlugin<R : ComputeRequestBase, C> {
+abstract class AbstractPlugin<R : ComputeRequestBase, C>(
+  /**
+   * Context in/for which this plugin is being executed.
+   */
+  protected val context: PluginContext<R, C>
+) {
 
   private val Log = LogManager.getLogger(javaClass)
 
@@ -18,8 +24,16 @@ abstract class AbstractPlugin<R : ComputeRequestBase, C> {
   // ║                                                                     ║//
   // ╚═════════════════════════════════════════════════════════════════════╝//
 
-  protected abstract fun execute(context: PluginContext<R, C>)
+  /**
+   * Returns a [StreamSpec] that will be used to fetch the tabular data for this
+   * plugin.
+   */
+  abstract val streamSpec: StreamSpec
 
+  /**
+   * Executes this plugin's tasks.
+   */
+  protected abstract fun execute()
 
   // ╔═════════════════════════════════════════════════════════════════════╗//
   // ║                                                                     ║//
@@ -30,7 +44,7 @@ abstract class AbstractPlugin<R : ComputeRequestBase, C> {
   // ║                                                                     ║//
   // ╚═════════════════════════════════════════════════════════════════════╝//
 
-  fun run(context: PluginContext<R, C>) {
+  fun run() {
     Log.info("Executing plugin {}", { context.pluginMeta.urlSegment })
 
     try {
@@ -40,7 +54,7 @@ abstract class AbstractPlugin<R : ComputeRequestBase, C> {
         .startTimer()
 
       // execute the plugin
-      execute(context)
+      execute()
 
       // Record the plugin execution time in the metrics
       tim.observeDuration()

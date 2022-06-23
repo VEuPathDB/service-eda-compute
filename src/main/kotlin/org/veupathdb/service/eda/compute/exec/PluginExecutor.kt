@@ -33,7 +33,7 @@ class PluginExecutor : JobExecutor {
     val jobPayload = Json.parse<PluginJobPayload>(ctx.config!!)
 
     // Get the plugin provider for the job
-    val provider = PluginRegistry.get<ComputeRequestBase, Any>(jobPayload.plugin)
+    val provider = PluginRegistry.get(jobPayload.plugin)
 
     // Deserialize the
     val request = Json.parse(jobPayload.request, provider.requestClass)
@@ -42,10 +42,6 @@ class PluginExecutor : JobExecutor {
     Log.debug("retrieving api study details")
     val studyDetail = EDA.requireAPIStudyDetail(request.studyId, jobPayload.authHeader)
     ctx.workspace.write(Const.InputFileMeta, Json.convert(studyDetail))
-
-    // Fetch the tabular data and write it out to the local workspace
-    Log.debug("retrieving tabular study data")
-    ctx.workspace.write(Const.InputFileTabular, EDA.getMergeData(jobPayload.authHeader))
 
     // Build the plugin context
     val context = provider.buildContext().also {
@@ -57,7 +53,17 @@ class PluginExecutor : JobExecutor {
 
     // Run the plugin.
     Log.debug("running plugin")
-    provider.createPlugin().run(context)
+    val plugin = provider.createPlugin(context)
+
+    // Fetch the tabular data and write it out to the local workspace
+    Log.debug("retrieving tabular study data")
+    ctx.workspace.write(Const.InputFileTabular, EDA.getMergeData(
+      context.referenceMetadata,
+      request.filters,
+      plugin.streamSpec,
+      jobPayload.authHeader
+    ))
+
 
     ThreadContext.remove(ThreadContextKey)
     return JobResult.success(*OutputFiles)

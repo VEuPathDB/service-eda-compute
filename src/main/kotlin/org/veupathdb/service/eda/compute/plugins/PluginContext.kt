@@ -1,7 +1,6 @@
 package org.veupathdb.service.eda.compute.plugins
 
 import org.veupathdb.lib.compute.platform.job.JobWorkspace
-import org.veupathdb.lib.jackson.Json
 import org.veupathdb.service.eda.common.model.ReferenceMetadata
 import org.veupathdb.service.eda.compute.exec.ComputeJobContext
 import org.veupathdb.service.eda.compute.jobs.Const
@@ -77,10 +76,10 @@ interface PluginContext<R: ComputeRequestBase, C> {
    *
    * The returned stream is not buffered.
    */
-  fun getTabularDataStream(): InputStream
+  fun tabularDataStream(): InputStream
 
   // TODO: how will the plugin execute arbitrary processes?
-  fun executeProcess(command: String): ComputeProcessBuilder
+  fun processBuilder(command: String): ComputeProcessBuilder
 }
 
 
@@ -106,6 +105,8 @@ class PluginContextBuilder<R : ComputeRequestBase, C> {
 
   var pluginMeta: PluginMeta<R>? = null
 
+  var studyDetail: APIStudyDetail? = null
+
   fun request(request: R): PluginContextBuilder<R, C> {
     this.request = request
     return this
@@ -126,12 +127,18 @@ class PluginContextBuilder<R : ComputeRequestBase, C> {
     return this
   }
 
+  fun studyDetail(studyDetail: APIStudyDetail): PluginContextBuilder<R, C> {
+    this.studyDetail = studyDetail
+    return this
+  }
+
   fun build(): PluginContext<R, C> =
     PluginContextImpl(
-      request ?: throw IllegalStateException("request must not be null"),
-      workspace ?: throw IllegalStateException("workspace must not be null"),
-      jobContext ?: throw IllegalStateException("jobContext must not be null"),
-      pluginMeta ?: throw IllegalStateException("pluginMeta must not be null")
+      request     ?: throw IllegalStateException("request must not be null"),
+      workspace   ?: throw IllegalStateException("workspace must not be null"),
+      jobContext  ?: throw IllegalStateException("jobContext must not be null"),
+      pluginMeta  ?: throw IllegalStateException("pluginMeta must not be null"),
+      studyDetail ?: throw IllegalStateException("studyDetail must not be null")
     )
 }
 
@@ -141,21 +148,15 @@ private class PluginContextImpl<R : ComputeRequestBase, C>(
   override val workspace: JobWorkspace,
   override val jobContext: ComputeJobContext,
   override val pluginMeta: PluginMeta<R>,
+  override val studyDetail: APIStudyDetail,
 ) : PluginContext<R, C> {
 
-  override val studyDetail: APIStudyDetail by lazy {
-    Json.parse(workspace.openStream(Const.InputFileMeta).buffered())
-  }
+  override val referenceMetadata
+    get() = ReferenceMetadata(studyDetail, request.derivedVariables)
 
-  override val referenceMetadata: ReferenceMetadata by lazy {
-    ReferenceMetadata(studyDetail, request.derivedVariables)
-  }
+  override fun tabularDataStream() =
+    workspace.openStream(Const.InputFileTabular)
 
-  override fun getTabularDataStream(): InputStream {
-    return workspace.openStream(Const.InputFileTabular)
-  }
-
-  override fun executeProcess(command: String): ComputeProcessBuilder {
-    TODO("Not yet implemented")
-  }
+  override fun processBuilder(command: String) =
+    ComputeProcessBuilder(jobContext, command, workspace.path)
 }

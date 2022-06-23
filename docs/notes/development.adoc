@@ -7,12 +7,6 @@
 
 * What are some simple example specs that I can use for testing?
 
-* Looking at the EDA Data Service's docker-compose file, it looks like it spins
-  up its own, owned instances of EDA Subsetting, EDA Merging, RServe, EDA User,
-  Dataset Access, and Dataset Download. +
-  *_Question_*: Is this the structure in production or is this just the local
-  stack definition?
-
 * `ConstraintSpec`: What is it, and is it relevant to compute? (in otherwords
   should compute have something similar or should this be in common or something?)
 
@@ -21,7 +15,30 @@
 
 * What is a `StreamSpec` and how do I get one?
 
+* How do I spin this thing up and test it?
+** What do I connect it to?
+*** *_Answer_*: Just make a dev docker-compose and spin the stuff up, use
+    `sshuttle` to connect to the DBs ofc.
+
+* Permissions checks?  Apparently these are necessary now?
+** What permission is needed to run compute jobs?
+*** *_Answer_*: `visualizations` on the target study.
+
+* Why do plugins in EDA data have a list of `StreamSpec` instances?
+
+* Apparently also the file download endpoints need to take in a spec and do the
+  permissions check.
+
 === Answered
+
+
+* Looking at the EDA Data Service's docker-compose file, it looks like it spins
+  up its own, owned instances of EDA Subsetting, EDA Merging, RServe, EDA User,
+  Dataset Access, and Dataset Download. +
+  *_Question_*: Is this the structure in production or is this just the local
+  stack definition?
+** *_Answer_*: There is only one stack, the docker-compose file just happens to\
+   live in eda-data for some reason.
 
 * RServe:
 ** The EDA Data service has an RServe client wrapping RServe functionality,
@@ -34,8 +51,8 @@
 
 * How does one instantiate an `EdaSubsettingClient` instance?
 ** *_Answer_*: Seems like it is done on a per-request basis, passing in the auth
-headers from the original request.  This means the auth headers will need to
-be forwarded to the compute service from other services.
+   headers from the original request.  This means the auth headers will need to
+   be forwarded to the compute service from other services.
 
 * How do we hold onto the job request envelope data (study ID, derived
   Variables, etc.) to use when running the job?
