@@ -2,7 +2,6 @@ package org.veupathdb.service.eda.compute.jobs
 
 object Const {
   const val InputFileMeta = "input-meta"
-  const val InputFileTabular = "input-data"
   const val InputFileConfig = "input-config"
   const val InputFileRequest = "input-request"
 

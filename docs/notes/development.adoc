@@ -7,30 +7,59 @@
 
 * What are some simple example specs that I can use for testing?
 
+* Should the plugin name be part of the job id hash?
+
 * `ConstraintSpec`: What is it, and is it relevant to compute? (in otherwords
   should compute have something similar or should this be in common or something?)
+** Spec used by the client and server to perform automated validation of the
+   input data.
+** May or may not be needed by the eda-compute service, depends on what the
+   plugin implementers want.
+** Ask Danielle and Ann if they are envisioning the constraints to be similar
+   for the compute configs as they are for the visualization configs?
+*** If we want it, then we will need to expose the constraint spec from the
+    plugin via the API, it will come from the plugin.
 
 * How does the data service handle validation of inputs?  Is it via the
   `ConstraintSpec` deal?
+** No, plugins do their own arbitrary validations.
 
-* What is a `StreamSpec` and how do I get one?
+* `StreamSpec`:
+** What is it and how do I get one?
+*** Plugins could return more than one!!!!
+** Why do plugins in EDA data have a list of `StreamSpec` instances?
 
 * How do I spin this thing up and test it?
 ** What do I connect it to?
 *** *_Answer_*: Just make a dev docker-compose and spin the stuff up, use
     `sshuttle` to connect to the DBs ofc.
 
-* Permissions checks?  Apparently these are necessary now?
-** What permission is needed to run compute jobs?
-*** *_Answer_*: `visualizations` on the target study.
-
-* Why do plugins in EDA data have a list of `StreamSpec` instances?
-
 * Apparently also the file download endpoints need to take in a spec and do the
   permissions check.
+** Add a parameterized enpdoint thats like `/computes/{plugin}/download/{file}`
+   that takes a job config and downloads the target file.
+*** Maybe instead of `{file}` it takes a file type?  since there are only 3
+    types?  (meta, statistics, tabular)
+
+* Need to expose the library.raml from this service to be imported from the data
+  service to be used in their RAML...  They could just type it as any but that
+  prevents type checking in the data service?
+
+* Rename `/plugins` to `/computes`
+
+* Could there be more than one tabular data input?
+** Start with one and if they need more, update the API?
+*** In this case the stream-spec name will be the file name
+
+* Why do we download the merge data beforehand?
+** Because they could be performing arbitrary script calls on the data?
+*** Seems like they will just be calling RServe?
+** They can do multiple passes over the file without needing to redownload.
 
 === Answered
 
+* What permission is needed to run compute jobs?
+** *_Answer_*: `visualizations` on the target study.
 
 * Looking at the EDA Data Service's docker-compose file, it looks like it spins
   up its own, owned instances of EDA Subsetting, EDA Merging, RServe, EDA User,

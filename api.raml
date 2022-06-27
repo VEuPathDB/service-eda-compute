@@ -14,7 +14,7 @@ uses:
 # Example Endpoints
 #
 
-/plugins:
+/computes:
   displayName: Available Plugins
   get:
     responses:
@@ -24,6 +24,25 @@ uses:
             type: array
             items:
               type: lib.PluginOverview
+
+  /{plugin}/{file}:
+    uriParameters:
+      plugin:
+        type: string
+      file:
+        type: lib.ComputeOutputType
+    post:
+      description: |
+        Fetches the output of a compute job using the compute config input as
+        the unique identifier.
+      body:
+        application/json:
+          type: any
+      responses:
+        200:
+          body:
+            "*/*":
+              type: any
 
   /example:
     displayName: Example Plugin

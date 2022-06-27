@@ -27,10 +27,6 @@ private const val DefaultS3Port = 80
 // Job Cache Defaults
 private const val DefaultJobCacheTimeoutDays = 30
 
-// EDA Service Defaults
-private const val DefaultEDASubsettingPort = 80
-private const val DefaultEDAMergePort = 80
-
 // RServe Defaults
 private const val DefaultRServePort = 6311
 
@@ -280,15 +276,6 @@ object ServiceOptions : Options() {
     private set
 
   @Option(
-    names = ["--eda-subsetting-port"],
-    defaultValue = "\${env:EDA_SUBSETTING_PORT}",
-    description = ["Host port of the EDA Subsetting Service"],
-    arity = "1",
-  )
-  var edaSubsettingPort = DefaultEDASubsettingPort
-    private set
-
-  @Option(
     names = ["--eda-merge-host"],
     defaultValue = "\${env:EDA_MERGE_HOST}",
     description = ["Hostname of the EDA Merge Service"],
@@ -299,12 +286,13 @@ object ServiceOptions : Options() {
     private set
 
   @Option(
-    names = ["--eda-merge-port"],
-    defaultValue = "\${env:EDA_MERGE_PORT}",
-    description = ["Host port of the EDA Merge Service"],
+    names = ["--dataset-access-host"],
+    defaultValue = "\${env:DATASET_ACCESS_HOST}",
+    description = ["Hostname of the Dataset Access Service"],
     arity = "1",
+    required = true
   )
-  var edaMergePort = DefaultEDAMergePort
+  var datasetAccessHost = UnconfiguredStringValue
     private set
 
   // endregion EDA Services
@@ -323,15 +311,6 @@ object ServiceOptions : Options() {
     required = true
   )
   var rServeHost = UnconfiguredStringValue
-    private set
-
-  @Option(
-    names = ["--rserve-port"],
-    defaultValue = "\${env:RSERVE_PORT}",
-    description = ["Host port of an RServe instance."],
-    arity = "1"
-  )
-  var rServePort = DefaultRServePort
     private set
 
   // endregion RServe

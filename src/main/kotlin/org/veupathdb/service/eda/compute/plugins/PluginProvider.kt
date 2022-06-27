@@ -11,6 +11,9 @@ import org.veupathdb.service.eda.generated.model.ComputeRequestBase
  * @param R HTTP request payload type.
  *
  * @param C Plugin configuration type.
+ *
+ * @author Elizabeth Paige Harper - https://github.com/foxcapades
+ * @since 1.0.0
  */
 interface PluginProvider<R : ComputeRequestBase, C> : PluginMeta<R> {
 
@@ -19,10 +22,25 @@ interface PluginProvider<R : ComputeRequestBase, C> : PluginMeta<R> {
    */
   fun createPlugin(context: PluginContext<R, C>): AbstractPlugin<R, C>
 
+  /**
+   * Plugin Request Configuration Validator
+   *
+   * The config validator is used before the plugin job is queued to ensure the
+   * incoming request is sane.
+   *
+   * A default implementation of this method is provided that returns a no-op
+   * config validator.
+   *
+   * Plugins may choose to implement this method and use their own config
+   * validators
+   */
   @Suppress("UNCHECKED_CAST")
-  fun createValidator(): PluginConfigValidator<R> =
+  fun getValidator(): PluginConfigValidator<R> =
     NoopPluginConfigValidator() as PluginConfigValidator<R>
 
-  fun buildContext(): PluginContextBuilder<R, C> =
+  /**
+   * Plugin Context Builder
+   */
+  fun getContextBuilder(): PluginContextBuilder<R, C> =
     PluginContextBuilder()
 }

@@ -9,7 +9,6 @@ import org.veupathdb.lib.jackson.Json
 import org.veupathdb.service.eda.compute.EDA
 import org.veupathdb.service.eda.compute.jobs.Const
 import org.veupathdb.service.eda.compute.plugins.PluginRegistry
-import org.veupathdb.service.eda.generated.model.ComputeRequestBase
 
 private val OutputFiles = arrayOf(
   Const.OutputFileMeta,
@@ -26,6 +25,9 @@ class PluginExecutor : JobExecutor {
   private val Log = LogManager.getLogger(javaClass)
 
   override fun execute(ctx: JobContext): JobResult {
+    // Add the job id to the logger thread context so log messages in this
+    // worker thread will be marked as part of this job.
+
     ThreadContext.put(ThreadContextKey, ctx.jobID.string)
     Log.info("Executing job {}", ctx.jobID)
 
@@ -44,7 +46,7 @@ class PluginExecutor : JobExecutor {
     ctx.workspace.write(Const.InputFileMeta, Json.convert(studyDetail))
 
     // Build the plugin context
-    val context = provider.buildContext().also {
+    val context = provider.contextBuilder().also {
       it.request = request
       it.workspace = ctx.workspace
       it.jobContext = ComputeJobContext(ctx.jobID)
@@ -56,14 +58,15 @@ class PluginExecutor : JobExecutor {
     val plugin = provider.createPlugin(context)
 
     // Fetch the tabular data and write it out to the local workspace
-    Log.debug("retrieving tabular study data")
-    ctx.workspace.write(Const.InputFileTabular, EDA.getMergeData(
-      context.referenceMetadata,
-      request.filters,
-      plugin.streamSpec,
-      jobPayload.authHeader
-    ))
-
+    plugin.streamSpecs.forEach { spec ->
+      Log.debug("retrieving tabular study data: {}", spec.streamName)
+      ctx.workspace.write(spec.streamName, EDA.getMergeData(
+        context.referenceMetadata,
+        request.filters,
+        spec,
+        jobPayload.authHeader
+      ))
+    }
 
     ThreadContext.remove(ThreadContextKey)
     return JobResult.success(*OutputFiles)

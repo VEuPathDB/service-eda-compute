@@ -25,10 +25,18 @@ abstract class AbstractPlugin<R : ComputeRequestBase, C>(
   // ╚═════════════════════════════════════════════════════════════════════╝//
 
   /**
-   * Returns a [StreamSpec] that will be used to fetch the tabular data for this
-   * plugin.
+   * One or more [StreamSpec] that will be used to fetch the tabular data
+   * required by this plugin.
+   *
+   * Each `StreamSpec` in this list will be used to download the tabular data
+   * from the EDA Merge Service into a file in the current job's local scratch
+   * workspace.  The created files will be named with the stream name specified
+   * in each `StreamSpec`.
+   *
+   * The files can be accessed using the job workspace handle provided in the
+   * [context] property.
    */
-  abstract val streamSpec: StreamSpec
+  abstract val streamSpecs: List<StreamSpec>
 
   /**
    * Executes this plugin's tasks.

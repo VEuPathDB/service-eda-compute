@@ -3,11 +3,9 @@ package org.veupathdb.service.eda.compute.plugins
 import org.veupathdb.lib.compute.platform.job.JobWorkspace
 import org.veupathdb.service.eda.common.model.ReferenceMetadata
 import org.veupathdb.service.eda.compute.exec.ComputeJobContext
-import org.veupathdb.service.eda.compute.jobs.Const
 import org.veupathdb.service.eda.compute.process.ComputeProcessBuilder
 import org.veupathdb.service.eda.generated.model.APIStudyDetail
 import org.veupathdb.service.eda.generated.model.ComputeRequestBase
-import java.io.InputStream
 
 /**
  * Plugin Execution Context
@@ -23,7 +21,7 @@ import java.io.InputStream
  *     * The API study details
  *     * The Tabular merge data for the job
  *
- * @author Elizabeth Paige Harper [https://github.com/foxcapades]
+ * @author Elizabeth Paige Harper - https://github.com/foxcapades
  * @since 1.0.0
  */
 interface PluginContext<R: ComputeRequestBase, C> {
@@ -71,15 +69,15 @@ interface PluginContext<R: ComputeRequestBase, C> {
   val referenceMetadata: ReferenceMetadata
 
   /**
-   * Opens a new stream over the tabular data retrieved from the EDA Merge
-   * Service.
+   * Returns a new [ComputeProcessBuilder] which may be used to construct an
+   * external process execution and run that external process.
    *
-   * The returned stream is not buffered.
+   * @param command Name of/absolute path to the external binary or script that
+   * will be executed.
+   *
+   * @return A new [ComputeProcessBuilder] instance.
    */
-  fun tabularDataStream(): InputStream
-
-  // TODO: how will the plugin execute arbitrary processes?
-  fun processBuilder(command: String): ComputeProcessBuilder
+  fun processBuilder(command: String, vararg args: String): ComputeProcessBuilder
 }
 
 
@@ -93,7 +91,7 @@ interface PluginContext<R: ComputeRequestBase, C> {
  * construction of a [PluginContext] instance without needing to rely on
  * unsafe casts.
  *
- * @author Elizabeth Paige Harper
+ * @author Elizabeth Paige Harper - https://github.com/foxcapades
  * @since 1.0.0
  */
 class PluginContextBuilder<R : ComputeRequestBase, C> {
@@ -154,9 +152,7 @@ private class PluginContextImpl<R : ComputeRequestBase, C>(
   override val referenceMetadata
     get() = ReferenceMetadata(studyDetail, request.derivedVariables)
 
-  override fun tabularDataStream() =
-    workspace.openStream(Const.InputFileTabular)
-
-  override fun processBuilder(command: String) =
-    ComputeProcessBuilder(jobContext, command, workspace.path)
+  override fun processBuilder(command: String, vararg args: String) =
+    ComputeProcessBuilder(command, workspace.path)
+      .addArgs(*args)
 }
