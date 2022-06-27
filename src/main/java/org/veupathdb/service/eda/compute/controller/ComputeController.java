@@ -1,12 +1,21 @@
 package org.veupathdb.service.eda.compute.controller;
 
 import jakarta.ws.rs.ForbiddenException;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.StreamingOutput;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.server.ContainerRequest;
+import org.gusdb.fgputil.Tuples;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.veupathdb.lib.container.jaxrs.providers.UserProvider;
+import org.veupathdb.lib.hash_id.HashID;
+import org.veupathdb.lib.jackson.Json;
 import org.veupathdb.service.eda.compute.EDA;
+import org.veupathdb.service.eda.compute.jobs.Const;
 import org.veupathdb.service.eda.compute.plugins.PluginProvider;
 import org.veupathdb.service.eda.compute.plugins.PluginRegistry;
 import org.veupathdb.service.eda.compute.plugins.example.ExamplePluginProvider;
@@ -15,6 +24,9 @@ import org.veupathdb.service.eda.generated.model.ComputeRequestBase;
 import org.veupathdb.service.eda.generated.model.ExamplePluginRequest;
 import org.veupathdb.service.eda.generated.model.JobResponse;
 import org.veupathdb.service.eda.generated.resources.Computes;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class ComputeController implements Computes {
 
@@ -36,8 +48,12 @@ public class ComputeController implements Computes {
     return PostComputesExampleResponse.respond200WithApplicationJson(submitJob(new ExamplePluginProvider(), entity));
   }
 
+
   // ╔════════════════════════════════════════════════════════════════════╗ //
-  // ║  Static Endpoints                                                  ║ //
+  // ║  Constant Endpoints                                                ║ //
+  // ║                                                                    ║ //
+  // ║  Endpoints that must exist regardless of what plugins are added    ║ //
+  // ║  or removed.                                                       ║ //
   // ╚════════════════════════════════════════════════════════════════════╝ //
 
   @Override
@@ -49,10 +65,36 @@ public class ComputeController implements Computes {
   public PostComputesByPluginAndFileResponse postComputesByPluginAndFile(
     String plugin,
     ComputeOutputType file,
-    Object entity
+    ComputeRequestBase entity
   ) {
-    return null;
+    var pluginMeta = PluginRegistry.get(plugin);
+
+    // If there was no plugin with the given name, throw a 404
+    if (pluginMeta == null)
+      throw new NotFoundException();
+
+    requirePermissions(entity, null);
+
+    var jobFiles = EDA.getComputeJobFiles(pluginMeta, entity);
+
+    var fileName = switch(file) {
+      case META -> Const.OutputFileMeta;
+      case TABULAR -> Const.OutputFileTabular;
+      case STATISTICS -> Const.OutputFileStats;
+    };
+
+    var fileRef = jobFiles.stream()
+      .filter(f -> f.getName().equals(fileName))
+      .findFirst()
+      .orElseThrow(NotFoundException::new);
+
+    return PostComputesByPluginAndFileResponse.respond200With((StreamingOutput) output -> {
+      try(var input = fileRef.open()) {
+        input.transferTo(output);
+      }
+    });
   }
+
 
   // ╔════════════════════════════════════════════════════════════════════╗ //
   // ║  Helper Methods                                                    ║ //
@@ -61,14 +103,21 @@ public class ComputeController implements Computes {
   private <R extends ComputeRequestBase, C> JobResponse submitJob(PluginProvider<R, C> plugin, R entity) {
     var auth = UserProvider.getSubmittedAuth(request).orElseThrow();
 
-    // Check that the user has permission to run compute jobs.
-    if (!EDA.getStudyPerms(entity.getStudyId(), auth).allowVisualizations())
-      throw new ForbiddenException();
+    requirePermissions(entity, auth);
 
-    //
+    // Validate the request body.
     plugin.getValidator()
       .validate(entity);
 
     return EDA.submitComputeJob(plugin, entity, auth);
+  }
+
+  private void requirePermissions(@NotNull ComputeRequestBase entity, @Nullable Tuples.TwoTuple<String, String> auth) {
+    if (auth == null)
+      auth = UserProvider.getSubmittedAuth(request).orElseThrow();
+
+    // Check that the user has permission to run compute jobs.
+    if (!EDA.getStudyPerms(entity.getStudyId(), auth).allowVisualizations())
+      throw new ForbiddenException();
   }
 }

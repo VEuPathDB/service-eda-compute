@@ -1,8 +1,10 @@
 package org.veupathdb.service.eda.compute
 
+import jakarta.ws.rs.ForbiddenException
+import jakarta.ws.rs.NotFoundException
 import org.gusdb.fgputil.Tuples.TwoTuple
 import org.veupathdb.lib.compute.platform.AsyncPlatform
-import org.veupathdb.lib.hash_id.HashID
+import org.veupathdb.lib.compute.platform.job.JobFileReference
 import org.veupathdb.lib.jackson.Json
 import org.veupathdb.service.eda.common.auth.StudyAccess
 import org.veupathdb.service.eda.common.client.DatasetAccessClient
@@ -13,6 +15,7 @@ import org.veupathdb.service.eda.common.model.ReferenceMetadata
 import org.veupathdb.service.eda.compute.exec.PluginJobPayload
 import org.veupathdb.service.eda.compute.plugins.PluginMeta
 import org.veupathdb.service.eda.compute.service.ServiceOptions
+import org.veupathdb.service.eda.compute.util.JobIDs
 import org.veupathdb.service.eda.compute.util.toJobResponse
 import org.veupathdb.service.eda.generated.model.APIFilter
 import org.veupathdb.service.eda.generated.model.APIStudyDetail
@@ -134,19 +137,7 @@ object EDA {
     // Serialize the http request to json
     val serial = Json.convert(payload)
 
-    // Job IDs are generated from the MD5 hash of the following json array
-    // structure:
-    // [
-    //   "plugin-url-segment",
-    //   {
-    //     "plugin": "config",
-    //     ...
-    //   }
-    // ]
-    val jobID = HashID.ofMD5(Json.newArray(2) {
-      add(plugin.urlSegment)
-      add(serial)
-    })
+    val jobID = JobIDs.of(plugin.urlSegment, serial)
 
     // Build the rabbitmq message payload
     val jobPay = PluginJobPayload(plugin.urlSegment, serial, auth)
@@ -161,6 +152,18 @@ object EDA {
     return AsyncPlatform.getJob(jobID)!!.toJobResponse()
   }
 
+  @JvmStatic
+  fun getComputeJobFiles(plugin: PluginMeta<ComputeRequestBase>, payload: ComputeRequestBase): List<JobFileReference> {
+    val jobID = JobIDs.of(plugin.urlSegment, payload)
+
+    // Get the target job (or throw 404) and ensure that it is finished (or
+    // throw 403)
+    (AsyncPlatform.getJob(jobID) ?: throw NotFoundException())
+      .status
+      .isFinished || throw ForbiddenException()
+
+    return AsyncPlatform.getJobFiles(jobID)
+  }
 
 
   @JvmStatic

@@ -1,3 +1,4 @@
+@file:JvmName("ConversionUtil")
 @file:Suppress("NOTHING_TO_INLINE")
 
 package org.veupathdb.service.eda.compute.util
@@ -23,3 +24,4 @@ internal inline fun IJobStatus.toOutJobStatus() =
     IJobStatus.Failed     -> OJobStatus.FAILED
     IJobStatus.Expired    -> OJobStatus.EXPIRED
   }
+

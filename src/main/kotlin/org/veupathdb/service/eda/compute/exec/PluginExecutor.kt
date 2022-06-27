@@ -35,7 +35,7 @@ class PluginExecutor : JobExecutor {
     val jobPayload = Json.parse<PluginJobPayload>(ctx.config!!)
 
     // Get the plugin provider for the job
-    val provider = PluginRegistry.get(jobPayload.plugin)
+    val provider = PluginRegistry.get(jobPayload.plugin)!!
 
     // Deserialize the
     val request = Json.parse(jobPayload.request, provider.requestClass)

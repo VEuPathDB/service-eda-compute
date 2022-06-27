@@ -3,6 +3,7 @@ package org.veupathdb.service.eda.compute.plugins;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.veupathdb.service.eda.compute.plugins.example.ExamplePluginProvider;
 import org.veupathdb.service.eda.generated.model.ComputeRequestBase;
 import org.veupathdb.service.eda.generated.model.PluginOverview;
@@ -65,17 +66,11 @@ public final class PluginRegistry {
    * @throws IllegalArgumentException If the given url segment does not match
    * any currently registered plugin.
    */
-  @NotNull
+  @Nullable
   @SuppressWarnings("unchecked")
   public static PluginProvider<ComputeRequestBase, Object> get(String urlSegment) {
     Log.trace("looking up plugin {}", urlSegment);
-
-    var raw = Registry.get(urlSegment);
-
-    if (raw == null)
-      throw new IllegalArgumentException("Unrecognized plugin url segment \"" + urlSegment + "\"");
-
-    return (PluginProvider<ComputeRequestBase, Object>) raw;
+    return (PluginProvider<ComputeRequestBase, Object>) Registry.get(urlSegment);
   }
 
   /**

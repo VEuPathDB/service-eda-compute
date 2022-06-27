@@ -11,6 +11,7 @@ import jakarta.ws.rs.core.GenericEntity;
 import jakarta.ws.rs.core.Response;
 import org.veupathdb.service.eda.generated.model.BadRequestError;
 import org.veupathdb.service.eda.generated.model.ComputeOutputType;
+import org.veupathdb.service.eda.generated.model.ComputeRequestBase;
 import org.veupathdb.service.eda.generated.model.ExamplePluginRequest;
 import org.veupathdb.service.eda.generated.model.JobResponse;
 import org.veupathdb.service.eda.generated.model.PluginOverview;
@@ -29,7 +30,8 @@ public interface Computes {
   @Produces("*/*")
   @Consumes("application/json")
   PostComputesByPluginAndFileResponse postComputesByPluginAndFile(
-      @PathParam("plugin") String plugin, @PathParam("file") ComputeOutputType file, Object entity);
+      @PathParam("plugin") String plugin, @PathParam("file") ComputeOutputType file,
+      ComputeRequestBase entity);
 
   @POST
   @Path("/example")
