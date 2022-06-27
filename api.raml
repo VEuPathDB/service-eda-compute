@@ -44,6 +44,12 @@ uses:
             "*/*":
               type: any
 
+  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+  #                                                                           #
+  #  Begin Plugin Endpoint Definitions                                        #
+  #                                                                           #
+  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
   /example:
     displayName: Example Plugin
     post:
@@ -72,6 +78,11 @@ uses:
             application/json:
               type: error.ServerError
 
+  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+  #                                                                           #
+  #  End Plugin Endpoint Definitions                                          #
+  #                                                                           #
+  # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 /jobs:
   /{job-id}:

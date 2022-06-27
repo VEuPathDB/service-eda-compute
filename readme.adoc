@@ -41,7 +41,12 @@ link:src/main/java/org/veupathdb/service/eda/compute/plugins/example[Example Plu
 
 === Plugin Context
 
-TODO!!
+On instantiation plugin implementations are provided a link:{kotlinPath}/plugins/PluginContext.kt[`PluginContext`]
+instance which provides the following:
+
+* Access to the plugin job's input data.
+* Access to the plugin job's local filesystem workspace
+* Method for starting/running arbitrary shell commands in the plugin job's context.
 
 === Input Data
 
@@ -91,3 +96,7 @@ plugin's execution.
 Plugins may choose to write to this file if they handle their own exceptions internally and do not throw uncaught
 exceptions.
 --
+
+=== Plugin Workspace
+
+TODO
