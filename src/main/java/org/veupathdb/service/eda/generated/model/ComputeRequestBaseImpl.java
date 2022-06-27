@@ -9,8 +9,7 @@ import java.util.List;
 @JsonPropertyOrder({
     "studyId",
     "filters",
-    "derivedVariables",
-    "config"
+    "derivedVariables"
 })
 public class ComputeRequestBaseImpl implements ComputeRequestBase {
   @JsonProperty("studyId")
@@ -21,9 +20,6 @@ public class ComputeRequestBaseImpl implements ComputeRequestBase {
 
   @JsonProperty("derivedVariables")
   private List<DerivedVariable> derivedVariables;
-
-  @JsonProperty("config")
-  private Object config;
 
   @JsonProperty("studyId")
   public String getStudyId() {
@@ -53,15 +49,5 @@ public class ComputeRequestBaseImpl implements ComputeRequestBase {
   @JsonProperty("derivedVariables")
   public void setDerivedVariables(List<DerivedVariable> derivedVariables) {
     this.derivedVariables = derivedVariables;
-  }
-
-  @JsonProperty("config")
-  public Object getConfig() {
-    return this.config;
-  }
-
-  @JsonProperty("config")
-  public void setConfig(Object config) {
-    this.config = config;
   }
 }

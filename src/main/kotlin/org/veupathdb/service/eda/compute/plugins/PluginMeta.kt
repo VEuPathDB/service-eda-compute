@@ -41,5 +41,5 @@ interface PluginMeta<R : ComputeRequestBase> {
    * This value is used to deserialize the request payload for use by the plugin
    * execution.
    */
-  val requestClass: Class<R>
+  val requestClass: Class<out R>
 }

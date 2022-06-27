@@ -25,10 +25,4 @@ public interface ComputeRequestBase {
 
   @JsonProperty("derivedVariables")
   void setDerivedVariables(List<DerivedVariable> derivedVariables);
-
-  @JsonProperty("config")
-  Object getConfig();
-
-  @JsonProperty("config")
-  void setConfig(Object config);
 }

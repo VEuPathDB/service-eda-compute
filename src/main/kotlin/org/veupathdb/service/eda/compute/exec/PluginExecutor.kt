@@ -9,6 +9,7 @@ import org.veupathdb.lib.jackson.Json
 import org.veupathdb.service.eda.compute.EDA
 import org.veupathdb.service.eda.compute.jobs.Const
 import org.veupathdb.service.eda.compute.plugins.PluginRegistry
+import org.veupathdb.service.eda.compute.plugins.PluginWorkspace
 
 private val OutputFiles = arrayOf(
   Const.OutputFileMeta,
@@ -46,9 +47,9 @@ class PluginExecutor : JobExecutor {
     ctx.workspace.write(Const.InputFileMeta, Json.convert(studyDetail))
 
     // Build the plugin context
-    val context = provider.contextBuilder().also {
+    val context = provider.getContextBuilder().also {
       it.request = request
-      it.workspace = ctx.workspace
+      it.workspace = PluginWorkspace(ctx.workspace)
       it.jobContext = ComputeJobContext(ctx.jobID)
       it.pluginMeta = provider
     }.build()

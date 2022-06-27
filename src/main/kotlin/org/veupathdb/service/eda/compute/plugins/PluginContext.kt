@@ -5,6 +5,7 @@ import org.veupathdb.service.eda.compute.exec.ComputeJobContext
 import org.veupathdb.service.eda.compute.process.ComputeProcessBuilder
 import org.veupathdb.service.eda.generated.model.APIStudyDetail
 import org.veupathdb.service.eda.generated.model.ComputeRequestBase
+import kotlin.reflect.full.memberFunctions
 
 /**
  * Plugin Execution Context
@@ -41,9 +42,7 @@ interface PluginContext<R: ComputeRequestBase, C> {
    *
    * Alias for `request.config` or `getRequest().getConfig()`
    */
-  @Suppress("UNCHECKED_CAST")
   val config: C
-    get() = request.config as C
 
   /**
    * A handle on the workspace the plugin is being executed in.
@@ -147,6 +146,13 @@ private class PluginContextImpl<R : ComputeRequestBase, C>(
   override val pluginMeta: PluginMeta<R>,
   override val studyDetail: APIStudyDetail,
 ) : PluginContext<R, C> {
+
+  @Suppress("UNCHECKED_CAST")
+  override val config: C by lazy {
+    (request::class.memberFunctions.find { it.name == "getConfig" }
+      ?: throw IllegalStateException("Request type ${request::class.java} does not have a 'getConfig' method."))
+      .call(request) as C
+  }
 
   override val referenceMetadata
     get() = ReferenceMetadata(studyDetail, request.derivedVariables)
