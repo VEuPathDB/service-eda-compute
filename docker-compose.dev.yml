@@ -23,9 +23,9 @@ services:
     depends_on:
     - minio
     environment:
-      MINIO_USER: ${COMPUTE_S3_ACCESS_TOKEN}
-      MINIO_PASS: ${COMPUTE_S3_SECRET_KEY}
-      MINIO_BUCKET: ${COMPUTE_S3_BUCKET}
+      MINIO_USER: ${COMPUTE_S3_ACCESS_TOKEN?required}
+      MINIO_PASS: ${COMPUTE_S3_SECRET_KEY?required}
+      MINIO_BUCKET: ${COMPUTE_S3_BUCKET?required}
     entrypoint: >
       /bin/sh -c "
       sleep 1;
@@ -54,6 +54,12 @@ services:
 
   rserve:
     image: veupathdb/rserve:${RSERVE_TAG:-latest}
+
+  email-spoof:
+    image: reachfive/fake-smtp-server
+    ports:
+    - 25:1025
+    - 1080:1080
 
   # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
   #
@@ -184,22 +190,22 @@ services:
       APP_DB_POOL_SIZE: 20
 
       # Account Database
-      ACCT_DB_TNS_NAME: ${ACCT_DB_TNS_NAME}
-      ACCT_DB_USER: ${ACCT_DB_USER}
-      ACCT_DB_PASS: ${ACCT_DB_PASS}
+      ACCT_DB_TNS_NAME: ${ACCT_DB_TNS_NAME?required}
+      ACCT_DB_USER: ${ACCT_DB_USER?required}
+      ACCT_DB_PASS: ${ACCT_DB_PASS?required}
       ACCT_DB_POOL_SIZE: 20
 
       # User Database
-      USER_DB_TNS_NAME: ${USER_DB_TNS_NAME}
-      USER_DB_USER: ${USER_DB_USER}
-      USER_DB_PASS: ${USER_DB_PASS}
+      USER_DB_TNS_NAME: ${USER_DB_TNS_NAME?required}
+      USER_DB_USER: ${USER_DB_USER?required}
+      USER_DB_PASS: ${USER_DB_PASS?required}
       USER_DB_SCHEMA: ${USER_DB_SCHEMA:-userlogins5}
 
       # Auth Secret (needed along with user/acct DBs for auth)
       AUTH_SECRET_KEY: ${AUTH_SECRET_KEY}
 
       # Email Config
-      SMTP_HOST: ${SMTP_HOST?required}
+      SMTP_HOST: ${SMTP_HOST:-email-spoof}
       SUPPORT_EMAIL: ${SUPPORT_EMAIL?required}
       EMAIL_DEBUG: ${EMAIL_DEBUG:-false}
 
@@ -211,13 +217,13 @@ services:
   eda-compute:
     build:
       dockerfile: Dockerfile
-      context: ..
+      context: .
     ports:
     - "8080:8080"
     depends_on:
     - minio
-    - queue
-    - queue-db
+    - compute-queue
+    - compute-queue-db
     - dataset-access
     - eda-subsetting
     - eda-merge

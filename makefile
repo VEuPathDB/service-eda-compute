@@ -80,6 +80,15 @@ jar: install-dev-env gen-jaxrs gen-docs build/libs/service.jar
 docker:
 	@./gradlew build-docker --stacktrace
 
+.PHONY: dc-dev-build
+dc-dev-build:
+	@docker-compose \
+		-f docker-compose/docker-compose.dev.yml \
+		--env-file .env \
+		build \
+		--build-arg GITHUB_USERNAME=${GITHUB_USERNAME} \
+		--build-arg GITHUB_TOKEN=${GITHUB_TOKEN}
+
 
 #
 # Code & Doc Generation

@@ -150,7 +150,7 @@ private class PluginContextImpl<R : ComputeRequestBase, C>(
   @Suppress("UNCHECKED_CAST")
   override val config: C by lazy {
     (request::class.memberFunctions.find { it.name == "getConfig" }
-      ?: throw IllegalStateException("Request type ${request::class.java} does not have a 'getConfig' method."))
+      ?: throw NoSuchMethodException("Request type ${request::class.java} does not have a 'getConfig' method."))
       .call(request) as C
   }
 
