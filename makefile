@@ -83,11 +83,19 @@ docker:
 .PHONY: dc-dev-build
 dc-dev-build:
 	@docker-compose \
-		-f docker-compose/docker-compose.dev.yml \
+		-f docker-compose.dev.yml \
 		--env-file .env \
 		build \
 		--build-arg GITHUB_USERNAME=${GITHUB_USERNAME} \
 		--build-arg GITHUB_TOKEN=${GITHUB_TOKEN}
+
+.PHONY: dc-dev-up
+dc-dev-up:
+	@docker-compose -f docker-compose.dev.yml --env-file .env up eda-compute
+
+.PHONY: dc-dev-down
+dc-dev-down:
+	@docker-compose -f docker-compose.dev.yml --env-file .env down
 
 
 #

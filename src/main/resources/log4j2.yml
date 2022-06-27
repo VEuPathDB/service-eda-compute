@@ -12,7 +12,21 @@ Configuration:
         #   3. session ID (e.g. sid:%-5X{sessionId}); is this useful since many containerized services will be stateless?
         pattern: "%highlight{%d{yyyy-MM-dd HH:mm:ss.SSS} [rid:%5X{requestId}] [job_id:%X{JOB_ID}] %-5level %c{1}:%L - %m%n}"
   Loggers:
+
     Root:
-      level: debug
+      level: info
       AppenderRef:
-        - ref: Console_Appender
+      - ref: Console_Appender
+
+    Logger:
+    - name: org.gusdb
+      level: debug
+      additivity: false
+      AppenderRef:
+      - ref: Console_Appender
+    - name: org.veupathdb
+      level: debug
+      additivity: false
+      AppenderRef:
+      - ref: Console_Appender
+

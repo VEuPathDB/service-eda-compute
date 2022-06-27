@@ -51,7 +51,7 @@ containerBuild {
     projectPackage = "org.veupathdb.service.eda"
 
     // Main Class Name
-    mainClassName = "compute.Main"
+    mainClassName = "compute.service.Main"
   }
 
   // Docker build configuration.

@@ -29,9 +29,9 @@ services:
     entrypoint: >
       /bin/sh -c "
       sleep 1;
-      /usr/bin/mc alias set minioc http://minio:9000 ${MINIO_USER} ${MINIO_PASS};
-      /usr/bin/mc mb minioc/${MINIO_BUCKET};
-      /usr/bin/mc policy set public minioc/${MINIO_BUCKET};
+      /usr/bin/mc alias set minioc http://minio:9000 $$MINIO_USER $$MINIO_PASS;
+      /usr/bin/mc mb minioc/$$MINIO_BUCKET;
+      /usr/bin/mc policy set public minioc/$$MINIO_BUCKET;
       exit 0;
       "
 
@@ -222,11 +222,12 @@ services:
     - "8080:8080"
     depends_on:
     - minio
+    - minio-create-buckets
     - compute-queue
     - compute-queue-db
-    - dataset-access
-    - eda-subsetting
-    - eda-merge
+#    - dataset-access
+#    - eda-subsetting
+#    - eda-merge
     environment:
       # Auth Secret (needed along with user/acct DBs for auth)
       AUTH_SECRET_KEY: ${AUTH_SECRET_KEY}
