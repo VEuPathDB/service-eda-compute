@@ -1,6 +1,5 @@
 package org.veupathdb.service.eda.compute.plugins
 
-import org.veupathdb.lib.compute.platform.job.JobWorkspace
 import org.veupathdb.service.eda.common.model.ReferenceMetadata
 import org.veupathdb.service.eda.compute.exec.ComputeJobContext
 import org.veupathdb.service.eda.compute.process.ComputeProcessBuilder
@@ -49,7 +48,7 @@ interface PluginContext<R: ComputeRequestBase, C> {
   /**
    * A handle on the workspace the plugin is being executed in.
    */
-  val workspace: JobWorkspace
+  val workspace: PluginWorkspace
 
   /**
    * Additional compute service context for the job being executed.
@@ -97,7 +96,7 @@ interface PluginContext<R: ComputeRequestBase, C> {
 class PluginContextBuilder<R : ComputeRequestBase, C> {
   var request: R? = null
 
-  var workspace: JobWorkspace? = null
+  var workspace: PluginWorkspace? = null
 
   var jobContext: ComputeJobContext? = null
 
@@ -110,7 +109,7 @@ class PluginContextBuilder<R : ComputeRequestBase, C> {
     return this
   }
 
-  fun workspace(workspace: JobWorkspace): PluginContextBuilder<R, C> {
+  fun workspace(workspace: PluginWorkspace): PluginContextBuilder<R, C> {
     this.workspace = workspace
     return this
   }
@@ -143,7 +142,7 @@ class PluginContextBuilder<R : ComputeRequestBase, C> {
 
 private class PluginContextImpl<R : ComputeRequestBase, C>(
   override val request: R,
-  override val workspace: JobWorkspace,
+  override val workspace: PluginWorkspace,
   override val jobContext: ComputeJobContext,
   override val pluginMeta: PluginMeta<R>,
   override val studyDetail: APIStudyDetail,
