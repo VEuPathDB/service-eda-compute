@@ -80,8 +80,8 @@ jar: install-dev-env gen-jaxrs gen-docs build/libs/service.jar
 docker:
 	@./gradlew build-docker --stacktrace
 
-.PHONY: dc-dev-build
-dc-dev-build:
+.PHONY: dc-build
+dc-build:
 	@docker compose \
 		-f docker-compose.dev.yml \
 		--env-file .env \
@@ -89,13 +89,18 @@ dc-dev-build:
 		--build-arg GITHUB_USERNAME=${GITHUB_USERNAME} \
 		--build-arg GITHUB_TOKEN=${GITHUB_TOKEN}
 
-.PHONY: dc-dev-up
-dc-dev-up:
+.PHONY: dc-up
+dc-up:
 	@docker compose -f docker-compose.dev.yml --env-file .env up
 
-.PHONY: dc-dev-down
-dc-dev-down:
-	@docker compose -f docker-compose.dev.yml --env-file .env down
+.PHONY: dc-upd
+dc-upd:
+	@docker compose -f docker-compose.dev.yml --env-file .env up -d
+
+.PHONY: dc-reset
+dc-reset:
+	@docker compose -f docker-compose.dev.yml --env-file .env rm -fv compute-queue-db
+	@docker compose -f docker-compose.dev.yml --env-file .env rm -fv minio
 
 
 #

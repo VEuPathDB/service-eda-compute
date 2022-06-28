@@ -47,8 +47,17 @@ class PluginExecutor : JobExecutor {
     // Deserialize the
     val request = Json.parse(jobPayload.request, provider.requestClass)
 
+    // Convert the auth header to a Map.Entry for use with eda-common code.
+    val authHeader = jobPayload.authHeader.toFgpTuple()
+
+    // Fetch the study metadata and write it out to the local workspace
+    Log.debug("retrieving api study details")
+    val studyDetail = EDA.requireAPIStudyDetail(request.studyId, authHeader)
+    ctx.workspace.write(ReservedFiles.InputMeta, Json.convert(studyDetail))
+
     // Build the plugin context
     val context = provider.getContextBuilder().also {
+      it.studyDetail = studyDetail
       it.request = request
       it.workspace = PluginWorkspace(ctx.workspace)
       it.jobContext = ComputeJobContext(ctx.jobID)
@@ -63,11 +72,6 @@ class PluginExecutor : JobExecutor {
       // If the stream specs were not valid, exit here with a failed status.
       return JobResult.failure(*OutputFiles)
 
-    // Fetch the study metadata and write it out to the local workspace
-    Log.debug("retrieving api study details")
-    val studyDetail = EDA.requireAPIStudyDetail(request.studyId, jobPayload.authHeader)
-    ctx.workspace.write(ReservedFiles.InputMeta, Json.convert(studyDetail))
-
     // Fetch the tabular data and write it out to the local workspace
     plugin.streamSpecs.forEach { spec ->
       Log.debug("retrieving tabular study data: {}", spec.streamName)
@@ -75,7 +79,7 @@ class PluginExecutor : JobExecutor {
         context.referenceMetadata,
         request.filters,
         spec,
-        jobPayload.authHeader
+        authHeader
       ))
     }
 

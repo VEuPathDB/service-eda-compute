@@ -16,6 +16,7 @@ import org.veupathdb.service.eda.compute.exec.PluginJobPayload
 import org.veupathdb.service.eda.compute.plugins.PluginMeta
 import org.veupathdb.service.eda.compute.service.ServiceOptions
 import org.veupathdb.service.eda.compute.util.JobIDs
+import org.veupathdb.service.eda.compute.util.toAuthTuple
 import org.veupathdb.service.eda.compute.util.toJobResponse
 import org.veupathdb.service.eda.generated.model.APIFilter
 import org.veupathdb.service.eda.generated.model.APIStudyDetail
@@ -129,7 +130,7 @@ object EDA {
    * @return A response describing the job that was created.
    */
   @JvmStatic
-  fun <R : ComputeRequestBase> submitComputeJob(
+  fun <R : ComputeRequestBase> getOrSubmitComputeJob(
     plugin:  PluginMeta<R>,
     payload: R,
     auth:    TwoTuple<String, String>,
@@ -139,8 +140,11 @@ object EDA {
 
     val jobID = JobIDs.of(plugin.urlSegment, serial)
 
+    // If the job already exists, just return it.
+    AsyncPlatform.getJob(jobID)?.let { return it.toJobResponse() }
+
     // Build the rabbitmq message payload
-    val jobPay = PluginJobPayload(plugin.urlSegment, serial, auth)
+    val jobPay = PluginJobPayload(plugin.urlSegment, serial, auth.toAuthTuple())
 
     // Submit the job
     AsyncPlatform.submitJob(plugin.targetQueue.queueName) {

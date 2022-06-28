@@ -103,7 +103,7 @@ public class ComputeController implements Computes {
     plugin.getValidator()
       .validate(entity);
 
-    return EDA.submitComputeJob(plugin, entity, auth);
+    return EDA.getOrSubmitComputeJob(plugin, entity, auth);
   }
 
   private void requirePermissions(@NotNull ComputeRequestBase entity, @Nullable Tuples.TwoTuple<String, String> auth) {
