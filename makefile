@@ -82,7 +82,7 @@ docker:
 
 .PHONY: dc-dev-build
 dc-dev-build:
-	@docker-compose \
+	@docker compose \
 		-f docker-compose.dev.yml \
 		--env-file .env \
 		build \
@@ -91,11 +91,11 @@ dc-dev-build:
 
 .PHONY: dc-dev-up
 dc-dev-up:
-	@docker-compose -f docker-compose.dev.yml --env-file .env up
+	@docker compose -f docker-compose.dev.yml --env-file .env up
 
 .PHONY: dc-dev-down
 dc-dev-down:
-	@docker-compose -f docker-compose.dev.yml --env-file .env down
+	@docker compose -f docker-compose.dev.yml --env-file .env down
 
 
 #

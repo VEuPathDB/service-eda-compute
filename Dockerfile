@@ -12,10 +12,7 @@ ARG GITHUB_TOKEN
 
 WORKDIR /workspace
 
-RUN jlink --compress=2 --module-path /opt/jdk/jmods \
-       --add-modules java.base,java.logging,java.xml,java.desktop,java.management,java.sql,java.naming \
-       --output /jlinked \
-    && apk add --no-cache git sed findutils coreutils make npm curl gawk \
+RUN apk add --no-cache git sed findutils coreutils make npm curl gawk \
     && git config --global advice.detachedHead false
 
 ENV DOCKER=build
@@ -41,7 +38,7 @@ RUN make jar
 #   Run the service
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-FROM foxcapades/alpine-oracle:1.6
+FROM amazoncorretto:17-alpine3.15-jdk
 
 LABEL service="demo-service"
 
@@ -49,12 +46,9 @@ RUN apk add --no-cache tzdata \
     && cp /usr/share/zoneinfo/America/New_York /etc/localtime \
     && echo "America/New_York" > /etc/timezone
 
-ENV JAVA_HOME=/opt/jdk \
-    PATH=/opt/jdk/bin:$PATH \
-    JVM_MEM_ARGS="-Xms32M -Xmx256M" \
+ENV JVM_MEM_ARGS="-Xms32M -Xmx256M" \
     JVM_ARGS=""
 
-COPY --from=prep /jlinked /opt/jdk
 COPY --from=prep /workspace/build/libs/service.jar /service.jar
 
 COPY startup.sh startup.sh
