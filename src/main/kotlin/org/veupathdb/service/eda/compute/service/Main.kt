@@ -9,6 +9,10 @@ import org.veupathdb.service.eda.compute.exec.PluginExecutorFactory
 object Main : Server() {
   @JvmStatic
   fun main(args: Array<String>) {
+    this.enableAccountDB()
+    this.enableApplicationDB()
+    this.enableUserDB()
+
     this.start(args)
   }
 

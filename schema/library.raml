@@ -7,6 +7,24 @@
 ################################################################################
 
 types:
+  JobID: !include https://raw.githubusercontent.com/VEuPathDB/lib-hash-id/v1.1.0/schema/hash-id.raml
+  ExamplePluginRequest:
+    type: ComputeRequestBase
+    properties:
+      config: ExamplePluginConfig
+  ExamplePluginConfig: object
+  ComputeRequestBase:
+    type: object
+    additionalProperties: false
+    properties:
+      studyId: string
+      filters:
+        type: array
+        required: false
+        items: API_Filter
+      derivedVariables:
+        type: array
+        items: DerivedVariable
   JobStatus:
     type: string
     enum:
@@ -39,11 +57,6 @@ types:
       - meta
       - statistics
       - tabular
-  ExamplePluginRequest:
-    type: ComputeRequestBase
-    properties:
-      config: ExamplePluginConfig
-  ExamplePluginConfig: object
   VariableSpec:
     type: object
     additionalProperties: false
@@ -465,17 +478,4 @@ types:
       variableId: string
       left: number
       right: number
-  JobID: !include https://raw.githubusercontent.com/VEuPathDB/lib-hash-id/v1.1.0/schema/hash-id.raml
-  ComputeRequestBase:
-    type: object
-    additionalProperties: false
-    properties:
-      studyId: string
-      filters:
-        type: array
-        required: false
-        items: API_Filter
-      derivedVariables:
-        type: array
-        items: DerivedVariable
 

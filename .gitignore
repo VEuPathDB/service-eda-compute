@@ -9,6 +9,7 @@
 /.settings/
 
 /.env
+.envrc
 
 *.tmp
 *.bak
