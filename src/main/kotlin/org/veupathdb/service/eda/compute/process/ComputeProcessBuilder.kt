@@ -1,7 +1,7 @@
 package org.veupathdb.service.eda.compute.process
 
 import org.slf4j.LoggerFactory
-import org.veupathdb.service.eda.compute.jobs.Const
+import org.veupathdb.service.eda.compute.jobs.ReservedFiles
 import java.nio.file.Path
 
 /**
@@ -115,7 +115,7 @@ class ComputeProcessBuilder(
     val proc = ProcessBuilder(args).also {
       it.environment().putAll(env)
       it.directory(workDir.toFile())
-      it.redirectError(workDir.resolve(Const.OutputFileErrors).toFile())
+      it.redirectError(workDir.resolve(ReservedFiles.OutputErrors).toFile())
     }.start()
 
     return proc.waitFor()

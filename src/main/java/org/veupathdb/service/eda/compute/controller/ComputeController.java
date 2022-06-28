@@ -2,7 +2,6 @@ package org.veupathdb.service.eda.compute.controller;
 
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.StreamingOutput;
 import org.apache.logging.log4j.LogManager;
@@ -12,10 +11,8 @@ import org.gusdb.fgputil.Tuples;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.veupathdb.lib.container.jaxrs.providers.UserProvider;
-import org.veupathdb.lib.hash_id.HashID;
-import org.veupathdb.lib.jackson.Json;
 import org.veupathdb.service.eda.compute.EDA;
-import org.veupathdb.service.eda.compute.jobs.Const;
+import org.veupathdb.service.eda.compute.jobs.ReservedFiles;
 import org.veupathdb.service.eda.compute.plugins.PluginProvider;
 import org.veupathdb.service.eda.compute.plugins.PluginRegistry;
 import org.veupathdb.service.eda.compute.plugins.example.ExamplePluginProvider;
@@ -24,9 +21,6 @@ import org.veupathdb.service.eda.generated.model.ComputeRequestBase;
 import org.veupathdb.service.eda.generated.model.ExamplePluginRequest;
 import org.veupathdb.service.eda.generated.model.JobResponse;
 import org.veupathdb.service.eda.generated.resources.Computes;
-
-import java.io.IOException;
-import java.io.OutputStream;
 
 public class ComputeController implements Computes {
 
@@ -78,9 +72,9 @@ public class ComputeController implements Computes {
     var jobFiles = EDA.getComputeJobFiles(pluginMeta, entity);
 
     var fileName = switch(file) {
-      case META -> Const.OutputFileMeta;
-      case TABULAR -> Const.OutputFileTabular;
-      case STATISTICS -> Const.OutputFileStats;
+      case META -> ReservedFiles.OutputMeta;
+      case TABULAR -> ReservedFiles.OutputTabular;
+      case STATISTICS -> ReservedFiles.OutputStats;
     };
 
     var fileRef = jobFiles.stream()

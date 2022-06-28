@@ -91,7 +91,7 @@ dc-dev-build:
 
 .PHONY: dc-dev-up
 dc-dev-up:
-	@docker-compose -f docker-compose.dev.yml --env-file .env up eda-compute
+	@docker-compose -f docker-compose.dev.yml --env-file .env up
 
 .PHONY: dc-dev-down
 dc-dev-down:

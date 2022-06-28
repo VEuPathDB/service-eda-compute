@@ -2,7 +2,7 @@ package org.veupathdb.service.eda.compute.plugins
 
 import org.apache.logging.log4j.LogManager
 import org.veupathdb.service.eda.common.client.spec.StreamSpec
-import org.veupathdb.service.eda.compute.jobs.Const
+import org.veupathdb.service.eda.compute.jobs.ReservedFiles
 import org.veupathdb.service.eda.compute.metrics.PluginMetrics
 import org.veupathdb.service.eda.generated.model.ComputeRequestBase
 
@@ -35,11 +35,36 @@ abstract class AbstractPlugin<R : ComputeRequestBase, C>(
    *
    * The files can be accessed using the job workspace handle provided in the
    * [context] property.
+   *
+   * For example, if your plugin defines a [StreamSpec] with the stream name
+   * "foobar", the downloaded file would be available at execution time by
+   * calling:
+   * ```
+   * getContext().getWorkspace().openStream("foobar")
+   * ```
+   *
+   * Because the name of the stream determines the name of the file, the
+   * following reserved file names are not valid for use as stream names:
+   * * `input-meta`
+   * * `input-config`
+   * * `input-request`
+   * * `output-stats`
+   * * `output-meta`
+   * * `output-data`
+   * * `error.log`
+   * * `exception.log`
+   *
+   * If any [StreamSpec] is defined with one of the above reserved file names as
+   * a stream name, an error will be logged and the plugin will not be executed.
    */
   abstract val streamSpecs: List<StreamSpec>
 
   /**
    * Executes this plugin's tasks.
+   *
+   * Plugins can indicate an execution failure or bad status by throwing an
+   * exception.  Any exception thrown by this method will result in the job
+   * being marked as "failed".
    */
   protected abstract fun execute()
 
@@ -76,7 +101,7 @@ abstract class AbstractPlugin<R : ComputeRequestBase, C>(
       PluginMetrics.failures.labels(context.pluginMeta.urlSegment).inc()
 
       // Write the stacktrace to file to be persisted in S3
-      e.printStackTrace(context.workspace.touch(Const.OutputFileException).toFile().printWriter())
+      e.printStackTrace(context.workspace.touch(ReservedFiles.OutputException).toFile().printWriter())
     }
   }
 }
