@@ -30,14 +30,7 @@ link:src/main/java/org/veupathdb/service/eda/compute/plugins/example[Example Plu
 . Run the command `make raml-gen-code` to generate the new Java source code for the plugin being added.
 . Add a new package for your plugin in the link:{javaPath}/plugins/[plugins package] +
   (See the link:{javaPath}/plugins/example[example plugin package])
-. Add an implementation of the link:{kotlinPath}/plugins/AbstractPlugin.kt[AbstractPlugin class] to your plugin
-  package. +
-  (See the link:{javaPath}/plugins/example/ExamplePlugin.java[example plugin implementation])
-. Add an implementation of the link:{kotlinPath}/plugins/PluginProvider.kt[PluginProvider interface] to your plugin
-  package. +
-  (See the link:{javaPath}/plugins/example/ExamplePluginProvider.java[example plugin provider implementation])
-. Add an entry for your plugin in the link:{javaPath}/plugins/PluginRegistry.java[Plugin Registry].
-. Add an endpoint for your new plugin in the link:{javaPath}/controller/ComputeController.java[Plugin Controller]
+. Follow the steps outlined in the link:{javaPath}/plugins[plugins package readme].
 
 === Plugin Context
 
