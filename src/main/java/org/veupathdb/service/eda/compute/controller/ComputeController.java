@@ -22,6 +22,26 @@ import org.veupathdb.service.eda.generated.model.ExamplePluginRequest;
 import org.veupathdb.service.eda.generated.model.JobResponse;
 import org.veupathdb.service.eda.generated.resources.Computes;
 
+
+/**
+ * Compute Plugins Controller
+ * <p>
+ * This controller is the home location where specific compute plugin endpoints
+ * are registered.
+ * <p>
+ * New plugin endpoints should be added in the Plugin Endpoints region in this
+ * file, after the "Plugin Endpoints" doc block and before the "endregion Plugin
+ * Endpoints" statement.
+ * <p>
+ * Plugin endpoints should follow the example set by the
+ * {@link #postComputesExample(ExamplePluginRequest)} method and call the
+ * {@link #submitJob(PluginProvider, ComputeRequestBase)} method, passing in an
+ * instance of the target {@link PluginProvider} for their plugin along with the
+ * raw request body (entity).
+ *
+ * @author Elizabeth Paige Harper - https://github.com/foxcapades
+ * @since 1.0.0
+ */
 public class ComputeController implements Computes {
 
   private final Logger Log = LogManager.getLogger(getClass());
@@ -29,6 +49,7 @@ public class ComputeController implements Computes {
   @Context
   private ContainerRequest request;
 
+  // region Plugin Endpoints
   // ╔════════════════════════════════════════════════════════════════════╗ //
   // ║  Plugin Endpoints                                                  ║ //
   // ║                                                                    ║ //
@@ -42,7 +63,9 @@ public class ComputeController implements Computes {
     return PostComputesExampleResponse.respond200WithApplicationJson(submitJob(new ExamplePluginProvider(), entity));
   }
 
+  // endregion Plugin Endpoints
 
+  // region Constant Endpoints
   // ╔════════════════════════════════════════════════════════════════════╗ //
   // ║  Constant Endpoints                                                ║ //
   // ║                                                                    ║ //
@@ -89,11 +112,28 @@ public class ComputeController implements Computes {
     });
   }
 
+  // endregion Constant Endpoints
 
   // ╔════════════════════════════════════════════════════════════════════╗ //
   // ║  Helper Methods                                                    ║ //
   // ╚════════════════════════════════════════════════════════════════════╝ //
 
+  /**
+   * Submits a new plugin execution job to one of the internal job queues.
+   *
+   * @param plugin {@code PluginProvider} that will be used to validate and
+   * submit the new job request.
+   *
+   * @param entity The raw request payload.
+   *
+   * @return Basic information about the submitted job to be returned to the
+   * caller.
+   *
+   * @param <R> Type of the raw request body that the target plugin accepts.
+   *
+   * @param <C> Type of the configuration wrapped by the raw request body that
+   * the target plugin accepts.
+   */
   private <R extends ComputeRequestBase, C> JobResponse submitJob(PluginProvider<R, C> plugin, R entity) {
     var auth = UserProvider.getSubmittedAuth(request).orElseThrow();
 
@@ -106,6 +146,22 @@ public class ComputeController implements Computes {
     return EDA.getOrSubmitComputeJob(plugin, entity, auth);
   }
 
+  /**
+   * Ensures that the requester has the required permission(s) to call a plugin
+   * endpoint for a target study.
+   * <p>
+   * As of the time of this writing, the permission required for plugin
+   * execution and lookup is "allowVisualizations".
+   *
+   * @param entity Raw request body containing the ID of the study the user must
+   * have permissions on.
+   *
+   * @param auth The auth header to use in validation, or {@code null} for the
+   * auth header from the {@link #request} context to be used.
+   *
+   * @throws ForbiddenException If the requester does not have the required
+   * permission(s) on the target study.
+   */
   private void requirePermissions(@NotNull ComputeRequestBase entity, @Nullable Tuples.TwoTuple<String, String> auth) {
     if (auth == null)
       auth = UserProvider.getSubmittedAuth(request).orElseThrow();

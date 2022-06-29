@@ -31,6 +31,7 @@ link:src/main/java/org/veupathdb/service/eda/compute/plugins/example[Example Plu
 . Add a new package for your plugin in the link:{javaPath}/plugins/[plugins package] +
   (See the link:{javaPath}/plugins/example[example plugin package])
 . Follow the steps outlined in the link:{javaPath}/plugins[plugins package readme].
+. Add an endpoint for your new plugin in the link:{javaPath}/controller/ComputeController.java[Plugin Controller]
 
 === Plugin Context
 
