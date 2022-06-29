@@ -94,7 +94,7 @@ abstract class AbstractPlugin<R : ComputeRequestBase, C>(
       // Record the job success in the metrics
       PluginMetrics.successes.labels(context.pluginMeta.urlSegment).inc()
     } catch (e: Throwable) {
-      Log.warn("Plugin execution failed", e)
+      Log.error("Plugin execution failed", e)
 
       // Record the job failure in the metrics
       PluginMetrics.failures.labels(context.pluginMeta.urlSegment).inc()

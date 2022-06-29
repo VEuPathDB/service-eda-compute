@@ -155,7 +155,7 @@ private class PluginContextImpl<R : ComputeRequestBase, C>(
   }
 
   override val referenceMetadata
-    get() = ReferenceMetadata(studyDetail, request.derivedVariables)
+    get() = ReferenceMetadata(studyDetail, request.derivedVariables ?: emptyList())
 
   override fun processBuilder(command: String, vararg args: String) =
     ComputeProcessBuilder(command, workspace.path)

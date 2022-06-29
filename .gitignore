@@ -10,6 +10,7 @@
 
 /.env
 .envrc
+sshuttle.sh
 
 *.tmp
 *.bak

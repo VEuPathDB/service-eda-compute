@@ -21,7 +21,7 @@ private val OutputFiles = arrayOf(
 )
 
 // These MUST match the %X variables defined in resources/log4j2.yml
-private const val ThreadContextJobKey    = "JOB_ID"
+private const val ThreadContextJobKey = "JOB_ID"
 private const val ThreadContextPluginKey = "PLUGIN"
 
 class PluginExecutor : JobExecutor {
@@ -51,9 +51,16 @@ class PluginExecutor : JobExecutor {
     val authHeader = jobPayload.authHeader.toFgpTuple()
 
     // Fetch the study metadata and write it out to the local workspace
-    Log.debug("retrieving api study details")
-    val studyDetail = EDA.requireAPIStudyDetail(request.studyId, authHeader)
-    ctx.workspace.write(ReservedFiles.InputMeta, Json.convert(studyDetail))
+    val studyDetail = try {
+      Log.debug("retrieving api study details")
+      EDA.requireAPIStudyDetail(request.studyId, authHeader)
+        .also { ctx.workspace.write(ReservedFiles.InputMeta, Json.convert(it)) }
+    } catch (e: Throwable) {
+      Log.error("Failed to fetch APIStudyDetail.", e)
+      e.printStackTrace(ctx.workspace.touch(ReservedFiles.OutputException).toFile().printWriter())
+      return JobResult.failure(*OutputFiles)
+    }
+
 
     // Build the plugin context
     val context = provider.getContextBuilder().also {
@@ -69,18 +76,27 @@ class PluginExecutor : JobExecutor {
 
     // Validate the stream specs
     if (!validateStreamSpecs(plugin))
-      // If the stream specs were not valid, exit here with a failed status.
+    // If the stream specs were not valid, exit here with a failed status.
       return JobResult.failure(*OutputFiles)
 
-    // Fetch the tabular data and write it out to the local workspace
-    plugin.streamSpecs.forEach { spec ->
-      Log.debug("retrieving tabular study data: {}", spec.streamName)
-      ctx.workspace.write(spec.streamName, EDA.getMergeData(
-        context.referenceMetadata,
-        request.filters,
-        spec,
-        authHeader
-      ))
+
+    try {
+      // Fetch the tabular data and write it out to the local workspace
+      plugin.streamSpecs.forEach { spec ->
+        Log.debug("retrieving tabular study data: {}", spec.streamName)
+        ctx.workspace.write(
+          spec.streamName, EDA.getMergeData(
+            context.referenceMetadata,
+            request.filters,
+            spec,
+            authHeader
+          )
+        )
+      }
+    } catch (e: Throwable) {
+      Log.error("Failed to fetch tabular data.", e)
+      e.printStackTrace(ctx.workspace.touch(ReservedFiles.OutputException).toFile().printWriter())
+      return JobResult.failure(*OutputFiles)
     }
 
     // Execute the plugin
