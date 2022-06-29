@@ -155,7 +155,7 @@ public class ComputeController implements Computes {
 
     var jobFiles = EDA.getComputeJobFiles(plugin, entity);
 
-    var fileName = switch(file.toLowerCase()) {
+    var fileName = switch(file) {
       case "meta"       -> ReservedFiles.OutputMeta;
       case "tabular"    -> ReservedFiles.OutputTabular;
       case "statistics" -> ReservedFiles.OutputStats;

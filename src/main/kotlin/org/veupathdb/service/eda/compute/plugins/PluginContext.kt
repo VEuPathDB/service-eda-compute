@@ -61,8 +61,6 @@ interface PluginContext<R: ComputeRequestBase, C> {
 
   /**
    * Reference Metadata
-   *
-   * Loaded lazily on request.
    */
   val referenceMetadata: ReferenceMetadata
 

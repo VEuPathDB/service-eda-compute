@@ -40,8 +40,6 @@ RUN make jar
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 FROM amazoncorretto:17-alpine3.15-jdk
 
-LABEL service="demo-service"
-
 RUN apk add --no-cache tzdata \
     && cp /usr/share/zoneinfo/America/New_York /etc/localtime \
     && echo "America/New_York" > /etc/timezone

@@ -225,9 +225,9 @@ services:
     - minio-create-buckets
     - compute-queue
     - compute-queue-db
-#    - dataset-access
-#    - eda-subsetting
-#    - eda-merge
+    - dataset-access
+    - eda-subsetting
+    - eda-merge
     environment:
       # Auth Secret (needed along with user/acct DBs for auth)
       AUTH_SECRET_KEY: ${AUTH_SECRET_KEY}
