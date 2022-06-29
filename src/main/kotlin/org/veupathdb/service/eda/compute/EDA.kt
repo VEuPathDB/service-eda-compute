@@ -157,7 +157,7 @@ object EDA {
   }
 
   @JvmStatic
-  fun getComputeJobFiles(plugin: PluginMeta<ComputeRequestBase>, payload: ComputeRequestBase): List<JobFileReference> {
+  fun getComputeJobFiles(plugin: PluginMeta<out ComputeRequestBase>, payload: ComputeRequestBase): List<JobFileReference> {
     val jobID = JobIDs.of(plugin.urlSegment, payload)
 
     // Get the target job (or throw 404) and ensure that it is finished (or

@@ -7,6 +7,14 @@
 ################################################################################
 
 types:
+  ExamplePluginRequest:
+    type: ComputeRequestBase
+    properties:
+      config: ExamplePluginConfig
+  ExamplePluginConfig:
+    type: object
+    properties:
+      outputEntityId: string
   ComputeRequestBase:
     type: object
     additionalProperties: false
@@ -467,12 +475,4 @@ types:
       left: number
       right: number
   JobID: !include https://raw.githubusercontent.com/VEuPathDB/lib-hash-id/v1.1.0/schema/hash-id.raml
-  ExamplePluginRequest:
-    type: ComputeRequestBase
-    properties:
-      config: ExamplePluginConfig
-  ExamplePluginConfig:
-    type: object
-    properties:
-      outputEntityId: string
 

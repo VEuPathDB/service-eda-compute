@@ -9,13 +9,9 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.GenericEntity;
 import jakarta.ws.rs.core.Response;
-import org.veupathdb.service.eda.generated.model.BadRequestError;
-import org.veupathdb.service.eda.generated.model.ComputeRequestBase;
 import org.veupathdb.service.eda.generated.model.ExamplePluginRequest;
 import org.veupathdb.service.eda.generated.model.JobResponse;
 import org.veupathdb.service.eda.generated.model.PluginOverview;
-import org.veupathdb.service.eda.generated.model.ServerError;
-import org.veupathdb.service.eda.generated.model.UnprocessableEntityError;
 import org.veupathdb.service.eda.generated.support.ResponseDelegate;
 
 @Path("/computes")
@@ -25,18 +21,17 @@ public interface Computes {
   GetComputesResponse getComputes();
 
   @POST
-  @Path("/{plugin}/{file}")
-  @Produces("*/*")
-  @Consumes("application/json")
-  PostComputesByPluginAndFileResponse postComputesByPluginAndFile(
-      @PathParam("plugin") String plugin, @PathParam("file") String file,
-      ComputeRequestBase entity);
-
-  @POST
   @Path("/example")
   @Produces("application/json")
   @Consumes("application/json")
   PostComputesExampleResponse postComputesExample(ExamplePluginRequest entity);
+
+  @POST
+  @Path("/example/{file}")
+  @Produces("text/plain")
+  @Consumes("application/json")
+  PostComputesExampleByFileResponse postComputesExampleByFile(@PathParam("file") String file,
+      ExamplePluginRequest entity);
 
   class GetComputesResponse extends ResponseDelegate {
     private GetComputesResponse(Response response, Object entity) {
@@ -55,22 +50,6 @@ public interface Computes {
     }
   }
 
-  class PostComputesByPluginAndFileResponse extends ResponseDelegate {
-    private PostComputesByPluginAndFileResponse(Response response, Object entity) {
-      super(response, entity);
-    }
-
-    private PostComputesByPluginAndFileResponse(Response response) {
-      super(response);
-    }
-
-    public static PostComputesByPluginAndFileResponse respond200With(Object entity) {
-      Response.ResponseBuilder responseBuilder = Response.status(200).header("Content-Type", "*/*");
-      responseBuilder.entity(entity);
-      return new PostComputesByPluginAndFileResponse(responseBuilder.build(), entity);
-    }
-  }
-
   class PostComputesExampleResponse extends ResponseDelegate {
     private PostComputesExampleResponse(Response response, Object entity) {
       super(response, entity);
@@ -85,25 +64,21 @@ public interface Computes {
       responseBuilder.entity(entity);
       return new PostComputesExampleResponse(responseBuilder.build(), entity);
     }
+  }
 
-    public static PostComputesExampleResponse respond400WithApplicationJson(
-        BadRequestError entity) {
-      Response.ResponseBuilder responseBuilder = Response.status(400).header("Content-Type", "application/json");
-      responseBuilder.entity(entity);
-      return new PostComputesExampleResponse(responseBuilder.build(), entity);
+  class PostComputesExampleByFileResponse extends ResponseDelegate {
+    private PostComputesExampleByFileResponse(Response response, Object entity) {
+      super(response, entity);
     }
 
-    public static PostComputesExampleResponse respond422WithApplicationJson(
-        UnprocessableEntityError entity) {
-      Response.ResponseBuilder responseBuilder = Response.status(422).header("Content-Type", "application/json");
-      responseBuilder.entity(entity);
-      return new PostComputesExampleResponse(responseBuilder.build(), entity);
+    private PostComputesExampleByFileResponse(Response response) {
+      super(response);
     }
 
-    public static PostComputesExampleResponse respond500WithApplicationJson(ServerError entity) {
-      Response.ResponseBuilder responseBuilder = Response.status(500).header("Content-Type", "application/json");
+    public static PostComputesExampleByFileResponse respond200WithTextPlain(Object entity) {
+      Response.ResponseBuilder responseBuilder = Response.status(200).header("Content-Type", "text/plain");
       responseBuilder.entity(entity);
-      return new PostComputesExampleResponse(responseBuilder.build(), entity);
+      return new PostComputesExampleByFileResponse(responseBuilder.build(), entity);
     }
   }
 }

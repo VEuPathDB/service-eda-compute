@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import org.veupathdb.lib.container.jaxrs.providers.UserProvider;
 import org.veupathdb.service.eda.compute.EDA;
 import org.veupathdb.service.eda.compute.jobs.ReservedFiles;
+import org.veupathdb.service.eda.compute.plugins.PluginMeta;
 import org.veupathdb.service.eda.compute.plugins.PluginProvider;
 import org.veupathdb.service.eda.compute.plugins.PluginRegistry;
 import org.veupathdb.service.eda.compute.plugins.example.ExamplePluginProvider;
@@ -20,6 +21,9 @@ import org.veupathdb.service.eda.generated.model.ComputeRequestBase;
 import org.veupathdb.service.eda.generated.model.ExamplePluginRequest;
 import org.veupathdb.service.eda.generated.model.JobResponse;
 import org.veupathdb.service.eda.generated.resources.Computes;
+import org.veupathdb.service.eda.generated.support.ResponseDelegate;
+
+import java.util.function.Function;
 
 
 /**
@@ -62,6 +66,11 @@ public class ComputeController implements Computes {
     return PostComputesExampleResponse.respond200WithApplicationJson(submitJob(new ExamplePluginProvider(), entity));
   }
 
+  @Override
+  public PostComputesExampleByFileResponse postComputesExampleByFile(String file, ExamplePluginRequest entity) {
+    return resultFile(new ExamplePluginProvider(), file, entity, PostComputesExampleByFileResponse::respond200WithTextPlain);
+  }
+
   // endregion Plugin Endpoints
 
   // region Constant Endpoints
@@ -75,41 +84,6 @@ public class ComputeController implements Computes {
   @Override
   public GetComputesResponse getComputes() {
     return GetComputesResponse.respond200WithApplicationJson(PluginRegistry.getPluginOverview());
-  }
-
-  @Override
-  public PostComputesByPluginAndFileResponse postComputesByPluginAndFile(
-    String plugin,
-    String file,
-    ComputeRequestBase entity
-  ) {
-    var pluginMeta = PluginRegistry.get(plugin);
-
-    // If there was no plugin with the given name, throw a 404
-    if (pluginMeta == null)
-      throw new NotFoundException();
-
-    requirePermissions(entity, null);
-
-    var jobFiles = EDA.getComputeJobFiles(pluginMeta, entity);
-
-    var fileName = switch(file.toLowerCase()) {
-      case "meta"       -> ReservedFiles.OutputMeta;
-      case "tabular"    -> ReservedFiles.OutputTabular;
-      case "statistics" -> ReservedFiles.OutputStats;
-      default           -> throw new NotFoundException();
-    };
-
-    var fileRef = jobFiles.stream()
-      .filter(f -> f.getName().equals(fileName))
-      .findFirst()
-      .orElseThrow(NotFoundException::new);
-
-    return PostComputesByPluginAndFileResponse.respond200With((StreamingOutput) output -> {
-      try(var input = fileRef.open()) {
-        input.transferTo(output);
-      }
-    });
   }
 
   // endregion Constant Endpoints
@@ -144,6 +118,39 @@ public class ComputeController implements Computes {
       .validate(entity);
 
     return EDA.getOrSubmitComputeJob(plugin, entity, auth);
+  }
+
+  public <R extends ResponseDelegate, P extends ComputeRequestBase> R resultFile(
+    PluginMeta<P> plugin,
+    String file,
+    ComputeRequestBase entity,
+    Function<Object, R> responseFn
+  ) {
+    // If there was no plugin with the given name, throw a 404
+    if (plugin == null)
+      throw new NotFoundException();
+
+    requirePermissions(entity, null);
+
+    var jobFiles = EDA.getComputeJobFiles(plugin, entity);
+
+    var fileName = switch(file.toLowerCase()) {
+      case "meta"       -> ReservedFiles.OutputMeta;
+      case "tabular"    -> ReservedFiles.OutputTabular;
+      case "statistics" -> ReservedFiles.OutputStats;
+      default           -> throw new NotFoundException();
+    };
+
+    var fileRef = jobFiles.stream()
+      .filter(f -> f.getName().equals(fileName))
+      .findFirst()
+      .orElseThrow(NotFoundException::new);
+
+    return responseFn.apply((StreamingOutput) output -> {
+      try(var input = fileRef.open()) {
+        input.transferTo(output);
+      }
+    });
   }
 
   /**

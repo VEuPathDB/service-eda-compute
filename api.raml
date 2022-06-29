@@ -25,26 +25,6 @@ uses:
             items:
               type: lib.PluginOverview
 
-  /{plugin}/{file}:
-    uriParameters:
-      plugin:
-        type: string
-      file:
-        type: string
-        description: MUST be one of "meta", "tabular", "statistics".
-    post:
-      description: |
-        Fetches the output of a compute job using the compute config input as
-        the unique identifier.
-      body:
-        application/json:
-          type: lib.ComputeRequestBase
-      responses:
-        200:
-          body:
-            "*/*":
-              type: any
-
   # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
   #                                                                           #
   #  Begin Plugin Endpoint Definitions                                        #
@@ -55,29 +35,24 @@ uses:
     displayName: Example Plugin
     post:
       body:
-        application/json:
-          type: lib.ExamplePluginRequest
+        application/json: lib.ExamplePluginRequest
       responses:
         200:
-          description: Job submitted successfully.
           body:
-            application/json:
-              type: lib.JobResponse
-        400:
-          description: Bad Request
-          body:
-            application/json:
-              type: error.BadRequestError
-        422:
-          description: Bad Config
-          body:
-            application/json:
-              type: error.UnprocessableEntityError
-        500:
-          description: Server Error
-          body:
-            application/json:
-              type: error.ServerError
+            application/json: lib.JobResponse
+    /{file}:
+      uriParameters:
+        file:
+          type: string
+          description: MUST be one of "meta", "tabular", "statistics".
+      post:
+        body:
+          application/json: lib.ExamplePluginRequest
+        responses:
+          200:
+            body:
+              text/plain: any
+
 
   # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
   #                                                                           #
