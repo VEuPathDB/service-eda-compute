@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager
 import org.veupathdb.service.eda.common.client.spec.StreamSpec
 import org.veupathdb.service.eda.compute.jobs.ReservedFiles
 import org.veupathdb.service.eda.compute.metrics.PluginMetrics
+import org.veupathdb.service.eda.generated.model.APIStudyDetail
 import org.veupathdb.service.eda.generated.model.ComputeRequestBase
 
 abstract class AbstractPlugin<R : ComputeRequestBase, C>(
@@ -67,6 +68,39 @@ abstract class AbstractPlugin<R : ComputeRequestBase, C>(
    * being marked as "failed".
    */
   protected abstract fun execute()
+
+  // ╔═════════════════════════════════════════════════════════════════════╗//
+  // ║                                                                     ║//
+  // ║  Internal API                                                       ║//
+  // ║                                                                     ║//
+  // ║  Methods and values provided for convenience of implementation for  ║//
+  // ║  extending plugins.                                                 ║//
+  // ║                                                                     ║//
+  // ╚═════════════════════════════════════════════════════════════════════╝//
+
+  /**
+   * Input configuration.
+   */
+  protected val config
+    get() = context.config
+
+  /**
+   * Raw input request.
+   */
+  protected val rawRequest
+    get() = context.request
+
+  /**
+   * Study details.
+   */
+  protected val studyDetail
+    get() = context.studyDetail
+
+  /**
+   * Plugin workspace.
+   */
+  protected val workspace
+    get() = context.workspace
 
   // ╔═════════════════════════════════════════════════════════════════════╗//
   // ║                                                                     ║//

@@ -5,7 +5,7 @@ import org.veupathdb.service.eda.compute.jobs.ReservedFiles
 import java.io.InputStream
 import java.io.Reader
 
-class PluginWorkspace(val jobWorkspace: JobWorkspace) : JobWorkspace by jobWorkspace {
+class PluginWorkspace(val internalWorkspace: JobWorkspace) : JobWorkspace by internalWorkspace {
 
   fun writeTabularResult(data: InputStream) {
     write(ReservedFiles.OutputTabular, data)

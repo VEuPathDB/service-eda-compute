@@ -12,7 +12,10 @@ types:
     type: ComputeRequestBase
     properties:
       config: ExamplePluginConfig
-  ExamplePluginConfig: object
+  ExamplePluginConfig:
+    type: object
+    properties:
+      outputEntityId: string
   ComputeRequestBase:
     type: object
     additionalProperties: false
