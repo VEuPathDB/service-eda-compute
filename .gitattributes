@@ -1,3 +1,5 @@
 *.html linguist-generated
 *.gradle.kts linguist-vendored
 schema/library.raml linguist-generated
+schema/eda-common-lib.raml linguist-generated
+src/main/java/org/veupathdb/service/eda/generated/* linguist-generated
