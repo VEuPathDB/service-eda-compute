@@ -5,6 +5,7 @@ import org.veupathdb.service.eda.compute.controller.ComputeController
 
 class Resources : ContainerResources(ServiceOptions) {
   override fun resources(): Array<Any> = arrayOf(
-    ComputeController::class.java
+    ComputeController::class.java,
+    JobsController,
   )
 }
