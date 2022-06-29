@@ -33,6 +33,45 @@ link:src/main/java/org/veupathdb/service/eda/compute/plugins/example[Example Plu
 . Follow the steps outlined in the link:{javaPath}/plugins[plugins package readme].
 . Add an endpoint for your new plugin in the link:{javaPath}/controller/ComputeController.java[Plugin Controller]
 
+==== Plugin RAML
+
+TODO
+
+==== API RAML
+
+Plugins MUST add at least one endpoint to the link:api.raml[`api.raml`] file.  This endpoint must accept a POST request
+with a request body that extends the `ComputeRequestBase` type defined in the
+link:schema/url/computes.raml[`computes.raml`] RAML library file.
+
+Each plugin execution endpoint definition MUST also contain a sub-endpoint that will be used to download result files
+from completed jobs from that endpoint's plugin.
+
+.Example Plugin Definition
+[source, yaml]
+----
+  /example:
+    post:
+      body:
+        application/json: lib.ExamplePluginRequest
+      responses:
+        200:
+          body:
+            application/json: lib.JobResponse
+    /{file}:
+      uriParameters:
+        file:
+          type: string
+          description: MUST be one of "meta", "tabular", "statistics".
+      post:
+        body:
+          application/json: lib.ExamplePluginRequest
+        responses:
+          200:
+            body:
+              text/plain: any
+----
+
+
 === Plugin Context
 
 On instantiation plugin implementations are provided a link:{kotlinPath}/plugins/PluginContext.kt[`PluginContext`]
