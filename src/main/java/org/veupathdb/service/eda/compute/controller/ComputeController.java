@@ -16,7 +16,6 @@ import org.veupathdb.service.eda.compute.jobs.ReservedFiles;
 import org.veupathdb.service.eda.compute.plugins.PluginProvider;
 import org.veupathdb.service.eda.compute.plugins.PluginRegistry;
 import org.veupathdb.service.eda.compute.plugins.example.ExamplePluginProvider;
-import org.veupathdb.service.eda.generated.model.ComputeOutputType;
 import org.veupathdb.service.eda.generated.model.ComputeRequestBase;
 import org.veupathdb.service.eda.generated.model.ExamplePluginRequest;
 import org.veupathdb.service.eda.generated.model.JobResponse;
@@ -81,7 +80,7 @@ public class ComputeController implements Computes {
   @Override
   public PostComputesByPluginAndFileResponse postComputesByPluginAndFile(
     String plugin,
-    ComputeOutputType file,
+    String file,
     ComputeRequestBase entity
   ) {
     var pluginMeta = PluginRegistry.get(plugin);
@@ -94,10 +93,11 @@ public class ComputeController implements Computes {
 
     var jobFiles = EDA.getComputeJobFiles(pluginMeta, entity);
 
-    var fileName = switch(file) {
-      case META -> ReservedFiles.OutputMeta;
-      case TABULAR -> ReservedFiles.OutputTabular;
-      case STATISTICS -> ReservedFiles.OutputStats;
+    var fileName = switch(file.toLowerCase()) {
+      case "meta"       -> ReservedFiles.OutputMeta;
+      case "tabular"    -> ReservedFiles.OutputTabular;
+      case "statistics" -> ReservedFiles.OutputStats;
+      default           -> throw new NotFoundException();
     };
 
     var fileRef = jobFiles.stream()

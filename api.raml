@@ -30,7 +30,8 @@ uses:
       plugin:
         type: string
       file:
-        type: lib.ComputeOutputType
+        type: string
+        description: MUST be one of "meta", "tabular", "statistics".
     post:
       description: |
         Fetches the output of a compute job using the compute config input as
