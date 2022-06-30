@@ -17,7 +17,7 @@ plugins {
 // ║                                                                         ║//
 // ╚═════════════════════════════════════════════════════════════════════════╝//
 
-val EdaCommonVersion = "8.1.0"
+val EdaCommonVersion = "9.1.0"
 val EdaCommonRAMLURL = "https://raw.githubusercontent.com/VEuPathDB/EdaCommon/v${EdaCommonVersion}/schema/library.raml"
 
 
@@ -39,7 +39,7 @@ containerBuild {
   project {
 
     // Project Name
-    name = "demo-service"
+    name = "eda-compute"
 
     // Project Group
     group = "org.veupathdb.service"
@@ -64,7 +64,7 @@ containerBuild {
     dockerFile = "Dockerfile"
 
     // Resulting image tag
-    imageName = "example-service"
+    imageName = "eda-compute"
 
   }
 

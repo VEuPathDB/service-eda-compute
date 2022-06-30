@@ -16,6 +16,12 @@ public interface APIStudyDetail {
   @JsonProperty("id")
   void setId(String id);
 
+  @JsonProperty("isUserStudy")
+  Boolean getIsUserStudy();
+
+  @JsonProperty("isUserStudy")
+  void setIsUserStudy(Boolean isUserStudy);
+
   @JsonProperty("rootEntity")
   APIEntity getRootEntity();
 
