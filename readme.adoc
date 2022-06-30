@@ -150,6 +150,6 @@ This project is written in and divided into sections for two languages, Java and
 its internals are all written in Kotlin, and the segment of the project made for plugin writers is in Java.  The two
 source sets exist under `src/main/java` and `src/main/kotlin`.
 
-The intention here is that plugin developers can work entirely in Java (and any languages specific to their individual
-plugins).
+The intention here is a clear separation between service internals and plugin code that allows plugin developers to work
+entirely in Java in a space free from service implementation clutter.
 
