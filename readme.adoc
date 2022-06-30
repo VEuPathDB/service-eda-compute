@@ -41,12 +41,14 @@ TODO
 
 Plugins MUST add at least one endpoint to the link:api.raml[`api.raml`] file.  This endpoint must accept a POST request
 with a request body that extends the `ComputeRequestBase` type defined in the
-link:schema/url/computes.raml[`computes.raml`] RAML library file.
+link:schema/url/computes.raml[`computes.raml`] RAML library file.  This endpoint MUST specify, at minimum, a `200`
+status response returning the RAML type `lib.JobResponse` in the media type `application/json`.
 
 Additionally, each plugin execution endpoint definition MUST contain a sub-endpoint that will be used to download result
-files from completed jobs from that endpoint's plugin.
+files from completed jobs from that endpoint's plugin.  This sub-endpoint SHOULD accept a URI parameter used to specify
+the type or name of the file that will be downloaded.
 
-.Example Plugin Definition
+.*Example Plugin Definition*
 [source, yaml]
 ----
   /example:
