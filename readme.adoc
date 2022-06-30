@@ -134,7 +134,13 @@ exceptions.
 
 === Plugin Workspace
 
-TODO
+When executed, a plugin job will be provided with a temporary local scratch workspace.  Plugins are expected to write
+their output data into this workspace from where it will be persisted to the S3 cache.
+
+On completion of the plugin's execution, the workspace will be deleted.
+
+Plugins may use this workspace for any additional filesystem based operations desired provided they do not extend beyond
+the lifecycle of the source job itself.
 
 == Project Development
 
