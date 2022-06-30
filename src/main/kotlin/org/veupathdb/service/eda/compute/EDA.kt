@@ -2,9 +2,11 @@ package org.veupathdb.service.eda.compute
 
 import jakarta.ws.rs.ForbiddenException
 import jakarta.ws.rs.NotFoundException
+import org.apache.logging.log4j.LogManager
 import org.gusdb.fgputil.Tuples.TwoTuple
 import org.veupathdb.lib.compute.platform.AsyncPlatform
 import org.veupathdb.lib.compute.platform.job.JobFileReference
+import org.veupathdb.lib.container.jaxrs.utils.logging.Log
 import org.veupathdb.lib.jackson.Json
 import org.veupathdb.service.eda.common.auth.StudyAccess
 import org.veupathdb.service.eda.common.client.DatasetAccessClient
@@ -34,6 +36,8 @@ import java.util.*
  *
  */
 object EDA {
+
+  private val Log = LogManager.getLogger(javaClass)
 
   /**
    * Returns the [StudyAccess] permissions object for the target [studyID] and
@@ -142,6 +146,8 @@ object EDA {
 
     // If the job already exists, just return it.
     AsyncPlatform.getJob(jobID)?.let { return it.toJobResponse() }
+
+    Log.info("Submitting job {} to the queue", jobID)
 
     // Build the rabbitmq message payload
     val jobPay = PluginJobPayload(plugin.urlSegment, serial, auth.toAuthTuple())
