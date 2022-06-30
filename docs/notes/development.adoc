@@ -7,11 +7,27 @@ Current project specific metrics:
 
 * histogram of time spent on queue by queue
 * gauge of queue size by queue
-
 * counter of job successes by plugin & by queue
 * counter of job failures by plugin & by queue
 * histogram of job time by plugin & by queue
 
+Log info:
+
+* Requests that trigger jobs record the ID of the job they queue
+* Log lines for job executions include the name of the plugin and job id
+
+.*Job Logging*
+[%nowrap, source]
+----
+2022-06-30 14:22:20.563 [rid:     ][jid:7f8241751980a0dbc6a4fe6c1e5e16e8][p:example] DEBUG PluginExecutor:103 - running plugin
+2022-06-30 14:22:20.564 [rid:     ][jid:7f8241751980a0dbc6a4fe6c1e5e16e8][p:example] INFO  ExamplePlugin:80 - Executing plugin example
+2022-06-30 14:22:20.565 [rid:     ][jid:7f8241751980a0dbc6a4fe6c1e5e16e8][p:example] DEBUG S3:78 - persisting 1 files to workspace 7f8241751980a0dbc6a4fe6c1e5e16e8 in S3
+2022-06-30 14:22:20.565 [rid:     ][jid:7f8241751980a0dbc6a4fe6c1e5e16e8][p:example] DEBUG S3WorkspaceFactory:110 - Test path = 7f8241751980a0dbc6a4fe6c1e5e16e8/.workspace
+2022-06-30 14:22:20.565 [rid:     ][jid:7f8241751980a0dbc6a4fe6c1e5e16e8][p:example] DEBUG BucketObjectContainer:44 - Attempting to test whether Bucket{ name='eda-compute' } contains object '7f8241751980a0dbc6a4fe6c1e5e16e8/.workspace'
+2022-06-30 14:22:20.567 [rid:     ][jid:7f8241751980a0dbc6a4fe6c1e5e16e8][p:example] DEBUG S3:83 - writing file /tmp/workspaces/7f8241751980a0dbc6a4fe6c1e5e16e8/output-data to workspace 7f8241751980a0dbc6a4fe6c1e5e16e8 in S3
+2022-06-30 14:22:20.568 [rid:     ][jid:7f8241751980a0dbc6a4fe6c1e5e16e8][p:example] DEBUG BucketObjectContainer:397 - Attempting to upload file '/tmp/workspaces/7f8241751980a0dbc6a4fe6c1e5e16e8/output-data' to path '7f8241751980a0dbc6a4fe6c1e5e16e8/output-data' in Bucket{ name='eda-compute' }
+2022-06-30 14:22:20.580 [rid:     ][jid:7f8241751980a0dbc6a4fe6c1e5e16e8][p:example] DEBUG QueueWorker:66 - sending success notification Success Notification: {
+----
 
 == Questions
 
