@@ -74,7 +74,9 @@ test: install-dev-env gen-jaxrs gen-docs
 	@./gradlew clean test
 
 .PHONY: jar
-jar: install-dev-env gen-jaxrs gen-docs build/libs/service.jar
+jar: install-dev-env gen-jaxrs gen-docs
+	@echo "$(C_BLUE)Building application jar$(C_NONE)"
+	@./gradlew clean test shadowJar
 
 .PHONY: docker
 docker:
@@ -157,8 +159,4 @@ example-clean:
 #
 # File based targets
 #
-
-build/libs/service.jar: build.gradle.kts
-	@echo "$(C_BLUE)Building application jar$(C_NONE)"
-	@./gradlew clean test shadowJar
 
