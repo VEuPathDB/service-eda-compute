@@ -43,8 +43,8 @@ Plugins MUST add at least one endpoint to the link:api.raml[`api.raml`] file.  T
 with a request body that extends the `ComputeRequestBase` type defined in the
 link:schema/url/computes.raml[`computes.raml`] RAML library file.
 
-Each plugin execution endpoint definition MUST also contain a sub-endpoint that will be used to download result files
-from completed jobs from that endpoint's plugin.
+Additionally, each plugin execution endpoint definition MUST contain a sub-endpoint that will be used to download result
+files from completed jobs from that endpoint's plugin.
 
 .Example Plugin Definition
 [source, yaml]

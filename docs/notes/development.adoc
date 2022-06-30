@@ -1,13 +1,24 @@
 = Development Notes
 :icons: font
 
+== Notes on metrics:
+
+Current project specific metrics:
+
+* histogram of time spent on queue by queue
+* gauge of queue size by queue
+
+* counter of job successes by plugin & by queue
+* counter of job failures by plugin & by queue
+* histogram of job time by plugin & by queue
+
+
 == Questions
 
 === Open
 
 * What are some simple example specs that I can use for testing?
 
-* Should the plugin name be part of the job id hash?
 
 * `ConstraintSpec`: What is it, and is it relevant to compute? (in otherwords
   should compute have something similar or should this be in common or something?)
@@ -57,6 +68,9 @@
 ** They can do multiple passes over the file without needing to redownload.
 
 === Answered
+
+* Should the plugin name be part of the job id hash?
+** Yes
 
 * What permission is needed to run compute jobs?
 ** *_Answer_*: `visualizations` on the target study.
