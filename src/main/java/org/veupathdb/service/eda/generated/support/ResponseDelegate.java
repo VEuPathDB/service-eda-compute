@@ -79,7 +79,7 @@ public class ResponseDelegate extends Response {
   }
 
   @Override
-  public <T> T readEntity(Class<T> p0) {
+  public <T> T readEntity(GenericType<T> p0) {
     return this.delegate.readEntity(p0);
   }
 
@@ -89,7 +89,7 @@ public class ResponseDelegate extends Response {
   }
 
   @Override
-  public <T> T readEntity(GenericType<T> p0) {
+  public <T> T readEntity(Class<T> p0) {
     return this.delegate.readEntity(p0);
   }
 

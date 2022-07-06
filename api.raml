@@ -67,6 +67,21 @@ uses:
         minLength: 32
         maxLength: 32
         pattern: '^[\dA-Fa-f]{32}$'
+    delete:
+      description: Deletes a target job by ID
+      responses:
+        204:
+          description: Success
+        404:
+          description: Not Found
+          body:
+            application/json:
+              type: error.NotFoundError
+        500:
+          description: Server Error
+          body:
+            application/json:
+              type: error.ServerError
     get:
       description: Gets the status of the target job.
       responses:
