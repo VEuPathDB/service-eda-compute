@@ -27,6 +27,10 @@ object JobsController : Jobs {
         Jobs.GetJobsFilesByJobIdAndFileNameResponse.headersFor200().withContentDisposition("attachment; filename=$fileName")) }
       ?: throw NotFoundException()
 
+  override fun deleteJobsByJobId(jobId: String?): Jobs.DeleteJobsByJobIdResponse {
+    TODO("Not yet implemented")
+  }
+
   @Suppress("NOTHING_TO_INLINE")
   private inline fun fileList(rawID: String) =
     AsyncPlatform.getJob(rawID.toHashID())
