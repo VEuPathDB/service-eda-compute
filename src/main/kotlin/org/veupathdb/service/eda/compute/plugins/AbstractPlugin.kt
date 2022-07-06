@@ -76,7 +76,7 @@ abstract class AbstractPlugin<R : ComputeRequestBase, C>(
   // ║                                                                     ║//
   // ╚═════════════════════════════════════════════════════════════════════╝//
 
-  override fun run() {
+  override fun run(): Boolean {
     Log.info("Executing plugin {}", { context.pluginMeta.urlSegment })
 
     try {
@@ -93,6 +93,8 @@ abstract class AbstractPlugin<R : ComputeRequestBase, C>(
 
       // Record the job success in the metrics
       PluginMetrics.successes.labels(context.pluginMeta.urlSegment).inc()
+
+      return true
     } catch (e: Throwable) {
       Log.error("Plugin execution failed", e)
 
@@ -101,6 +103,8 @@ abstract class AbstractPlugin<R : ComputeRequestBase, C>(
 
       // Write the stacktrace to file to be persisted in S3
       e.printStackTrace(context.workspace.touch(ReservedFiles.OutputException).toFile().printWriter())
+
+      return false
     }
   }
 }

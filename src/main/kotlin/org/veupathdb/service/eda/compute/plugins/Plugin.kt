@@ -15,7 +15,7 @@ interface Plugin {
    * in each `StreamSpec`.
    *
    * The files can be accessed using the job workspace handle provided in the
-   * [context] property.
+   * job's context.
    *
    * For example, if your plugin defines a [StreamSpec] with the stream name
    * "foobar", the downloaded file would be available at execution time by
@@ -46,6 +46,14 @@ interface Plugin {
    * This method MUST NOT throw any exceptions.  Exceptions from the execution
    * of this plugin should be caught, and the stacktrace written out to the
    * workspace file name [ReservedFiles.OutputException].
+   *
+   * To indicate whether the execution of a plugin succeeded or failed, this
+   * method returns a boolean flag.  Returning `true` indicates that the plugin
+   * completed without error and the job must be considered 'successful'.
+   * Returning `false` indicates that the plugin completed with or due to an
+   * error and the job must be considered 'failed'.
+   *
+   * @return `true` if the job succeeded, otherwise `false`.
    */
-  fun run()
+  fun run(): Boolean
 }

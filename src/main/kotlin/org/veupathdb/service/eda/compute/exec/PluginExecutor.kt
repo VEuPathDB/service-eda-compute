@@ -5,9 +5,11 @@ import org.apache.logging.log4j.ThreadContext
 import org.veupathdb.lib.compute.platform.job.JobContext
 import org.veupathdb.lib.compute.platform.job.JobExecutor
 import org.veupathdb.lib.compute.platform.job.JobResult
+import org.veupathdb.lib.compute.platform.job.JobWorkspace
 import org.veupathdb.lib.jackson.Json
 import org.veupathdb.service.eda.compute.EDA
 import org.veupathdb.service.eda.compute.jobs.ReservedFiles
+import org.veupathdb.service.eda.compute.plugins.Plugin
 import org.veupathdb.service.eda.compute.plugins.AbstractPlugin
 import org.veupathdb.service.eda.compute.plugins.PluginRegistry
 import org.veupathdb.service.eda.compute.plugins.PluginWorkspace
@@ -20,14 +22,76 @@ private val OutputFiles = arrayOf(
   ReservedFiles.OutputException
 )
 
-// These MUST match the %X variables defined in resources/log4j2.yml
+// These MUST match the %X{} variables defined in resources/log4j2.yml
 private const val ThreadContextJobKey = "JOB_ID"
 private const val ThreadContextPluginKey = "PLUGIN"
 
+/**
+ * # Plugin Executor
+ *
+ * Implementation of [JobExecutor] wrapping the execution of an EDA Compute
+ * plugin.
+ *
+ * @author Elizabeth Paige Harper - https://github.com/foxcapades
+ * @since 1.0.0
+ */
 class PluginExecutor : JobExecutor {
 
   private val Log = LogManager.getLogger(javaClass)
 
+  /**
+   * # Plugin Execution
+   *
+   * This method prepares the service and a target plugin for execution,
+   * executes that plugin, then persists the plugin's outputs to a cache in an
+   * external S3 store.
+   *
+   * ## 1. Preparation
+   *
+   * Preparing for a plugin execution includes the following steps:
+   *
+   * * Configuring the Log4j2 ThreadContext with the plugin name and job ID to
+   *   allow us to follow the execution of a specific job in the logs for
+   *   debugging purposes.
+   * * Deserialize the job payload (again) to hand to the plugin to execute.
+   * * Fetch the APIStudyDetail information from the EDA Subsetting Service to
+   *   hand to the plugin as an input.
+   * * Write the APIStudyDetail information to file in the job/plugin's local
+   *   scratch workspace.
+   * * Fetch all the tabular data required by the plugin from the EDA Merge
+   *   Service to hand to the plugin as inputs.
+   * * Write the tabular data to files in the job/plugin's local scratch
+   *   workspace.
+   *
+   * ## 2. Execution
+   *
+   * Once the preparation steps have been completed the plugin itself will be
+   * executed with the input job configuration.
+   *
+   * The [Plugin.run] method promises not to throw exceptions.  Instead, the
+   * `run` method returns a boolean value indicating whether the execution was
+   * successful.
+   *
+   * ## 3. Persistence
+   *
+   * ### 3.a. On Success
+   *
+   * When a plugin completes successfully, there is a known set of output files
+   * that may be persisted.  The post-execution persistence step will attempt to
+   * persist all of those files (only actually persisting the files that exist).
+   *
+   * The set of known files to persist is defined by [OutputFiles].
+   *
+   * ### 3.b. On Failure
+   *
+   * When a plugin completes unsuccessfully, we attempt to persist the entire
+   * local scratch workspace to the external S3 store to assist in debugging the
+   * job failure.
+   *
+   * Since a plugin may create any number of arbitrary files or directories, we
+   * must first figure out what files there are to persist, then go through and
+   * attempt to persist all of them to the cache.
+   */
   override fun execute(ctx: JobContext): JobResult {
     // Add the job id to the logger thread context so log messages in this
     // worker thread will be marked as part of this job.
@@ -60,7 +124,6 @@ class PluginExecutor : JobExecutor {
       e.printStackTrace(ctx.workspace.touch(ReservedFiles.OutputException).toFile().printWriter())
       return JobResult.failure(*OutputFiles)
     }
-
 
     // Build the plugin context
     val context = provider.getContextBuilder().also {
@@ -101,9 +164,19 @@ class PluginExecutor : JobExecutor {
 
     // Execute the plugin
     Log.debug("running plugin")
-    plugin.run()
+    return if (plugin.run()) {
+      // If the plugin executed successfully, look for the known target files to
+      // persist to S3.
+      JobResult.success(*OutputFiles)
+    } else {
+      // If the plugin execution failed, try and persist everything in the local
+      // workspace.
+      JobResult.failure(ctx.workspace.path.toFile().listFiles()!!.map { it.name })
+    }
+  }
 
-    return JobResult.success(*OutputFiles)
+  private fun persistWorkspace(workspace: JobWorkspace) {
+
   }
 
   private fun validateStreamSpecs(plugin: AbstractPlugin<*, *>): Boolean {
