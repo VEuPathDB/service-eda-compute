@@ -5,7 +5,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 FROM veupathdb/alpine-dev-base:jdk-17 AS prep
 
-LABEL service="demo-service"
+LABEL service="eda-compute-build"
 
 ARG GITHUB_USERNAME
 ARG GITHUB_TOKEN
@@ -38,7 +38,7 @@ RUN make jar
 #   Run the service
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-FROM amazoncorretto:17-alpine3.15-jdk
+FROM alpine:3.16
 
 RUN apk add --no-cache tzdata \
     && cp /usr/share/zoneinfo/America/New_York /etc/localtime \
