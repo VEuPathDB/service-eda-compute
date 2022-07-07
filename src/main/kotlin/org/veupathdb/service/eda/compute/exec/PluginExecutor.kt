@@ -14,6 +14,10 @@ import org.veupathdb.service.eda.compute.plugins.AbstractPlugin
 import org.veupathdb.service.eda.compute.plugins.PluginRegistry
 import org.veupathdb.service.eda.compute.plugins.PluginWorkspace
 
+/**
+ * Standard set of files we will attempt to persist to S3 on "successful" job
+ * completion.
+ */
 private val OutputFiles = arrayOf(
   ReservedFiles.OutputMeta,
   ReservedFiles.OutputStats,
@@ -173,10 +177,6 @@ class PluginExecutor : JobExecutor {
       // workspace.
       JobResult.failure(ctx.workspace.path.toFile().listFiles()!!.map { it.name })
     }
-  }
-
-  private fun persistWorkspace(workspace: JobWorkspace) {
-
   }
 
   private fun validateStreamSpecs(plugin: AbstractPlugin<*, *>): Boolean {
