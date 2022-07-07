@@ -1,5 +1,12 @@
 package org.veupathdb.service.eda.compute.jobs
 
+/**
+ * Index of file names that are reserved for internal use by the EDA Compute
+ * service.
+ *
+ * @author Elizabeth Paige Harper - https://github.com/foxcapades
+ * @since 1.0.0
+ */
 object ReservedFiles {
   const val InputMeta = "input-meta"
 
