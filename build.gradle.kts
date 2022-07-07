@@ -6,7 +6,7 @@ plugins {
   kotlin("jvm") version "1.7.0"
   java
 
-  id("org.veupathdb.lib.gradle.container.container-utils") version "3.4.1"
+  id("org.veupathdb.lib.gradle.container.container-utils") version "3.4.3"
   id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
@@ -135,7 +135,7 @@ dependencies {
   implementation("org.veupathdb.lib:jackson-singleton:3.0.0")
 
   // FgpUtil
-  implementation("org.gusdb:fgputil-client:2.5-jakarta")
+  implementation("org.gusdb:fgputil-client:2.7.1-jakarta")
 
   // Prometheus Metrics
   implementation("io.prometheus:simpleclient:0.15.0")
