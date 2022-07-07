@@ -1,13 +1,16 @@
 package org.veupathdb.service.eda.compute.service
 
+import jakarta.ws.rs.ForbiddenException
 import jakarta.ws.rs.NotFoundException
 import jakarta.ws.rs.core.StreamingOutput
 import org.veupathdb.lib.compute.platform.AsyncPlatform
 import org.veupathdb.lib.compute.platform.job.JobFileReference
+import org.veupathdb.lib.container.jaxrs.server.annotations.Authenticated
 import org.veupathdb.lib.hash_id.HashID
 import org.veupathdb.service.eda.compute.util.toJobResponse
 import org.veupathdb.service.eda.generated.resources.Jobs
 
+@Authenticated(allowGuests = false)
 object JobsController : Jobs {
   override fun getJobsByJobId(jobId: String): Jobs.GetJobsByJobIdResponse =
     Jobs.GetJobsByJobIdResponse.respond200WithApplicationJson(
@@ -27,8 +30,17 @@ object JobsController : Jobs {
         Jobs.GetJobsFilesByJobIdAndFileNameResponse.headersFor200().withContentDisposition("attachment; filename=$fileName")) }
       ?: throw NotFoundException()
 
-  override fun deleteJobsByJobId(jobId: String?): Jobs.DeleteJobsByJobIdResponse {
-    TODO("Not yet implemented")
+  override fun deleteJobsByJobId(rawId: String): Jobs.DeleteJobsByJobIdResponse {
+    val jobID = rawId.toHashID()
+    val job   = AsyncPlatform.getJob(jobID) ?: throw NotFoundException()
+
+    // Ensure that this instance owns the job and the job is finished before
+    // attempting to delete.
+    job.owned && job.status.isFinished || throw ForbiddenException()
+
+    AsyncPlatform.deleteJob(jobID)
+
+    return Jobs.DeleteJobsByJobIdResponse.respond204()
   }
 
   @Suppress("NOTHING_TO_INLINE")
