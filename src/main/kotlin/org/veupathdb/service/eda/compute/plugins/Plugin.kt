@@ -3,6 +3,12 @@ package org.veupathdb.service.eda.compute.plugins
 import org.veupathdb.service.eda.common.client.spec.StreamSpec
 import org.veupathdb.service.eda.compute.jobs.ReservedFiles
 
+/**
+ * EDA Compute Plugin
+ *
+ * @author Elizabeth Paige Harper - https://github.com/Foxcapades
+ * @since 1.0.0
+ */
 interface Plugin {
 
   /**
