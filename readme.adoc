@@ -145,6 +145,7 @@ the lifecycle of the source job itself.
 == Metrics
 
 .EDA Compute Specific Metrics
+--
 [cols="1m,3"]
 |===
 | Metric | Description
@@ -159,6 +160,7 @@ the lifecycle of the source job itself.
 | Counter of failed plugin executions by plugin.
 
 |===
+--
 
 == Project Development
 
