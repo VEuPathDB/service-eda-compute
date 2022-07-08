@@ -144,11 +144,11 @@ the lifecycle of the source job itself.
 
 == Metrics
 
-.EDA Compute Specific Metrics
---
 [cols="1m,3"]
 |===
 | Metric | Description
+
+2+^h| EDA Compute Specific Metrics
 
 | plugin_exec_time
 | Histogram of plugin execution time in seconds by plugin.
@@ -159,8 +159,20 @@ the lifecycle of the source job itself.
 | plugin_failures
 | Counter of failed plugin executions by plugin.
 
+2+^h| Async Platform Metrics
+
+| queue_time
+| Histogram of times spent queued by queue.
+
+| queued_jobs
+| Gauge of the number of currently queued jobs by queue.
+
+| job_successes
+| Counter of successful job executions by queue.
+
+| job_failures
+| Counter of failed job executions by queue.
 |===
---
 
 == Project Development
 
