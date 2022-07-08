@@ -102,7 +102,10 @@ abstract class AbstractPlugin<R : ComputeRequestBase, C>(
       PluginMetrics.failures.labels(context.pluginMeta.urlSegment).inc()
 
       // Write the stacktrace to file to be persisted in S3
-      e.printStackTrace(context.workspace.touch(ReservedFiles.OutputException).toFile().printWriter())
+      val eWriter = context.workspace.touch(ReservedFiles.OutputException).toFile().printWriter()
+      e.printStackTrace(eWriter)
+      eWriter.flush()
+      eWriter.close()
 
       return false
     }

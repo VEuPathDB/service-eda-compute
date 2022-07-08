@@ -21,7 +21,6 @@ val EdaCommonVersion = "9.1.0"
 val EdaCommonRAMLURL = "https://raw.githubusercontent.com/VEuPathDB/EdaCommon/v${EdaCommonVersion}/schema/library.raml"
 
 
-
 // ╔═════════════════════════════════════════════════════════════════════════╗//
 // ║                                                                         ║//
 // ║  Container Project Configuration                                        ║//
@@ -115,7 +114,7 @@ dependencies {
 
   implementation("org.veupathdb.lib:jaxrs-container-core:6.7.4")
   implementation("org.veupathdb.service.eda:eda-common:$EdaCommonVersion")
-  implementation("org.veupathdb.lib:compute-platform:1.2.0")
+  implementation("org.veupathdb.lib:compute-platform:1.2.1")
 
   // Jersey
   implementation("org.glassfish.jersey.core:jersey-server:3.0.4")
