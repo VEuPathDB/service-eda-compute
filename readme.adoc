@@ -95,6 +95,10 @@ the `StreamSpec` list the plugin defines.
 * Study metadata retrieved from the EDA Subsetting service.
 --
 
+The tabular data retrieve from the EDA Merge Service based on the plugin's provided `StreamSpec` instances will be
+written to the plugin's local scratch workspace and will be available via the `workspace` property provided on the
+`AbstractPlugin` base type.
+
 === Output Data
 
 Plugins are expected to output specific target files which will be persisted to a cache in S3.

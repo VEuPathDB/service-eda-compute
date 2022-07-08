@@ -1,10 +1,11 @@
 package org.veupathdb.service.eda.compute.service
 
 import org.veupathdb.lib.compute.platform.AsyncPlatform
+import org.veupathdb.lib.compute.platform.job.JobExecutorFactory
 import org.veupathdb.lib.container.jaxrs.config.Options
 import org.veupathdb.lib.container.jaxrs.server.ContainerResources
 import org.veupathdb.lib.container.jaxrs.server.Server
-import org.veupathdb.service.eda.compute.exec.PluginExecutorFactory
+import org.veupathdb.service.eda.compute.exec.PluginExecutor
 
 object Main : Server() {
   @JvmStatic
@@ -51,7 +52,7 @@ object Main : Server() {
       }
 
       jobConfig {
-        executorFactory = PluginExecutorFactory()
+        executorFactory = JobExecutorFactory { PluginExecutor() }
         expirationDays  = ServiceOptions.jobCacheTimeoutDays
       }
 
