@@ -12,41 +12,46 @@ import org.veupathdb.service.eda.generated.resources.Jobs
 
 @Authenticated(allowGuests = false)
 object JobsController : Jobs {
-  override fun getJobsByJobId(jobId: String): Jobs.GetJobsByJobIdResponse =
-    Jobs.GetJobsByJobIdResponse.respond200WithApplicationJson(
-      (AsyncPlatform.getJob(jobId.toHashID()) ?: throw NotFoundException()).toJobResponse())
 
+  /**
+   * Lookup job by job id.
+   */
+  override fun getJobsByJobId(jobId: String) =
+    Jobs.GetJobsByJobIdResponse.respond200WithApplicationJson(requireJob(jobId).toJobResponse())!!
+
+  /**
+   * List files for job by job id.
+   */
   override fun getJobsFilesByJobId(jobId: String) =
-    fileList(jobId)
-      ?.map(JobFileReference::name)
-      ?.let(Jobs.GetJobsFilesByJobIdResponse::respond200WithApplicationJson)
-      ?: throw NotFoundException()
+    Jobs.GetJobsFilesByJobIdResponse.respond200WithApplicationJson(fileList(jobId).map(JobFileReference::name))!!
 
+  /**
+   * Get the contents of a file by job id and file name.
+   */
   override fun getJobsFilesByJobIdAndFileName(jobId: String, fileName: String) =
     fileList(jobId)
-      ?.let { it.find { it.name == fileName } }
+      .let { it.find { it.name == fileName } }
       ?.let { StreamingOutput { o -> it.open().use { i -> i.transferTo(o) } } }
       ?.let { Jobs.GetJobsFilesByJobIdAndFileNameResponse.respond200WithTextPlain(it,
         Jobs.GetJobsFilesByJobIdAndFileNameResponse.headersFor200().withContentDisposition("attachment; filename=$fileName")) }
       ?: throw NotFoundException()
 
-  override fun deleteJobsByJobId(rawId: String): Jobs.DeleteJobsByJobIdResponse {
-    val jobID = rawId.toHashID()
-    val job   = AsyncPlatform.getJob(jobID) ?: throw NotFoundException()
+  /**
+   * Delete a job by job id.
+   */
+  override fun deleteJobsByJobId(rawId: String) =
+    requireJob(rawId)
+      .also { it.owned && it.status.isFinished || throw ForbiddenException() }
+      .also { AsyncPlatform.deleteJob(it.jobID) }
+      .let { Jobs.DeleteJobsByJobIdResponse.respond204()!! }
 
-    // Ensure that this instance owns the job and the job is finished before
-    // attempting to delete.
-    job.owned && job.status.isFinished || throw ForbiddenException()
-
-    AsyncPlatform.deleteJob(jobID)
-
-    return Jobs.DeleteJobsByJobIdResponse.respond204()
-  }
+  @Suppress("NOTHING_TO_INLINE")
+  private inline fun requireJob(rawID: String) =
+    AsyncPlatform.getJob(rawID.toHashID()) ?: throw NotFoundException()
 
   @Suppress("NOTHING_TO_INLINE")
   private inline fun fileList(rawID: String) =
-    AsyncPlatform.getJob(rawID.toHashID())
-      ?.let { AsyncPlatform.getJobFiles(it.jobID) }
+    requireJob(rawID).let { AsyncPlatform.getJobFiles(it.jobID) }
 
   @Suppress("NOTHING_TO_INLINE")
   private inline fun String.toHashID(): HashID {
