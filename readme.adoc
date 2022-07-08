@@ -142,6 +142,24 @@ On completion of the plugin's execution, the workspace will be deleted.
 Plugins may use this workspace for any additional filesystem based operations desired provided they do not extend beyond
 the lifecycle of the source job itself.
 
+== Metrics
+
+.EDA Compute Specific Metrics
+[cols="1m,3"]
+|===
+| Metric | Description
+
+| plugin_exec_time
+| Histogram of plugin execution time in seconds by plugin.
+
+| plugin_successes
+| Counter of successful plugin executions by plugin.
+
+| plugin_failures
+| Counter of failed plugin executions by plugin.
+
+|===
+
 == Project Development
 
 === Project Structure
