@@ -26,6 +26,6 @@ public class ExamplePlugin extends AbstractPlugin<ExamplePluginRequest, ExampleP
   @Override
   protected void execute() {
     // TODO: actually do something.
-    getWorkspace().writeTabularResult(getWorkspace().openStream(INPUT_DATA));
+    getWorkspace().writeDataResult(getWorkspace().openStream(INPUT_DATA));
   }
 }

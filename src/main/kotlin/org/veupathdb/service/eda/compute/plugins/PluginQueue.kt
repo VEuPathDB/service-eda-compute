@@ -16,7 +16,7 @@ import org.veupathdb.service.eda.compute.service.ServiceOptions
  * The queues are separated so as not to block quick jobs by a long queue of
  * slower jobs.
  *
- * @author Elizabeth Paige Harper [https://github.com/foxcapades]
+ * @author Elizabeth Paige Harper - https://github.com/foxcapades
  * @since 1.0.0
  */
 enum class PluginQueue {
