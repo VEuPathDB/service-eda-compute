@@ -20,8 +20,6 @@ v1.0.0
 
 === Adding a Plugin
 
-TODO!!
-
 link:src/main/java/org/veupathdb/service/eda/compute/plugins/example[Example Plugin]
 
 . Add the plugin RAML to new or existing files in the link:schema/url/computes[plugins schema directory]. +
@@ -98,6 +96,23 @@ the `StreamSpec` list the plugin defines.
 The tabular data retrieve from the EDA Merge Service based on the plugin's provided `StreamSpec` instances will be
 written to the plugin's local scratch workspace and will be available via the `workspace` property provided on the
 `AbstractPlugin` base type.
+
+For example, if your plugin defines a `StreamSpec` instance with the name `foobar`, on plugin start, the data retrieved
+from the EDA Merge Service for your `StreamSpec` would be available by doing the following.
+
+.Opening an Input.
+[source, java]
+----
+// Open the input as an InputStream
+getWorkspace().openStream("foobar")
+
+// Open the input as a Reader
+getWorkspace().openReader("foobar")
+
+// Get full input as a string
+getWorkspace().readAsString("foobar")
+----
+
 
 === Output Data
 
