@@ -153,6 +153,8 @@ private class PluginContextImpl<R : ComputeRequestBase, C>(
   }
 
   override val referenceMetadata
+    // IDE may show this line as a compile error, but it is not, the generated
+    // classes are resolved at compile time.
     get() = ReferenceMetadata(studyDetail, request.derivedVariables ?: emptyList())
 
   override fun processBuilder(command: String, vararg args: String) =
