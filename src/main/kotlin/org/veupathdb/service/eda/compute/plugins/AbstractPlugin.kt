@@ -57,6 +57,11 @@ abstract class AbstractPlugin<R : ComputeRequestBase, C>(
    * Plugins can indicate an execution failure or bad status by throwing an
    * exception.  Any exception thrown by this method will result in the job
    * being marked as "failed".
+   *
+   * Additionally, the exception thrown will be written to file and persisted
+   * to the job's workspace in the remote cache for debugging purposes.  It is
+   * recommended that the exceptions thrown be descriptive or have useful
+   * messages as they will be used to debug plugin job failures.
    */
   protected abstract fun execute()
 
