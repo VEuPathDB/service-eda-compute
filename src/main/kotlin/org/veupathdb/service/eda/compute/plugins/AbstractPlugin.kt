@@ -76,12 +76,17 @@ abstract class AbstractPlugin<R : ComputeRequestBase, C>(
 
   /**
    * Input configuration.
+   *
+   * This is the configuration segment of the original request body sent in to
+   * the service.
    */
   protected val config
     get() = context.config
 
   /**
    * Raw input request.
+   *
+   * This is the full original request body sent in to the service.
    */
   protected val rawRequest
     get() = context.request
