@@ -42,14 +42,14 @@ abstract class AbstractPlugin<R : ComputeRequestBase, C>(
 
   private val Log = LogManager.getLogger(javaClass)
 
-  // ╔═════════════════════════════════════════════════════════════════════╗//
-  // ║                                                                     ║//
-  // ║  Abstract Extension Points                                          ║//
-  // ║                                                                     ║//
-  // ║  Methods and values which must be implemented by the extending      ║//
-  // ║  plugin.                                                            ║//
-  // ║                                                                     ║//
-  // ╚═════════════════════════════════════════════════════════════════════╝//
+  // ╔════════════════════════════════════════════════════════════════════╗ //
+  // ║                                                                    ║ //
+  // ║  Abstract Extension Points                                         ║ //
+  // ║                                                                    ║ //
+  // ║  Methods and values which must be implemented by the extending     ║ //
+  // ║  plugin.                                                           ║ //
+  // ║                                                                    ║ //
+  // ╚════════════════════════════════════════════════════════════════════╝ //
 
   /**
    * Executes this plugin's tasks.
@@ -65,14 +65,14 @@ abstract class AbstractPlugin<R : ComputeRequestBase, C>(
    */
   protected abstract fun execute()
 
-  // ╔═════════════════════════════════════════════════════════════════════╗//
-  // ║                                                                     ║//
-  // ║  Internal API                                                       ║//
-  // ║                                                                     ║//
-  // ║  Methods and values provided for convenience of implementation for  ║//
-  // ║  extending plugins.                                                 ║//
-  // ║                                                                     ║//
-  // ╚═════════════════════════════════════════════════════════════════════╝//
+  // ╔════════════════════════════════════════════════════════════════════╗ //
+  // ║                                                                    ║ //
+  // ║  Internal API                                                      ║ //
+  // ║                                                                    ║ //
+  // ║  Methods and values provided for convenience of implementation     ║ //
+  // ║  for extending plugins.                                            ║ //
+  // ║                                                                    ║ //
+  // ╚════════════════════════════════════════════════════════════════════╝ //
 
   /**
    * Input configuration.
@@ -103,14 +103,14 @@ abstract class AbstractPlugin<R : ComputeRequestBase, C>(
   protected val workspace
     get() = context.workspace
 
-  // ╔═════════════════════════════════════════════════════════════════════╗//
-  // ║                                                                     ║//
-  // ║  Final Public API                                                   ║//
-  // ║                                                                     ║//
-  // ║  Methods and values which must be implemented by the extending      ║//
-  // ║  plugin.                                                            ║//
-  // ║                                                                     ║//
-  // ╚═════════════════════════════════════════════════════════════════════╝//
+  // ╔════════════════════════════════════════════════════════════════════╗ //
+  // ║                                                                    ║ //
+  // ║  Final Public API                                                  ║ //
+  // ║                                                                    ║ //
+  // ║  Methods and values which must be implemented by the extending     ║ //
+  // ║  plugin.                                                           ║ //
+  // ║                                                                    ║ //
+  // ╚════════════════════════════════════════════════════════════════════╝ //
 
   final override fun run(): Boolean {
     Log.info("Executing plugin {}", { context.pluginMeta.urlSegment })
