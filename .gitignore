@@ -8,6 +8,10 @@
 /tmp/
 /.settings/
 
+/.env
+.envrc
+sshuttle.sh
+
 *.tmp
 *.bak
 *.swp
@@ -26,3 +30,4 @@ local.properties
 .settings
 *~
 .*~
+schema/eda-common-lib.raml
