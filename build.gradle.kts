@@ -1,10 +1,32 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.veupathdb.lib.gradle.container.util.Logger.Level
+import java.net.URL
 
 plugins {
+  kotlin("jvm") version "1.7.0"
   java
-  id("org.veupathdb.lib.gradle.container.container-utils") version "3.4.1"
+
+  id("org.veupathdb.lib.gradle.container.container-utils") version "3.4.3"
   id("com.github.johnrengelman.shadow") version "7.1.2"
 }
+
+
+// ╔═════════════════════════════════════════════════════════════════════════╗//
+// ║                                                                         ║//
+// ║  Constants                                                              ║//
+// ║                                                                         ║//
+// ╚═════════════════════════════════════════════════════════════════════════╝//
+
+val EdaCommonVersion = "9.1.0"
+val EdaCommonRAMLURL = "https://raw.githubusercontent.com/VEuPathDB/EdaCommon/v${EdaCommonVersion}/schema/library.raml"
+
+
+// ╔═════════════════════════════════════════════════════════════════════════╗//
+// ║                                                                         ║//
+// ║  Container Project Configuration                                        ║//
+// ║                                                                         ║//
+// ╚═════════════════════════════════════════════════════════════════════════╝//
+
 
 // configure VEupathDB container plugin
 containerBuild {
@@ -16,7 +38,7 @@ containerBuild {
   project {
 
     // Project Name
-    name = "demo-service"
+    name = "eda-compute"
 
     // Project Group
     group = "org.veupathdb.service"
@@ -25,10 +47,10 @@ containerBuild {
     version = "1.0.0"
 
     // Project Root Package
-    projectPackage = "org.veupathdb.service.demo"
+    projectPackage = "org.veupathdb.service.eda"
 
     // Main Class Name
-    mainClassName = "Main"
+    mainClassName = "compute.service.Main"
   }
 
   // Docker build configuration.
@@ -41,7 +63,7 @@ containerBuild {
     dockerFile = "Dockerfile"
 
     // Resulting image tag
-    imageName = "example-service"
+    imageName = "eda-compute"
 
   }
 
@@ -56,16 +78,13 @@ containerBuild {
   }
 }
 
-java {
-  toolchain {
-    languageVersion.set(JavaLanguageVersion.of(17))
-  }
-}
 
-tasks.shadowJar {
-  exclude("**/Log4j2Plugins.dat")
-  archiveFileName.set("service.jar")
-}
+// ╔═════════════════════════════════════════════════════════════════════════╗//
+// ║                                                                         ║//
+// ║  Dependency Management                                                  ║//
+// ║                                                                         ║//
+// ╚═════════════════════════════════════════════════════════════════════════╝//
+
 
 repositories {
   mavenCentral()
@@ -89,58 +108,40 @@ configurations.all {
 
 dependencies {
 
-  // Required Dependencies
-  //
-  // These dependencies are required for all projects based on this example
-  // repository:
+  implementation(kotlin("stdlib"))
+  implementation(kotlin("stdlib-jdk7"))
+  implementation(kotlin("stdlib-jdk8"))
 
-  // Core lib
-  implementation("org.veupathdb.lib:jaxrs-container-core:6.7.0")
+  implementation("org.veupathdb.lib:jaxrs-container-core:6.7.4")
+  implementation("org.veupathdb.service.eda:eda-common:$EdaCommonVersion")
+  implementation("org.veupathdb.lib:compute-platform:1.2.1")
 
   // Jersey
   implementation("org.glassfish.jersey.core:jersey-server:3.0.4")
 
-  // Async platform core
-  implementation("org.veupathdb.lib:compute-platform:1.0.0")
+  // Pico CLI
+  implementation("info.picocli:picocli:4.6.3")
 
   // Job IDs
   implementation("org.veupathdb.lib:hash-id:1.1.0")
+
+  // RServe
+  implementation("org.rosuda.REngine:Rserve:1.8.1")
 
   // Logging
   implementation("org.slf4j:slf4j-api:1.7.36")
   implementation("org.apache.logging.log4j:log4j-core:2.17.2")
   runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:2.17.2")
 
-
-  // Example Dependencies
-  //
-  // These dependencies were added for the demo/example project and may not be
-  // needed
-
-  // Pico CLI
-  // Only required if your project adds custom CLI/environment options, see
-  // the "MyOptions" class in the demo source code.
-  implementation("info.picocli:picocli:4.6.3")
-
-  // Multipart/Form-Data Jersey Plugin
-  // Only required if your project will be handling multipart/form-data HTTP
-  // requests.
-  implementation("org.glassfish.jersey.media:jersey-media-multipart:3.0.4")
-
   // Jackson
-  // Only required if you are going to be directly using Jackson's JSON api.
   implementation("org.veupathdb.lib:jackson-singleton:3.0.0")
 
-  // Prometheus Metrics Gathering
-  // Only required if your project will be doing custom metric reporting outside
-  // of the metrics provided by the container core library.
+  // FgpUtil
+  implementation("org.gusdb:fgputil-client:2.7.1-jakarta")
+
+  // Prometheus Metrics
   implementation("io.prometheus:simpleclient:0.15.0")
   implementation("io.prometheus:simpleclient_common:0.15.0")
-
-
-  // Recommended Dependencies
-  //
-  // These dependencies are not required, but are recommended.
 
   // JUnit 5
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
@@ -148,4 +149,56 @@ dependencies {
 
   // Mockito Test Mocking
   testImplementation("org.mockito:mockito-core:4.6.1")
+}
+
+
+// ╔═════════════════════════════════════════════════════════════════════════╗//
+// ║                                                                         ║//
+// ║  JVM & Compile Configuration                                            ║//
+// ║                                                                         ║//
+// ╚═════════════════════════════════════════════════════════════════════════╝//
+
+
+java {
+  toolchain {
+    languageVersion.set(JavaLanguageVersion.of(17))
+  }
+}
+
+kotlin {
+  jvmToolchain {
+    languageVersion.set(JavaLanguageVersion.of(17))
+  }
+}
+
+tasks.withType<KotlinCompile> {
+  kotlinOptions {
+    jvmTarget = "17"
+    freeCompilerArgs = listOf(
+      "-Xjvm-default=all"
+    )
+  }
+}
+
+
+// ╔═════════════════════════════════════════════════════════════════════════╗//
+// ║                                                                         ║//
+// ║  Task Configurations                                                    ║//
+// ║                                                                         ║//
+// ╚═════════════════════════════════════════════════════════════════════════╝//
+
+
+tasks.shadowJar {
+  exclude("**/Log4j2Plugins.dat")
+  archiveFileName.set("service.jar")
+}
+
+/**
+ * Fetch EDA Common Schema
+ *
+ * Custom task that fetches the contents of the EDA Common RAML library file and
+ * spits it out on STDOUT.
+ */
+tasks.register("fetch-eda-common-schema") {
+  URL(EdaCommonRAMLURL).openStream().use { it.transferTo(System.out) }
 }

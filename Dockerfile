@@ -5,7 +5,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 FROM veupathdb/alpine-dev-base:jdk-17 AS prep
 
-LABEL service="demo-service"
+LABEL service="eda-compute-build"
 
 ARG GITHUB_USERNAME
 ARG GITHUB_TOKEN
@@ -31,7 +31,7 @@ RUN make install-dev-env
 RUN ./gradlew dependencies
 
 # copy remaining files
-COPY .. .
+COPY . .
 
 # build the project
 RUN make jar
@@ -41,9 +41,7 @@ RUN make jar
 #   Run the service
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-FROM foxcapades/alpine-oracle:1.6
-
-LABEL service="demo-service"
+FROM alpine:3.16
 
 RUN apk add --no-cache tzdata \
     && cp /usr/share/zoneinfo/America/New_York /etc/localtime \
