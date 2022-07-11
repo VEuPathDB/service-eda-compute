@@ -122,7 +122,6 @@ raml-gen-code: api.raml merge-raml
 	@./gradlew --quiet generate-jaxrs
 	@$(BIN_DIR)/generate-jaxrs-streams.sh $(APP_PACKAGE)
 	@$(BIN_DIR)/generate-jaxrs-postgen-mods.sh $(APP_PACKAGE)
-	@grep -Rl javax src | xargs -I{} sed -i 's/javax.ws/jakarta.ws/g' {}
 
 # See raml-gen-docs
 .PHONY: gen-docs
