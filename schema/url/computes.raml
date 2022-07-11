@@ -1,0 +1,21 @@
+#%RAML 1.0 Library
+
+uses:
+  eda: ../eda-common-lib.raml
+
+types:
+  ComputeRequestBase:
+    type: object
+    properties:
+      studyId:
+        type: string
+      filters:
+        type: array
+        items:
+          type: eda.API_Filter
+        required: false
+      derivedVariables:
+        type: array
+        items:
+          type: eda.DerivedVariable
+    additionalProperties: false

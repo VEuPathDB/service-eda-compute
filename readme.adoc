@@ -1,7 +1,9 @@
-= Example Containerized Async Service
+= EDA Compute
 :toc:
 :source-highlighter: highlightjs
 :icons: font
+:javaPath: src/main/java/org/veupathdb/service/eda/compute
+:kotlinPath: src/main/kotlin/org/veupathdb/service/eda/compute
 // Github specifics
 ifdef::env-github[]
 :tip-caption: :bulb:
@@ -13,261 +15,192 @@ endif::[]
 Elizabeth Paige Harper <epharper@upenn.edu>
 v1.0.0
 
-This repository is a template for and demonstration of creating asynchronous
-job processing services utilizing VEuPathDB's
-https://github.com/VEuPathDB/lib-jaxrs-container-core[container infrastructure]
-and https://github.com/VEuPathDB/lib-compute-platform[async compute platform].
 
-For additional information about the components this project is built upon, see
-the following projects:
+== Plugin Development
 
-* https://github.com/VEuPathDB/example-jaxrs-container-service[Example Container Service]
-* https://github.com/VEuPathDB/lib-jaxrs-container-core[Container Service Core]
-* https://github.com/VEuPathDB/lib-compute-platform[Async Compute Platform]
+=== Adding a Plugin
 
-== Running the Example
+link:src/main/java/org/veupathdb/service/eda/compute/plugins/example[Example Plugin]
 
-=== Prerequisites
+. Add the plugin RAML to new or existing files in the link:schema/url/computes[plugins schema directory]. +
+  (See the link:schema/url/computes/example.raml[example plugin schema])
+. Add the new plugin endpoint to the project's link:api.raml[API Definition RAML].
+. Run the command `make raml-gen-code` to generate the new Java source code for the plugin being added.
+. Add a new package for your plugin in the link:{javaPath}/plugins/[plugins package] +
+  (See the link:{javaPath}/plugins/example[example plugin package])
+. Follow the steps outlined in the link:{javaPath}/plugins[plugins package readme].
+. Add an endpoint for your new plugin in the link:{javaPath}/controller/ComputeController.java[Plugin Controller]
 
-* https://docs.docker.com/engine/[Docker]
-* https://docs.docker.com/compose/[Docker Compose]
+==== Plugin RAML
 
-=== Start Up
+TODO
 
-[source, shell]
+==== API RAML
+
+Plugins MUST add at least one endpoint to the link:api.raml[`api.raml`] file.  This endpoint must accept a POST request
+with a request body that extends the `ComputeRequestBase` type defined in the
+link:schema/url/computes.raml[`computes.raml`] RAML library file.  This endpoint MUST specify, at minimum, a `200`
+status response returning the RAML type `lib.JobResponse` in the media type `application/json`.
+
+Additionally, each plugin execution endpoint definition MUST contain a sub-endpoint that will be used to download result
+files from completed jobs from that endpoint's plugin.  This sub-endpoint SHOULD accept a URI parameter used to specify
+the type or name of the file that will be downloaded.
+
+.*Example Plugin Definition*
+[source, yaml]
 ----
-$ make example-clean
-$ make example-build
-$ make example-run
-----
-
-=== Using the Service
-
-https://veupathdb.github.io/example-async-compute-service/api.html[API Documentation]
-
-Using curl, https://www.postman.com/[Postman], or your favorite API request
-tool, the following actions may be performed on the example service:
-
-. <<Job Submission,Submitting string reversal jobs>>
-. <<Job Status Check,Check the status of your job>>
-. Get the output files from your job
-. Download the output file from your job
-
-==== Job Submission
-
-The example project offers one job type under the endpoint `/reverse` which
-simply reverses the given input string.
-
-The input is taken as a JSON object with an `"input"` field containing the text
-to reverse.
-
-.Example Input
-[source, json]
-----
-{
-  "input": "racecar"
-}
-----
-
-Once the job is accepted, the API will return a JSON object containing
-information about the submitted job.  The key piece of information in this
-response is the `"jobID"` field which is the ID of the created job that can be
-used in requests to other API endpoints to retrieve information about the job
-and the job's results.
-
-.Example Response
-[source, json]
-----
-{
-  "jobID": "6c3ac2cc4489e81857e1e2290523a505",
-  "status": "queued",
-  "queuePosition": 0
-}
-----
-
-==== Job Status Check
-
-Once a job has been submitted, the API may be used to check on the status of the
-job.  In a more realistic situation, this endpoint could be used to poll the API
-waiting for the job's status to be updated to a completion status.
-
-In the example API, a job's status/details may be retrieved using the
-`/jobs/{job-id}` endpoint.  In this endpoint the `{job-id}` variable should be
-replaced with the ID of the job returned on job submission.
-
-.Example Response
-[source, json]
-----
-{
-  "jobID": "6c3ac2cc4489e81857e1e2290523a505",
-  "status": "complete"
-}
-----
-
-==== Job File Listing
-
-A completed job will have result files associated with it.  These files may be
-listed using the `/jobs/{job-id}/files` endpoint.
-
-.Example Response
-[source, json]
-----
-[
-  "output"
-]
+  /example:
+    post:
+      body:
+        application/json: lib.ExamplePluginRequest
+      responses:
+        200:
+          body:
+            application/json: lib.JobResponse
+    /{file}:
+      uriParameters:
+        file:
+          type: string
+          description: MUST be one of "meta", "tabular", "statistics".
+      post:
+        body:
+          application/json: lib.ExamplePluginRequest
+        responses:
+          200:
+            body:
+              text/plain: any
 ----
 
 
-==== Job File Download
+=== Plugin Context
 
-The outputs of a completed job can
+On instantiation plugin implementations are provided a link:{kotlinPath}/plugins/PluginContext.kt[`PluginContext`]
+instance which provides the following:
+
+* Access to the plugin job's input data.
+* Access to the plugin job's local filesystem workspace
+* Method for starting/running arbitrary shell commands in the plugin job's context.
+
+=== Input Data
+
+On execution, plugins will be provided with the following values in addition to named tabular data files generated from
+the `StreamSpec` list the plugin defines.
+
+.*Standard Inputs*
+--
+* The original HTTP request sent in to trigger the execution of a job.
+* The job configuration (pulled from and additionally available as part of the original HTTP request).
+* Study metadata retrieved from the EDA Subsetting service.
+--
+
+The tabular data retrieve from the EDA Merge Service based on the plugin's provided `StreamSpec` instances will be
+written to the plugin's local scratch workspace and will be available via the `workspace` property provided on the
+`AbstractPlugin` base type.
+
+For example, if your plugin defines a `StreamSpec` instance with the name `foobar`, on plugin start, the data retrieved
+from the EDA Merge Service for your `StreamSpec` would be available by doing the following.
+
+.Opening an Input.
+[source, java]
+----
+// Open the input as an InputStream
+getWorkspace().openStream("foobar")
+
+// Open the input as a Reader
+getWorkspace().openReader("foobar")
+
+// Get full input as a string
+getWorkspace().readAsString("foobar")
+----
 
 
-=== RabbitMQ
+=== Output Data
 
-The example uses a RabbitMQ image with the management plugin.  This means that
-it is possible to view the queues and their state from the browser by navigating
-to http://localhost:9002 when the example docker-compose stack is online.
+Plugins are expected to output specific target files which will be persisted to a cache in S3.
 
-The credentials for the management plugin login are `demouser` / `demopass` by
-default, but are configured via the `RABBITMQ_DEFAULT_USER` and
-`RABBITMQ_DEFAULT_PASS` environment variables set in the
-https://github.com/VEuPathDB/example-async-compute-service/blob/master/docker-compose.example.yml[example docker-compose config].
+Plugins are not required to output every file listed below, but only the listed files will be persisted.
 
-
-=== S3 / MinIO
-
-The S3 store backing the example project is https://min.io[MinIO].  This MinIO
-instance may be accessed and managed via a web interface by navigating to
-http://localhost:9001 when the example docker-compose stack is online.
-
-The credentials for the web interface are `demouser` / `demopass` by default,
-but are configured via the `MINIO_ROOT_USER` and `MINIO_ROOT_PASSWORD`
-environment variables set in the
-https://github.com/VEuPathDB/example-async-compute-service/blob/master/docker-compose.example.yml[example docker-compose config].
-
-
-== Using this Template
-
-=== Creating a New Project
-
-Creating a new project from this template can be done by first pressing the
-"*Use this template*" button at the top of this page to create a new git
-repository that is a copy of this one.
-
-After you have created your new project, follow these steps to get set up for
-development:
-
-. Clone your new project onto your local development machine.
+.*Expected Output Files*
+--
+`output-stats`::
+Statistics data generated by the plugin execution.
 +
-[source, shell]
-----
-git clone git@github.com:veupathdb/my-new-project
-----
-. Using a console or terminal emulator, navigate to the directory in which you
-  cloned your project.
+This file will be made available for download via the HTTP API.
+
+`output-meta`::
+Metadata generated by the plugin execution.
 +
-[source, shell]
-----
-cd my-new-project
-----
-. Perform the new-project init step. +
+This file will be made available for download via the HTTP API.
+
+`output-data`::
+Tabular data generated by the plugin execution.
 +
-This step will link your new project's git history with the history of this
-template repository to enable pulling in patches and updates from this
-template into your new project in the future.
+This file will be made available for download via the HTTP API.
+
+`error.log`::
+`STDERR` output from the execution of a shell command via the Compute Service's CLI call API.
 +
-[source, shell]
-----
-make new-project-initialization
-----
-. Install the required development tools and ensure your dev environment has all
-  the needed components to develop your new project.
+Plugins do not need to and should not write to this file directly, the `ComputeProcessBuilder` utility made available
+through the provided plugin context will handle configuring external processes to write to this file.
+
+`exception.log`::
+Exception stacktrace output.  This file is created and populated with the stacktrace of uncaught exception thrown by a
+plugin's execution.
 +
-[source, shell]
-----
-make install-dev-env
-----
-. Using your favorite editor, open the `build.gradle.kts` file and update the
-  configuration in the `containerBuild` block near the top of the file with your
-  new project's properties.
+Plugins may choose to write to this file if they handle their own exceptions internally and do not throw uncaught
+exceptions.
+--
 
+=== Plugin Workspace
 
-=== Development Prerequisites
+When executed, a plugin job will be provided with a temporary local scratch workspace.  Plugins are expected to write
+their output data into this workspace from where it will be persisted to the S3 cache.
 
-* JDK 17+
-* Docker
-* Docker Compose
-* NodeJS / NPM
+On completion of the plugin's execution, the workspace will be deleted.
 
-=== Makefile Targets
+Plugins may use this workspace for any additional filesystem based operations desired provided they do not extend beyond
+the lifecycle of the source job itself.
 
-This project includes a Makefile which includes the following targets.
+== Metrics
 
-==== Meta
+[cols="1m,3"]
+|===
+| Metric | Description
 
-`help`::
-Prints the list of available make targets.
+2+^h| EDA Compute Specific Metrics
 
-==== Project Setup & Maintenance
+| plugin_exec_time
+| Histogram of plugin execution time in seconds by plugin.
 
-`new-project-initialization`::
-A one-time-use target that should be used as the first step when initializing a
-brand-new project based on this template.
-+
-This target links the git histories of the new project with this template repo
-and merges the two histories together to enable the new project to pull in
-patches and updates from the template.
-+
-This is required because GitHub squashes the history of the template repo into
-a single "Initial commit" in the new project repo, creating a separate
-"unrelated" git history.
+| plugin_successes
+| Counter of successful plugin executions by plugin.
 
-`link-template-repo`::
-(Re)Adds a git-remote entry for this template repo to the local project repo
-where this make target is called.  This is done to enable pulling down patches
-and updates from the template repo via the `merge-template-repo` make target.
+| plugin_failures
+| Counter of failed plugin executions by plugin.
 
-`merge-template-repo`::
-Merges in changes from the template repo into the project in which this make
-target was called.
+2+^h| Async Platform Metrics
 
-`install-dev-env`::
-Checks the user's environment to ensure that the necessary development
-prerequisites are installed and installs the extra tooling necessary to build
-and test the project.
+| queue_time
+| Histogram of times spent queued by queue.
 
-==== Dev Process
+| queued_jobs
+| Gauge of the number of currently queued jobs by queue.
 
-`compile`::
-Performs a clean compile of the project source code.
+| job_successes
+| Counter of successful job executions by queue.
 
-`test`::
-Performs a clean run of the project's unit tests.
+| job_failures
+| Counter of failed job executions by queue.
+|===
 
-`jar`::
-Builds an output jar of the project source plus all dependencies, otherwise
-known as a "fat" or "uber" jar.
+== Project Development
 
-`docker`::
-Builds the project as a docker image with the name configured in the
-`build.gradle.kts` file's `containerBuild.docker` block.
+=== Project Structure
 
-`raml-gen-code`::
-Generates Jax-RS source code from the RAML API definition.
+This project is written in and divided into sections for two languages, Java and Kotlin.  The core of the service and
+its internals are all written in Kotlin, and the segment of the project made for plugin writers is in Java.  The two
+source sets exist under `src/main/java` and `src/main/kotlin`.
 
-`raml-gen-docs`::
-Generates API HTML docs from the RAML API definition.
-
-==== Example Project
-
-`example-clean`::
-Removes any offline docker containers and networks from the example project's
-docker-compose stack.
-
-`example-build`::
-Builds the example project docker-compose stack.
-
-`example-run`::
-Runs the example project docker-compose stack.
+The intention here is a clear separation between service internals and plugin code that allows plugin developers to work
+entirely in Java in a space free from service implementation clutter.
 

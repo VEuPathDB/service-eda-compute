@@ -74,11 +74,35 @@ test: install-dev-env gen-jaxrs gen-docs
 	@./gradlew clean test
 
 .PHONY: jar
-jar: install-dev-env gen-jaxrs gen-docs build/libs/service.jar
+jar: install-dev-env gen-jaxrs gen-docs
+	@echo "$(C_BLUE)Building application jar$(C_NONE)"
+	@./gradlew clean test shadowJar
 
 .PHONY: docker
 docker:
 	@./gradlew build-docker --stacktrace
+
+.PHONY: dc-build
+dc-build:
+	@docker compose \
+		-f docker-compose.dev.yml \
+		--env-file .env \
+		build \
+		--build-arg GITHUB_USERNAME=${GITHUB_USERNAME} \
+		--build-arg GITHUB_TOKEN=${GITHUB_TOKEN}
+
+.PHONY: dc-up
+dc-up:
+	@docker compose -f docker-compose.dev.yml --env-file .env up
+
+.PHONY: dc-upd
+dc-upd:
+	@docker compose -f docker-compose.dev.yml --env-file .env up -d
+
+.PHONY: dc-reset
+dc-reset:
+	@docker compose -f docker-compose.dev.yml --env-file .env rm -fv compute-queue-db
+	@docker compose -f docker-compose.dev.yml --env-file .env rm -fv minio
 
 
 #
@@ -94,9 +118,11 @@ gen-jaxrs: raml-gen-code
 
 .PHONY: raml-gen-code
 raml-gen-code: api.raml merge-raml
-	@./gradlew generate-jaxrs
+	@rm -rf src/main/java/org/veupathdb/service/eda/generated
+	@./gradlew --quiet generate-jaxrs
 	@$(BIN_DIR)/generate-jaxrs-streams.sh $(APP_PACKAGE)
 	@$(BIN_DIR)/generate-jaxrs-postgen-mods.sh $(APP_PACKAGE)
+	@grep -Rl javax src | xargs -I{} sed -i 's/javax.ws/jakarta.ws/g' {}
 
 # See raml-gen-docs
 .PHONY: gen-docs
@@ -112,6 +138,7 @@ raml-gen-docs: api.raml merge-raml
 
 .PHONY: merge-raml
 merge-raml:
+	@./gradlew -q "fetch-eda-common-schema" > schema/eda-common-lib.raml
 	@$(BIN_DIR)/merge-raml schema > schema/library.raml
 
 
@@ -132,8 +159,4 @@ example-clean:
 #
 # File based targets
 #
-
-build/libs/service.jar: build.gradle.kts
-	@echo "$(C_BLUE)Building application jar$(C_NONE)"
-	@./gradlew clean test shadowJar
 
