@@ -1,0 +1,187 @@
+= Development Notes
+:icons: font
+
+== Notes on metrics:
+
+Current project specific metrics:
+
+* histogram of time spent on queue by queue
+* gauge of queue size by queue
+* counter of job successes by plugin & by queue
+* counter of job failures by plugin & by queue
+* histogram of job time by plugin & by queue
+
+Log info:
+
+* Requests that trigger jobs record the ID of the job they queue
+* Log lines for job executions include the name of the plugin and job id
+
+.*Job Logging*
+[%nowrap, source]
+----
+2022-06-30 14:22:20.563 [rid:     ][jid:7f8241751980a0dbc6a4fe6c1e5e16e8][p:example] DEBUG PluginExecutor:103 - running plugin
+2022-06-30 14:22:20.564 [rid:     ][jid:7f8241751980a0dbc6a4fe6c1e5e16e8][p:example] INFO  ExamplePlugin:80 - Executing plugin example
+2022-06-30 14:22:20.565 [rid:     ][jid:7f8241751980a0dbc6a4fe6c1e5e16e8][p:example] DEBUG S3:78 - persisting 1 files to workspace 7f8241751980a0dbc6a4fe6c1e5e16e8 in S3
+2022-06-30 14:22:20.565 [rid:     ][jid:7f8241751980a0dbc6a4fe6c1e5e16e8][p:example] DEBUG S3WorkspaceFactory:110 - Test path = 7f8241751980a0dbc6a4fe6c1e5e16e8/.workspace
+2022-06-30 14:22:20.565 [rid:     ][jid:7f8241751980a0dbc6a4fe6c1e5e16e8][p:example] DEBUG BucketObjectContainer:44 - Attempting to test whether Bucket{ name='eda-compute' } contains object '7f8241751980a0dbc6a4fe6c1e5e16e8/.workspace'
+2022-06-30 14:22:20.567 [rid:     ][jid:7f8241751980a0dbc6a4fe6c1e5e16e8][p:example] DEBUG S3:83 - writing file /tmp/workspaces/7f8241751980a0dbc6a4fe6c1e5e16e8/output-data to workspace 7f8241751980a0dbc6a4fe6c1e5e16e8 in S3
+2022-06-30 14:22:20.568 [rid:     ][jid:7f8241751980a0dbc6a4fe6c1e5e16e8][p:example] DEBUG BucketObjectContainer:397 - Attempting to upload file '/tmp/workspaces/7f8241751980a0dbc6a4fe6c1e5e16e8/output-data' to path '7f8241751980a0dbc6a4fe6c1e5e16e8/output-data' in Bucket{ name='eda-compute' }
+2022-06-30 14:22:20.580 [rid:     ][jid:7f8241751980a0dbc6a4fe6c1e5e16e8][p:example] DEBUG QueueWorker:66 - sending success notification Success Notification: {
+----
+
+== Questions
+
+=== Open
+
+* What are some simple example specs that I can use for testing?
+
+
+* `ConstraintSpec`: What is it, and is it relevant to compute? (in otherwords
+  should compute have something similar or should this be in common or something?)
+** Spec used by the client and server to perform automated validation of the
+   input data.
+** May or may not be needed by the eda-compute service, depends on what the
+   plugin implementers want.
+** Ask Danielle and Ann if they are envisioning the constraints to be similar
+   for the compute configs as they are for the visualization configs?
+*** If we want it, then we will need to expose the constraint spec from the
+    plugin via the API, it will come from the plugin.
+
+* How does the data service handle validation of inputs?  Is it via the
+  `ConstraintSpec` deal?
+** No, plugins do their own arbitrary validations.
+
+* `StreamSpec`:
+** What is it and how do I get one?
+*** Plugins could return more than one!!!!
+** Why do plugins in EDA data have a list of `StreamSpec` instances?
+
+* How do I spin this thing up and test it?
+** What do I connect it to?
+*** *_Answer_*: Just make a dev docker-compose and spin the stuff up, use
+    `sshuttle` to connect to the DBs ofc.
+
+* Apparently also the file download endpoints need to take in a spec and do the
+  permissions check.
+** Add a parameterized enpdoint thats like `/computes/{plugin}/download/{file}`
+   that takes a job config and downloads the target file.
+*** Maybe instead of `{file}` it takes a file type?  since there are only 3
+    types?  (meta, statistics, tabular)
+
+* Need to expose the library.raml from this service to be imported from the data
+  service to be used in their RAML...  They could just type it as any but that
+  prevents type checking in the data service?
+
+* Rename `/plugins` to `/computes`
+
+* Could there be more than one tabular data input?
+** Start with one and if they need more, update the API?
+*** In this case the stream-spec name will be the file name
+
+* Why do we download the merge data beforehand?
+** Because they could be performing arbitrary script calls on the data?
+*** Seems like they will just be calling RServe?
+** They can do multiple passes over the file without needing to redownload.
+
+=== Answered
+
+* Should the plugin name be part of the job id hash?
+** Yes
+
+* What permission is needed to run compute jobs?
+** *_Answer_*: `visualizations` on the target study.
+
+* Looking at the EDA Data Service's docker-compose file, it looks like it spins
+  up its own, owned instances of EDA Subsetting, EDA Merging, RServe, EDA User,
+  Dataset Access, and Dataset Download. +
+  *_Question_*: Is this the structure in production or is this just the local
+  stack definition?
+** *_Answer_*: There is only one stack, the docker-compose file just happens to\
+   live in eda-data for some reason.
+
+* RServe:
+** The EDA Data service has an RServe client wrapping RServe functionality,
+   should this type be moved to common or something similar constructed for
+   eda-compute?
+*** *_Answer_* Ryan will move the RServe client into EDA Common.
+** Where does RServe live?
+*** *_Answer_*: RServe lives in a separate container which is available through
+   the docker compose stack.
+
+* How does one instantiate an `EdaSubsettingClient` instance?
+** *_Answer_*: Seems like it is done on a per-request basis, passing in the auth
+   headers from the original request.  This means the auth headers will need to
+   be forwarded to the compute service from other services.
+
+* How do we hold onto the job request envelope data (study ID, derived
+  Variables, etc.) to use when running the job?
+** Do we pass the whole request through the queue and pop out the parts we need
+   when it's time to run the job?
+** *_Answer_*: Yes, the full request payload will need to be passed down the
+   line.  It includes several fields that are needed to make requests to the
+   other EDA services.
+
+* How do we get the merge data from the EDA Merge Service?
+** *_Answer_*: Using the study ID and API filters that are fields on the job
+   request envelope type.
+
+* How do we get the metadata from the EDA Subsetting Service?
+** *_Answer_*: Using the study ID which will be a field on the job request
+   envelope type.
+
+* What does a request payload look like? +
+  Do I have any control over this, or is this something that will be handled by
+  others?
+** *_Answer_*: It appears that I have some say over the payload.  The outer
+   envelope type is defined by me, but contains a "config" property that is
+   defined by the plugin developers.
+
+* Can a RAML DataType's parent's "facets" be used to enforce implementing
+  generic properties? +
+  For example, could I have a `BaseRequest` type that defines a "config" facet,
+  and have child types required to use that facet?
+** *_Answer_*: No, but you can override facets with subtypes.
++
+.Example
+[source, yaml]
+----
+types:
+  Foo:
+    type: object
+    properties:
+      fizz: any
+  Bar:
+    type: Foo
+    properties:
+      fizz: Buzz
+----
+
+
+== Request workflow
+
+. Request comes in
+. Get hold of a plugin instance to validate the input. +
+*_Question_*: Does this need to be a full plugin instance or can it be something
+like a "PluginConfigValidator"?
+. Validate the input
+. Submit job to the queue
+
+
+== Executor Workflow
+
+. Get hold of a plugin instance
+. Using plugin, parse raw json config coming from job queue back into plugin
+  config
+. Using the parsed config:
+.. Fetch the metadata from the eda-subsetting service. +
+... Write the metadata out to file in the plugin workspace
+... Create a ReferenceMetadata instance? +
+    (To do this, we will need a handle on the derived variables which are part
+    of the request envelope.  This means the envelope data will need to be held
+    onto in some way)
+.. Fetch the tabular data from the eda-merge service. +
+*_Question_*: How does this even work?
+
+== TODO
+
+. Create a dummy plugin that does simple things just to aid development
