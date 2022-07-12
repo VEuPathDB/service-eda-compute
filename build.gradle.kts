@@ -111,7 +111,7 @@ dependencies {
   implementation(kotlin("stdlib-jdk7"))
   implementation(kotlin("stdlib-jdk8"))
 
-  implementation("org.veupathdb.lib:jaxrs-container-core:6.7.4")
+  implementation("org.veupathdb.lib:jaxrs-container-core:6.8.0")
   implementation("org.veupathdb.service.eda:eda-common:$EdaCommonVersion")
   implementation("org.veupathdb.lib:compute-platform:1.2.1")
 
