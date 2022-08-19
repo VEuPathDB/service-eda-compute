@@ -1,0 +1,16 @@
+#%RAML 1.0 Library
+
+uses:
+  req: ../computes.raml
+
+types:
+  ExamplePluginRequest:
+    type: req.ComputeRequestBase
+    properties:
+      config: ExamplePluginConfig
+
+  ExamplePluginConfig:
+    type: object
+    properties:
+      outputEntityId:
+        type: string

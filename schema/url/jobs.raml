@@ -1,0 +1,27 @@
+#%RAML 1.0 Library
+
+uses:
+  com: ./common.raml
+
+types:
+  JobStatus:
+    type: string
+    enum:
+      - queued
+      - in-progress
+      - complete
+      - failed
+      - expired
+
+  JobResponse:
+    type: object
+    properties:
+      jobID:
+        type: com.JobID
+      status:
+        type: JobStatus
+      queuePosition:
+        type: integer
+        format: int32
+        required: false
+    additionalProperties: false
