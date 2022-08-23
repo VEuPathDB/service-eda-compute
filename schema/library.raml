@@ -7,6 +7,22 @@
 ################################################################################
 
 types:
+  BetaDivPluginRequest:
+    type: ComputeRequestBase
+    properties:
+      config: BetaDivPluginConfig
+  BetaDivPluginConfig:
+    type: object
+    properties:
+      outputEntityId: string
+      collectionVariable: VariableSpec
+      betaDivDistanceMethod: BetaDivDistanceMethod
+  BetaDivDistanceMethod:
+    type: string
+    enum:
+      - bray
+      - jaccard
+      - jsd
   ExamplePluginRequest:
     type: ComputeRequestBase
     properties:
