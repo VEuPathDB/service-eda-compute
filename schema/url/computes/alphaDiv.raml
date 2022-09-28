@@ -4,7 +4,7 @@ uses:
   req: ../computes.raml
 
 types:
-  BetaDivPluginRequest:
+  AlphaDivPluginRequest:
     type: req.ComputeRequestBase
     properties:
       config: AlphaDivPluginConfig
@@ -16,7 +16,7 @@ types:
       outputEntityId:
         type: string
       collectionVariable: VariableSpec
-      betaDivDistanceMethod: AlphaDivMethod
+      alphaDivMethod: AlphaDivMethod
 
   AlphaDivMethod:
     type: string
