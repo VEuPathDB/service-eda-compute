@@ -1,0 +1,23 @@
+#%RAML 1.0 Library
+
+uses:
+  req: ../computes.raml
+
+types:
+  BetaDivPluginRequest:
+    type: req.ComputeRequestBase
+    properties:
+      config: RankedAbundancePluginConfig
+
+  RankedAbundancePluginConfig:
+    type: object
+    additionalProperties: false
+    properties:
+      outputEntityId:
+        type: string
+      collectionVariable: VariableSpec
+      rankingMethod: RankingMethod
+
+  RankingMethod:
+    type: string
+    enum: ['median', 'q3', 'variance', 'max']
