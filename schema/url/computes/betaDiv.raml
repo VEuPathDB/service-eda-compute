@@ -1,0 +1,23 @@
+#%RAML 1.0 Library
+
+uses:
+  req: ../computes.raml
+
+types:
+  BetaDivPluginRequest:
+    type: req.ComputeRequestBase
+    properties:
+      config: BetaDivPluginConfig
+
+  BetaDivPluginConfig:
+    type: object
+    additionalProperties: false
+    properties:
+      outputEntityId:
+        type: string
+      collectionVariable: VariableSpec
+      betaDivDistanceMethod: BetaDivDistanceMethod
+
+  BetaDivDistanceMethod:
+    type: string
+    enum: ['bray', 'jaccard', 'jsd']

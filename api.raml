@@ -53,6 +53,69 @@ uses:
               text/plain: any
 
 
+  /betadiv:
+    post:
+      body:
+        application/json: lib.BetaDivPluginRequest
+      responses:
+        200:
+          body:
+            application/json: lib.JobResponse
+    /{file}:
+      uriParameters:
+        file:
+          type: string
+          description: MUST be one of "meta", "tabular", "statistics".
+      post:
+        body:
+          application/json: lib.BetaDivPluginRequest
+        responses:
+          200:
+            body:
+              text/plain: any
+
+  /alphadiv:
+    post:
+      body:
+        application/json: lib.AlphaDivPluginRequest
+      responses:
+        200:
+          body:
+            application/json: lib.JobResponse
+    /{file}:
+      uriParameters:
+        file:
+          type: string
+          description: MUST be one of "meta", "tabular", "statistics".
+      post:
+        body:
+          application/json: lib.AlphaDivPluginRequest
+        responses:
+          200:
+            body:
+              text/plain: any
+
+  /rankedabundance:
+    post:
+      body:
+        application/json: lib.RankedAbundancePluginRequest
+      responses:
+        200:
+          body:
+            application/json: lib.JobResponse
+    /{file}:
+      uriParameters:
+        file:
+          type: string
+          description: MUST be one of "meta", "tabular", "statistics".
+      post:
+        body:
+          application/json: lib.RankedAbundancePluginRequest
+        responses:
+          200:
+            body:
+              text/plain: any
+
   # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
   #                                                                           #
   #  End Plugin Endpoint Definitions                                          #
