@@ -33,6 +33,7 @@ uses:
 
   /example:
     post:
+      description: Receives a compute config to retreive a job status (starting job if expired or none exists)
       body:
         application/json: lib.ExamplePluginRequest
       responses:
@@ -45,6 +46,7 @@ uses:
           type: string
           description: MUST be one of "meta", "tabular", "statistics".
       post:
+        description: Receives a compute config and returns the results of a completed job (error if not complete)
         body:
           application/json: lib.ExamplePluginRequest
         responses:
