@@ -7,6 +7,44 @@
 ################################################################################
 
 types:
+  ExamplePluginRequest:
+    type: ComputeRequestBase
+    properties:
+      config: ExamplePluginConfig
+  ExamplePluginConfig:
+    type: object
+    properties:
+      outputEntityId: string
+  JobStatus:
+    type: string
+    enum:
+      - queued
+      - in-progress
+      - complete
+      - failed
+      - expired
+  JobResponse:
+    type: object
+    additionalProperties: false
+    properties:
+      jobID: JobID
+      status: JobStatus
+      queuePosition:
+        type: integer
+        required: false
+        format: int32
+  ComputeRequestBase:
+    type: object
+    additionalProperties: false
+    properties:
+      studyId: string
+      filters:
+        type: array
+        required: false
+        items: API_Filter
+      derivedVariables:
+        type: array
+        items: DerivedVariable
   PluginOverview:
     displayName: Plugin Overview
     type: object
@@ -458,6 +496,23 @@ types:
     properties:
       distributionDefaults: API_DateDistributionDefaults
   JobID: !include https://raw.githubusercontent.com/VEuPathDB/lib-hash-id/v1.1.0/schema/hash-id.raml
+  AlphaDivPluginRequest:
+    type: ComputeRequestBase
+    properties:
+      config: AlphaDivPluginConfig
+  AlphaDivPluginConfig:
+    type: object
+    additionalProperties: false
+    properties:
+      outputEntityId: string
+      collectionVariable: VariableSpec
+      alphaDivMethod: AlphaDivMethod
+  AlphaDivMethod:
+    type: string
+    enum:
+      - shannon
+      - simpson
+      - evenness
   BetaDivPluginRequest:
     type: ComputeRequestBase
     properties:
@@ -475,42 +530,22 @@ types:
       - bray
       - jaccard
       - jsd
-  ExamplePluginRequest:
+  RankedAbundancePluginRequest:
     type: ComputeRequestBase
     properties:
-      config: ExamplePluginConfig
-  ExamplePluginConfig:
+      config: RankedAbundancePluginConfig
+  RankedAbundancePluginConfig:
     type: object
+    additionalProperties: false
     properties:
       outputEntityId: string
-  ComputeRequestBase:
-    type: object
-    additionalProperties: false
-    properties:
-      studyId: string
-      filters:
-        type: array
-        required: false
-        items: API_Filter
-      derivedVariables:
-        type: array
-        items: DerivedVariable
-  JobStatus:
+      collectionVariable: VariableSpec
+      rankingMethod: RankingMethod
+  RankingMethod:
     type: string
     enum:
-      - queued
-      - in-progress
-      - complete
-      - failed
-      - expired
-  JobResponse:
-    type: object
-    additionalProperties: false
-    properties:
-      jobID: JobID
-      status: JobStatus
-      queuePosition:
-        type: integer
-        required: false
-        format: int32
+      - median
+      - q3
+      - variance
+      - max
 
