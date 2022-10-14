@@ -113,10 +113,10 @@ dependencies {
 
   implementation("org.veupathdb.lib:jaxrs-container-core:6.8.0")
   implementation("org.veupathdb.service.eda:eda-common:$EdaCommonVersion")
-  implementation("org.veupathdb.lib:compute-platform:1.2.1")
+  implementation("org.veupathdb.lib:compute-platform:1.3.0")
 
   // Jersey
-  implementation("org.glassfish.jersey.core:jersey-server:3.0.4")
+  implementation("org.glassfish.jersey.core:jersey-server:3.0.8")
 
   // Pico CLI
   implementation("info.picocli:picocli:4.6.3")
@@ -129,25 +129,25 @@ dependencies {
 
   // Logging
   implementation("org.slf4j:slf4j-api:1.7.36")
-  implementation("org.apache.logging.log4j:log4j-core:2.17.2")
-  runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:2.17.2")
+  implementation("org.apache.logging.log4j:log4j-core:2.19.0")
+  runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:2.19.0")
 
   // Jackson
   implementation("org.veupathdb.lib:jackson-singleton:3.0.0")
 
   // FgpUtil
-  implementation("org.gusdb:fgputil-client:2.7.1-jakarta")
+  implementation("org.gusdb:fgputil-client:2.8.0-jakarta")
 
   // Prometheus Metrics
-  implementation("io.prometheus:simpleclient:0.15.0")
-  implementation("io.prometheus:simpleclient_common:0.15.0")
+  implementation("io.prometheus:simpleclient:0.16.0")
+  implementation("io.prometheus:simpleclient_common:0.16.0")
 
   // JUnit 5
-  testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+  testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
+  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
 
   // Mockito Test Mocking
-  testImplementation("org.mockito:mockito-core:4.6.1")
+  testImplementation("org.mockito:mockito-core:4.8.0")
 }
 
 
