@@ -1,11 +1,11 @@
 #%RAML 1.0 Library
 
 uses:
-  req: ../computes.raml
+  eda: ../eda-common-lib.raml
 
 types:
   ExamplePluginRequest:
-    type: req.ComputeRequestBase
+    type: eda.ComputeRequestBase
     properties:
       config: ExamplePluginConfig
 
@@ -13,5 +13,5 @@ types:
     type: object
     properties:
       outputEntityId: string
-      inputVariable: VariableSpec
+      inputVariable: eda.VariableSpec
       valueSuffix: string

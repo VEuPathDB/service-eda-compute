@@ -1,11 +1,11 @@
 #%RAML 1.0 Library
 
 uses:
-  req: ../computes.raml
+  eda: ../eda-common-lib.raml
 
 types:
   RankedAbundancePluginRequest:
-    type: req.ComputeRequestBase
+    type: eda.ComputeRequestBase
     properties:
       config: RankedAbundancePluginConfig
 
@@ -15,7 +15,7 @@ types:
     properties:
       outputEntityId:
         type: string
-      collectionVariable: VariableSpec
+      collectionVariable: eda.VariableSpec
       rankingMethod: RankingMethod
 
   RankingMethod:

@@ -1,11 +1,11 @@
 #%RAML 1.0 Library
 
 uses:
-  req: ../computes.raml
+  eda: ../eda-common-lib.raml
 
 types:
   BetaDivPluginRequest:
-    type: req.ComputeRequestBase
+    type: eda.ComputeRequestBase
     properties:
       config: BetaDivPluginConfig
 
