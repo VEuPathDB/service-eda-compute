@@ -12,7 +12,7 @@ plugins {
 
 // ╔═════════════════════════════════════════════════════════════════════════╗//
 // ║                                                                         ║//
-// ║  Constants                                                              ║//
+// ║  EDA Common Management                                                  ║//
 // ║                                                                         ║//
 // ╚═════════════════════════════════════════════════════════════════════════╝//
 
@@ -84,7 +84,6 @@ containerBuild {
 // ║                                                                         ║//
 // ╚═════════════════════════════════════════════════════════════════════════╝//
 
-
 repositories {
   mavenCentral()
   mavenLocal()
@@ -112,7 +111,7 @@ dependencies {
   implementation(kotlin("stdlib-jdk8"))
 
   implementation("org.veupathdb.lib:jaxrs-container-core:6.8.0")
-  implementation("org.veupathdb.service.eda:eda-common:$EdaCommonVersion")
+  implementation(findProject(":edaCommon") ?: "org.veupathdb.service.eda:eda-common:$EdaCommonVersion")
   implementation("org.veupathdb.lib:compute-platform:1.3.3")
 
   // Jersey
@@ -199,5 +198,11 @@ tasks.shadowJar {
  * spits it out on STDOUT.
  */
 tasks.register("fetch-eda-common-schema") {
-  URL(EdaCommonRAMLURL).openStream().use { it.transferTo(System.out) }
+  // use local EdaCommon compiled schema if project exists, else use released version;
+  //    this mirrors the way we use local EdaCommon code library if available
+  val edaCommonLocalProjectDir = findProject(":edaCommon")?.projectDir
+  if (edaCommonLocalProjectDir != null)
+    File("${edaCommonLocalProjectDir}/schema/library.raml").inputStream().use { it.transferTo(System.out) }
+  else
+    URL(EdaCommonRAMLURL).openStream().use { it.transferTo(System.out) }
 }

@@ -139,7 +139,7 @@ raml-gen-docs: api.raml merge-raml
 merge-raml:
 	@./gradlew -q "fetch-eda-common-schema" > schema/eda-common-lib.raml
 	@$(BIN_DIR)/merge-raml schema > schema/library.raml
-	rm schema/eda-common-lib.raml
+#	@rm schema/eda-common-lib.raml
 
 
 .PHONY: example-build
