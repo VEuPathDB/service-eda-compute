@@ -7,40 +7,6 @@
 ################################################################################
 
 types:
-  AlphaDivPluginRequest:
-    type: ComputeRequestBase
-    properties:
-      config: AlphaDivPluginConfig
-  AlphaDivPluginConfig:
-    type: object
-    additionalProperties: false
-    properties:
-      outputEntityId: string
-      collectionVariable: VariableSpec
-      alphaDivMethod: AlphaDivMethod
-  AlphaDivMethod:
-    type: string
-    enum:
-      - shannon
-      - simpson
-      - evenness
-  BetaDivPluginRequest:
-    type: ComputeRequestBase
-    properties:
-      config: BetaDivPluginConfig
-  BetaDivPluginConfig:
-    type: object
-    additionalProperties: false
-    properties:
-      outputEntityId: string
-      collectionVariable: VariableSpec
-      betaDivDistanceMethod: BetaDivDistanceMethod
-  BetaDivDistanceMethod:
-    type: string
-    enum:
-      - bray
-      - jaccard
-      - jsd
   ExamplePluginRequest:
     type: ComputeRequestBase
     properties:
@@ -77,6 +43,50 @@ types:
       name: string
       displayName: string
       description: string
+  JobID: !include https://raw.githubusercontent.com/VEuPathDB/lib-hash-id/v1.1.0/schema/hash-id.raml
+  JobStatus:
+    type: string
+    enum:
+      - queued
+      - in-progress
+      - complete
+      - failed
+      - expired
+  JobResponse:
+    type: object
+    additionalProperties: false
+    properties:
+      jobID: JobID
+      status: JobStatus
+      queuePosition:
+        type: integer
+        required: false
+        format: int32
+  ComputeRequestBase:
+    type: object
+    properties:
+      studyId: string
+      filters:
+        type: array
+        required: false
+        items: API_Filter
+      derivedVariables:
+        type: array
+        items: DerivedVariable
+  PlotReference:
+    type: object
+    additionalProperties: false
+    properties:
+      id: string
+      variablePlotRef?: string
+      valuePlotRef?: string
+  ComputedVariableMetadata:
+    type: object
+    additionalProperties: false
+    properties:
+      computedVariables: API_VariableWithValues[]
+      computedCollections: API_Collection[]
+      plotReferences: PlotReference[]
   VisualizationDataElementConstraint:
     type: object
     additionalProperties: false
@@ -532,34 +542,38 @@ types:
     discriminatorValue: date
     properties:
       distributionDefaults: API_DateDistributionDefaults
-  JobID: !include https://raw.githubusercontent.com/VEuPathDB/lib-hash-id/v1.1.0/schema/hash-id.raml
-  JobStatus:
-    type: string
-    enum:
-      - queued
-      - in-progress
-      - complete
-      - failed
-      - expired
-  JobResponse:
+  AlphaDivPluginRequest:
+    type: ComputeRequestBase
+    properties:
+      config: AlphaDivPluginConfig
+  AlphaDivPluginConfig:
     type: object
     additionalProperties: false
     properties:
-      jobID: JobID
-      status: JobStatus
-      queuePosition:
-        type: integer
-        required: false
-        format: int32
-  ComputeRequestBase:
-    type: object
+      outputEntityId: string
+      collectionVariable: VariableSpec
+      alphaDivMethod: AlphaDivMethod
+  AlphaDivMethod:
+    type: string
+    enum:
+      - shannon
+      - simpson
+      - evenness
+  BetaDivPluginRequest:
+    type: ComputeRequestBase
     properties:
-      studyId: string
-      filters:
-        type: array
-        required: false
-        items: API_Filter
-      derivedVariables:
-        type: array
-        items: DerivedVariable
+      config: BetaDivPluginConfig
+  BetaDivPluginConfig:
+    type: object
+    additionalProperties: false
+    properties:
+      outputEntityId: string
+      collectionVariable: VariableSpec
+      betaDivDistanceMethod: BetaDivDistanceMethod
+  BetaDivDistanceMethod:
+    type: string
+    enum:
+      - bray
+      - jaccard
+      - jsd
 
