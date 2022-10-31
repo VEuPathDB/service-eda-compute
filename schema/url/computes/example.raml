@@ -4,11 +4,14 @@ types:
   ExamplePluginRequest:
     type: ComputeRequestBase
     properties:
-      config: ExamplePluginConfig
+      config: ExampleComputeConfig
 
-  ExamplePluginConfig:
-    type: object
+  ExampleComputeConfig:
+    type: ComputeConfigBase
     properties:
-      outputEntityId: string
       inputVariable: VariableSpec
       valueSuffix: string
+
+  ExamplePluginStats:
+    properties:
+      numEmptyValues: integer
