@@ -113,7 +113,7 @@ dependencies {
 
   implementation("org.veupathdb.lib:jaxrs-container-core:6.8.0")
   implementation("org.veupathdb.service.eda:eda-common:$EdaCommonVersion")
-  implementation("org.veupathdb.lib:compute-platform:1.3.3")
+  implementation("org.veupathdb.lib:compute-platform:1.3.4")
 
   // Jersey
   implementation("org.glassfish.jersey.core:jersey-server:3.0.8")
