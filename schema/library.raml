@@ -7,25 +7,6 @@
 ################################################################################
 
 types:
-  BetaDivPluginRequest:
-    type: ComputeRequestBase
-    properties:
-      config: BetaDivComputeConfig
-  BetaDivComputeConfig:
-    type: ComputeConfigBase
-    properties:
-      collectionVariable: VariableSpec
-      betaDivDistanceMethod: BetaDivDistanceMethod
-  BetaDivDistanceMethod:
-    type: string
-    enum:
-      - bray
-      - jaccard
-      - jsd
-  BetaDivStats:
-    type: object
-    properties:
-      pcoaVariance: number[]
   ExamplePluginRequest:
     type: ComputeRequestBase
     properties:
@@ -264,6 +245,64 @@ types:
     discriminatorValue: date
     properties:
       distributionDefaults: API_DateDistributionDefaults
+  VariableClass:
+    type: string
+    enum:
+      - native
+      - derived
+      - computed
+  PlotReferenceValue:
+    type: string
+    enum:
+      - xAxis
+      - yAxis
+      - zAxis
+      - overlay
+      - facet1
+      - facet2
+      - geo
+      - latitude
+      - longitude
+  VariableMapping:
+    type: object
+    additionalProperties: false
+    properties:
+      variableClass: VariableClass
+      variableSpec: VariableSpec
+      plotReference: PlotReferenceValue
+      dataType: API_VariableType
+      dataShape: API_VariableDataShape
+      displayName?: string
+      displayRangeMin?: any
+      displayRangeMax?: any
+      vocabulary?: string[]
+      isCollection: boolean
+      imputeZero: boolean
+      members?: VariableSpec[]
+  EmptyResponse:
+    type: object
+    additionalProperties: false
+  VisualizationDataElementConstraint:
+    type: object
+    additionalProperties: false
+    properties:
+      isRequired: boolean
+      isTemporal: boolean
+      minNumVars: number
+      maxNumVars: number
+      minNumValues: number
+      maxNumValues: number
+      allowedTypes:
+        type: API_VariableType[]
+        required: false
+      allowedShapes:
+        type: API_VariableDataShape[]
+        required: false
+      description: string
+  VisualizationDataElementConstraintPattern:
+    type: object
+    properties:
+      //: VisualizationDataElementConstraint
   JobID: !include https://raw.githubusercontent.com/VEuPathDB/lib-hash-id/v1.1.0/schema/hash-id.raml
   JobStatus:
     type: string
@@ -298,40 +337,11 @@ types:
     type: object
     properties:
       outputEntityId: string
-  PlotReference:
-    type: object
-    additionalProperties: false
-    properties:
-      computedVariableId: string
-      variablePlotRef?: string
   ComputedVariableMetadata:
     type: object
     additionalProperties: false
     properties:
-      computedVariables: API_VariableWithValues[]
-      computedCollections: API_Collection[]
-      plotReferences: PlotReference[]
-  VisualizationDataElementConstraint:
-    type: object
-    additionalProperties: false
-    properties:
-      isRequired: boolean
-      isTemporal: boolean
-      minNumVars: number
-      maxNumVars: number
-      minNumValues: number
-      maxNumValues: number
-      allowedTypes:
-        type: API_VariableType[]
-        required: false
-      allowedShapes:
-        type: API_VariableDataShape[]
-        required: false
-      description: string
-  VisualizationDataElementConstraintPattern:
-    type: object
-    properties:
-      //: VisualizationDataElementConstraint
+      variables: VariableMapping[]
   API_Filter:
     type: object
     discriminator: type
@@ -586,4 +596,23 @@ types:
       - shannon
       - simpson
       - evenness
+  BetaDivPluginRequest:
+    type: ComputeRequestBase
+    properties:
+      config: BetaDivComputeConfig
+  BetaDivComputeConfig:
+    type: ComputeConfigBase
+    properties:
+      collectionVariable: VariableSpec
+      betaDivDistanceMethod: BetaDivDistanceMethod
+  BetaDivDistanceMethod:
+    type: string
+    enum:
+      - bray
+      - jaccard
+      - jsd
+  BetaDivStats:
+    type: object
+    properties:
+      pcoaVariance: number[]
 
