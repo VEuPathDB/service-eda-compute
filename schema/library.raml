@@ -7,59 +7,6 @@
 ################################################################################
 
 types:
-  BetaDivPluginRequest:
-    type: ComputeRequestBase
-    properties:
-      config: BetaDivComputeConfig
-  BetaDivComputeConfig:
-    type: ComputeConfigBase
-    properties:
-      collectionVariable: VariableSpec
-      betaDivDistanceMethod: BetaDivDistanceMethod
-  BetaDivDistanceMethod:
-    type: string
-    enum:
-      - bray
-      - jaccard
-      - jsd
-  BetaDivStats:
-    type: object
-    properties:
-      pcoaVariance: number[]
-  ExamplePluginRequest:
-    type: ComputeRequestBase
-    properties:
-      config: ExampleComputeConfig
-  ExampleComputeConfig:
-    type: ComputeConfigBase
-    properties:
-      inputVariable: VariableSpec
-      valueSuffix: string
-  ExamplePluginStats:
-    type: object
-    properties:
-      numEmptyValues: integer
-  RankedAbundancePluginRequest:
-    type: ComputeRequestBase
-    properties:
-      config: RankedAbundanceComputeConfig
-  RankedAbundanceComputeConfig:
-    type: ComputeConfigBase
-    properties:
-      collectionVariable: VariableSpec
-      rankingMethod: RankingMethod
-  RankingMethod:
-    type: string
-    enum:
-      - median
-      - q3
-      - variance
-      - max
-  RankedAbundanceStats:
-    type: object
-    additionalProperties: false
-    properties:
-      isCutoff: boolean
   PluginOverview:
     displayName: Plugin Overview
     type: object
@@ -68,6 +15,64 @@ types:
       name: string
       displayName: string
       description: string
+  VariableClass:
+    type: string
+    enum:
+      - native
+      - derived
+      - computed
+  PlotReferenceValue:
+    type: string
+    enum:
+      - xAxis
+      - yAxis
+      - zAxis
+      - overlay
+      - facet1
+      - facet2
+      - geo
+      - latitude
+      - longitude
+  VariableMapping:
+    type: object
+    additionalProperties: false
+    properties:
+      variableClass: VariableClass
+      variableSpec: VariableSpec
+      plotReference: PlotReferenceValue
+      dataType: API_VariableType
+      dataShape: API_VariableDataShape
+      displayName?: string
+      displayRangeMin?: any
+      displayRangeMax?: any
+      vocabulary?: string[]
+      isCollection: boolean
+      imputeZero: boolean
+      members?: VariableSpec[]
+  EmptyResponse:
+    type: object
+    additionalProperties: false
+  VisualizationDataElementConstraint:
+    type: object
+    additionalProperties: false
+    properties:
+      isRequired: boolean
+      isTemporal: boolean
+      minNumVars: number
+      maxNumVars: number
+      minNumValues: number
+      maxNumValues: number
+      allowedTypes:
+        type: API_VariableType[]
+        required: false
+      allowedShapes:
+        type: API_VariableDataShape[]
+        required: false
+      description: string
+  VisualizationDataElementConstraintPattern:
+    type: object
+    properties:
+      //: VisualizationDataElementConstraint
   JobID: !include https://raw.githubusercontent.com/VEuPathDB/lib-hash-id/v1.1.0/schema/hash-id.raml
   JobStatus:
     type: string
@@ -536,64 +541,6 @@ types:
     discriminatorValue: date
     properties:
       distributionDefaults: API_DateDistributionDefaults
-  VariableClass:
-    type: string
-    enum:
-      - native
-      - derived
-      - computed
-  PlotReferenceValue:
-    type: string
-    enum:
-      - xAxis
-      - yAxis
-      - zAxis
-      - overlay
-      - facet1
-      - facet2
-      - geo
-      - latitude
-      - longitude
-  VariableMapping:
-    type: object
-    additionalProperties: false
-    properties:
-      variableClass: VariableClass
-      variableSpec: VariableSpec
-      plotReference: PlotReferenceValue
-      dataType: API_VariableType
-      dataShape: API_VariableDataShape
-      displayName?: string
-      displayRangeMin?: any
-      displayRangeMax?: any
-      vocabulary?: string[]
-      isCollection: boolean
-      imputeZero: boolean
-      members?: VariableSpec[]
-  EmptyResponse:
-    type: object
-    additionalProperties: false
-  VisualizationDataElementConstraint:
-    type: object
-    additionalProperties: false
-    properties:
-      isRequired: boolean
-      isTemporal: boolean
-      minNumVars: number
-      maxNumVars: number
-      minNumValues: number
-      maxNumValues: number
-      allowedTypes:
-        type: API_VariableType[]
-        required: false
-      allowedShapes:
-        type: API_VariableDataShape[]
-        required: false
-      description: string
-  VisualizationDataElementConstraintPattern:
-    type: object
-    properties:
-      //: VisualizationDataElementConstraint
   AlphaDivPluginRequest:
     type: ComputeRequestBase
     properties:
@@ -609,4 +556,57 @@ types:
       - shannon
       - simpson
       - evenness
+  BetaDivPluginRequest:
+    type: ComputeRequestBase
+    properties:
+      config: BetaDivComputeConfig
+  BetaDivComputeConfig:
+    type: ComputeConfigBase
+    properties:
+      collectionVariable: VariableSpec
+      betaDivDistanceMethod: BetaDivDistanceMethod
+  BetaDivDistanceMethod:
+    type: string
+    enum:
+      - bray
+      - jaccard
+      - jsd
+  BetaDivStats:
+    type: object
+    properties:
+      pcoaVariance: number[]
+  ExamplePluginRequest:
+    type: ComputeRequestBase
+    properties:
+      config: ExampleComputeConfig
+  ExampleComputeConfig:
+    type: ComputeConfigBase
+    properties:
+      inputVariable: VariableSpec
+      valueSuffix: string
+  ExamplePluginStats:
+    type: object
+    properties:
+      numEmptyValues: integer
+  RankedAbundancePluginRequest:
+    type: ComputeRequestBase
+    properties:
+      config: RankedAbundanceComputeConfig
+  RankedAbundanceComputeConfig:
+    type: ComputeConfigBase
+    properties:
+      collectionVariable: VariableSpec
+      rankingMethod: RankingMethod
+  RankingMethod:
+    type: string
+    enum:
+      - median
+      - q3
+      - variance
+      - max
+  RankedAbundanceStats:
+    type: object
+    additionalProperties: false
+    properties:
+      isCutoff: boolean
 
