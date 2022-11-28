@@ -33,6 +33,11 @@ uses:
 
   /example:
     post:
+      queryParameters:
+        autostart:
+          type: boolean
+          required: false
+          default: true
       body:
         application/json: lib.ExamplePluginRequest
       responses:
@@ -55,6 +60,11 @@ uses:
 
   /betadiv:
     post:
+      queryParameters:
+        autostart:
+          type: boolean
+          required: false
+          default: true
       body:
         application/json: lib.BetaDivPluginRequest
       responses:
@@ -76,6 +86,11 @@ uses:
 
   /alphadiv:
     post:
+      queryParameters:
+        autostart:
+          type: boolean
+          required: false
+          default: true
       body:
         application/json: lib.AlphaDivPluginRequest
       responses:
@@ -97,6 +112,11 @@ uses:
 
   /rankedabundance:
     post:
+      queryParameters:
+        autostart:
+          type: boolean
+          required: false
+          default: true
       body:
         application/json: lib.RankedAbundancePluginRequest
       responses:
