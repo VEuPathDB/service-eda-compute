@@ -7,19 +7,6 @@
 ################################################################################
 
 types:
-  ExamplePluginRequest:
-    type: ComputeRequestBase
-    properties:
-      config: ExampleComputeConfig
-  ExampleComputeConfig:
-    type: ComputeConfigBase
-    properties:
-      inputVariable: VariableSpec
-      valueSuffix: string
-  ExamplePluginStats:
-    type: object
-    properties:
-      numEmptyValues: integer
   RankedAbundancePluginRequest:
     type: ComputeRequestBase
     properties:
@@ -610,4 +597,17 @@ types:
     type: object
     properties:
       pcoaVariance: number[]
+  ExamplePluginRequest:
+    type: ComputeRequestBase
+    properties:
+      config: ExampleComputeConfig
+  ExampleComputeConfig:
+    type: ComputeConfigBase
+    properties:
+      inputVariable: VariableSpec
+      valueSuffix: string
+  ExamplePluginStats:
+    type: object
+    properties:
+      numEmptyValues: integer
 
