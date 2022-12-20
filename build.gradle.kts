@@ -5,7 +5,7 @@ import java.net.URL
 plugins {
   kotlin("jvm") version "1.7.0"
   java
-  id("org.veupathdb.lib.gradle.container.container-utils") version "4.5.2"
+  id("org.veupathdb.lib.gradle.container.container-utils") version "4.6.0"
   id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
@@ -16,7 +16,7 @@ plugins {
 // ║                                                                         ║//
 // ╚═════════════════════════════════════════════════════════════════════════╝//
 
-val EdaCommonVersion = "10.0.0-beta1"
+val EdaCommonVersion = "10.0.0"
 val EdaCommonRAMLURL = "https://raw.githubusercontent.com/VEuPathDB/EdaCommon/v${EdaCommonVersion}/schema/library.raml"
 
 
@@ -104,21 +104,23 @@ configurations.all {
   }
 }
 
+val containerCore = "6.8.0"
+
 dependencies {
 
   implementation(kotlin("stdlib"))
   implementation(kotlin("stdlib-jdk7"))
   implementation(kotlin("stdlib-jdk8"))
 
-  implementation("org.veupathdb.lib:jaxrs-container-core:6.8.0")
+  implementation("org.veupathdb.lib:jaxrs-container-core:${containerCore}")
   implementation(findProject(":edaCommon") ?: "org.veupathdb.service.eda:eda-common:$EdaCommonVersion")
   implementation("org.veupathdb.lib:compute-platform:1.3.4")
 
   // Jersey
-  implementation("org.glassfish.jersey.core:jersey-server:3.0.8")
+  implementation("org.glassfish.jersey.core:jersey-server:3.1.0")
 
   // Pico CLI
-  implementation("info.picocli:picocli:4.6.3")
+  implementation("info.picocli:picocli:4.7.0")
 
   // Job IDs
   implementation("org.veupathdb.lib:hash-id:1.1.0")
