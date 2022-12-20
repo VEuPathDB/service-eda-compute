@@ -5,18 +5,18 @@ import java.net.URL
 plugins {
   kotlin("jvm") version "1.7.0"
   java
-  id("org.veupathdb.lib.gradle.container.container-utils") version "4.0.0"
+  id("org.veupathdb.lib.gradle.container.container-utils") version "4.6.0"
   id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 
 // ╔═════════════════════════════════════════════════════════════════════════╗//
 // ║                                                                         ║//
-// ║  Constants                                                              ║//
+// ║  EDA Common Management                                                  ║//
 // ║                                                                         ║//
 // ╚═════════════════════════════════════════════════════════════════════════╝//
 
-val EdaCommonVersion = "9.1.0"
+val EdaCommonVersion = "10.0.0"
 val EdaCommonRAMLURL = "https://raw.githubusercontent.com/VEuPathDB/EdaCommon/v${EdaCommonVersion}/schema/library.raml"
 
 
@@ -84,7 +84,6 @@ containerBuild {
 // ║                                                                         ║//
 // ╚═════════════════════════════════════════════════════════════════════════╝//
 
-
 repositories {
   mavenCentral()
   mavenLocal()
@@ -105,21 +104,23 @@ configurations.all {
   }
 }
 
+val containerCore = "6.8.0"
+
 dependencies {
 
   implementation(kotlin("stdlib"))
   implementation(kotlin("stdlib-jdk7"))
   implementation(kotlin("stdlib-jdk8"))
 
-  implementation("org.veupathdb.lib:jaxrs-container-core:6.8.0")
-  implementation("org.veupathdb.service.eda:eda-common:$EdaCommonVersion")
+  implementation("org.veupathdb.lib:jaxrs-container-core:${containerCore}")
+  implementation(findProject(":edaCommon") ?: "org.veupathdb.service.eda:eda-common:$EdaCommonVersion")
   implementation("org.veupathdb.lib:compute-platform:1.3.4")
 
   // Jersey
-  implementation("org.glassfish.jersey.core:jersey-server:3.0.8")
+  implementation("org.glassfish.jersey.core:jersey-server:3.1.0")
 
   // Pico CLI
-  implementation("info.picocli:picocli:4.6.3")
+  implementation("info.picocli:picocli:4.7.0")
 
   // Job IDs
   implementation("org.veupathdb.lib:hash-id:1.1.0")
@@ -199,5 +200,11 @@ tasks.shadowJar {
  * spits it out on STDOUT.
  */
 tasks.register("fetch-eda-common-schema") {
-  URL(EdaCommonRAMLURL).openStream().use { it.transferTo(System.out) }
+  // use local EdaCommon compiled schema if project exists, else use released version;
+  //    this mirrors the way we use local EdaCommon code library if available
+  val edaCommonLocalProjectDir = findProject(":edaCommon")?.projectDir
+  if (edaCommonLocalProjectDir != null)
+    File("${edaCommonLocalProjectDir}/schema/library.raml").inputStream().use { it.transferTo(System.out) }
+  else
+    URL(EdaCommonRAMLURL).openStream().use { it.transferTo(System.out) }
 }

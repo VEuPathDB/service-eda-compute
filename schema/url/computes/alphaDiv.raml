@@ -1,20 +1,18 @@
 #%RAML 1.0 Library
 
-uses:
-  req: ../computes.raml
-
 types:
-  AlphaDivPluginRequest:
-    type: req.ComputeRequestBase
-    properties:
-      config: AlphaDivPluginConfig
 
-  AlphaDivPluginConfig:
-    type: object
-    additionalProperties: false
+  AlphaDivPluginRequest:
+    type: ComputeRequestBase
     properties:
-      outputEntityId:
-        type: string
+      config: AlphaDivComputeConfig
+
+  # how do we want to ensure the collectionVariable is a collection variable?
+  # presumably the compute service will check and err
+  # but do we want to talk about constraints?
+  AlphaDivComputeConfig:
+    type: ComputeConfigBase
+    properties:
       collectionVariable: VariableSpec
       alphaDivMethod: AlphaDivMethod
 

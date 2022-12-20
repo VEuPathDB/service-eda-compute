@@ -1,23 +1,23 @@
 #%RAML 1.0 Library
 
-uses:
-  req: ../computes.raml
-
 types:
-  BetaDivPluginRequest:
-    type: req.ComputeRequestBase
-    properties:
-      config: BetaDivPluginConfig
 
-  BetaDivPluginConfig:
-    type: object
-    additionalProperties: false
+  BetaDivPluginRequest:
+    type: ComputeRequestBase
     properties:
-      outputEntityId:
-        type: string
+      config: BetaDivComputeConfig
+
+  BetaDivComputeConfig:
+    type: ComputeConfigBase
+    properties:
       collectionVariable: VariableSpec
       betaDivDistanceMethod: BetaDivDistanceMethod
 
   BetaDivDistanceMethod:
     type: string
+    # RD: what happened to these (were in data service)? 'unifrac', 'wunifrac', 'jensen-shannon'
     enum: ['bray', 'jaccard', 'jsd']
+
+  BetaDivStats:
+    properties:
+      pcoaVariance: number[]
