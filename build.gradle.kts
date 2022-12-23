@@ -16,7 +16,7 @@ plugins {
 // ║                                                                         ║//
 // ╚═════════════════════════════════════════════════════════════════════════╝//
 
-val EdaCommonVersion = "10.0.0"
+val EdaCommonVersion = "10.2.1"
 val EdaCommonRAMLURL = "https://raw.githubusercontent.com/VEuPathDB/EdaCommon/v${EdaCommonVersion}/schema/library.raml"
 
 
@@ -104,7 +104,7 @@ configurations.all {
   }
 }
 
-val containerCore = "6.8.0"
+val containerCore = "6.13.1"
 
 dependencies {
 
