@@ -7,53 +7,6 @@
 ################################################################################
 
 types:
-  AlphaDivPluginRequest:
-    type: ComputeRequestBase
-    properties:
-      config: AlphaDivComputeConfig
-  AlphaDivComputeConfig:
-    type: object
-    properties:
-      collectionVariable: VariableSpec
-      alphaDivMethod: AlphaDivMethod
-  AlphaDivMethod:
-    type: string
-    enum:
-      - shannon
-      - simpson
-      - evenness
-  BetaDivPluginRequest:
-    type: ComputeRequestBase
-    properties:
-      config: BetaDivComputeConfig
-  BetaDivComputeConfig:
-    type: object
-    properties:
-      collectionVariable: VariableSpec
-      betaDivDistanceMethod: BetaDivDistanceMethod
-  BetaDivDistanceMethod:
-    type: string
-    enum:
-      - bray
-      - jaccard
-      - jsd
-  BetaDivStats:
-    type: object
-    properties:
-      pcoaVariance: number[]
-  ExamplePluginRequest:
-    type: ComputeRequestBase
-    properties:
-      config: ExampleComputeConfig
-  ExampleComputeConfig:
-    type: object
-    properties:
-      inputVariable: VariableSpec
-      valueSuffix: string
-  ExamplePluginStats:
-    type: object
-    properties:
-      numEmptyValues: integer
   RankedAbundancePluginRequest:
     type: ComputeRequestBase
     properties:
@@ -617,4 +570,51 @@ types:
     discriminatorValue: date
     properties:
       distributionDefaults: API_DateDistributionDefaults
+  AlphaDivPluginRequest:
+    type: ComputeRequestBase
+    properties:
+      config: AlphaDivComputeConfig
+  AlphaDivComputeConfig:
+    type: object
+    properties:
+      collectionVariable: VariableSpec
+      alphaDivMethod: AlphaDivMethod
+  AlphaDivMethod:
+    type: string
+    enum:
+      - shannon
+      - simpson
+      - evenness
+  BetaDivPluginRequest:
+    type: ComputeRequestBase
+    properties:
+      config: BetaDivComputeConfig
+  BetaDivComputeConfig:
+    type: object
+    properties:
+      collectionVariable: VariableSpec
+      betaDivDistanceMethod: BetaDivDistanceMethod
+  BetaDivDistanceMethod:
+    type: string
+    enum:
+      - bray
+      - jaccard
+      - jsd
+  BetaDivStats:
+    type: object
+    properties:
+      pcoaVariance: number[]
+  ExamplePluginRequest:
+    type: ComputeRequestBase
+    properties:
+      config: ExampleComputeConfig
+  ExampleComputeConfig:
+    type: object
+    properties:
+      inputVariable: VariableSpec
+      valueSuffix: string
+  ExamplePluginStats:
+    type: object
+    properties:
+      numEmptyValues: integer
 

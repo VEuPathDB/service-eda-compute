@@ -5,7 +5,7 @@ import java.net.URL
 plugins {
   kotlin("jvm") version "1.7.0"
   java
-  id("org.veupathdb.lib.gradle.container.container-utils") version "4.6.0"
+  id("org.veupathdb.lib.gradle.container.container-utils") version "4.7.1"
   id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
@@ -16,7 +16,7 @@ plugins {
 // ║                                                                         ║//
 // ╚═════════════════════════════════════════════════════════════════════════╝//
 
-val EdaCommonVersion = "10.2.1"
+val EdaCommonVersion = "10.2.2"
 val EdaCommonRAMLURL = "https://raw.githubusercontent.com/VEuPathDB/EdaCommon/v${EdaCommonVersion}/schema/library.raml"
 
 
@@ -104,7 +104,7 @@ configurations.all {
   }
 }
 
-val containerCore = "6.13.1"
+val containerCore = "6.13.2"
 
 dependencies {
 
@@ -137,18 +137,18 @@ dependencies {
   implementation("org.veupathdb.lib:jackson-singleton:3.0.0")
 
   // FgpUtil
-  implementation("org.gusdb:fgputil-client:2.8.0-jakarta")
+  implementation("org.gusdb:fgputil-client:2.12.0-jakarta")
 
   // Prometheus Metrics
   implementation("io.prometheus:simpleclient:0.16.0")
   implementation("io.prometheus:simpleclient_common:0.16.0")
 
   // JUnit 5
-  testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
-  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
+  testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
+  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 
   // Mockito Test Mocking
-  testImplementation("org.mockito:mockito-core:4.8.0")
+  testImplementation("org.mockito:mockito-core:4.11.0")
 }
 
 
