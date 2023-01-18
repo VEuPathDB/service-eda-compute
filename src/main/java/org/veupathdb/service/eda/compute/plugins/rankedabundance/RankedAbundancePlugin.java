@@ -49,6 +49,7 @@ public class RankedAbundancePlugin extends AbstractPlugin<RankedAbundancePluginR
     VariableDef computeEntityIdVarSpec = util.getEntityIdVarSpec(entityId);
     String computeEntityIdColName = util.toColNameOrEmpty(computeEntityIdVarSpec);
     String method = computeConfig.getRankingMethod().getName();
+    Number numberVariablesReturned = computeConfig.getNumberVariablesReturned() != null ? computeConfig.getNumberVariablesReturned() : 10;
     HashMap<String, InputStream> dataStream = new HashMap<>();
     dataStream.put(INPUT_DATA, getWorkspace().openStream(INPUT_DATA));
     List<VariableDef> idColumns = new ArrayList<>();
@@ -81,8 +82,10 @@ public class RankedAbundancePlugin extends AbstractPlugin<RankedAbundancePluginR
                                                                           ",recordIdColumn=" + util.singleQuote(computeEntityIdColName) + 
                                                                           ",ancestorIdColumns=" + dotNotatedIdColumnsString +
                                                                           ",imputeZero=TRUE)");
-      connection.voidEval("abundanceDT <- rankedAbundance(abundDT, " +
-                                                          PluginUtil.singleQuote(method) + ")");
+      connection.voidEval("abundanceDT <- rankedAbundance(abundDT" +
+                                                          ",method=" + PluginUtil.singleQuote(method) +
+                                                          ",cutoff=" + numberVariablesReturned +
+                                                          ")");
       String dataCmd = "writeData(abundanceDT, NULL, TRUE)";
       String metaCmd = "writeMeta(abundanceDT, NULL, TRUE)";
 
