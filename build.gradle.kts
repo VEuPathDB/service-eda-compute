@@ -1,24 +1,14 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.veupathdb.lib.gradle.container.util.Logger.Level
+import java.io.FileOutputStream
 import java.net.URL
 
 plugins {
   kotlin("jvm") version "1.7.0"
   java
-  id("org.veupathdb.lib.gradle.container.container-utils") version "4.7.1"
+  id("org.veupathdb.lib.gradle.container.container-utils") version "4.8.0"
   id("com.github.johnrengelman.shadow") version "7.1.2"
 }
-
-
-// ╔═════════════════════════════════════════════════════════════════════════╗//
-// ║                                                                         ║//
-// ║  EDA Common Management                                                  ║//
-// ║                                                                         ║//
-// ╚═════════════════════════════════════════════════════════════════════════╝//
-
-val EdaCommonVersion = "10.2.2"
-val EdaCommonRAMLURL = "https://raw.githubusercontent.com/VEuPathDB/EdaCommon/v${EdaCommonVersion}/schema/library.raml"
-
 
 // ╔═════════════════════════════════════════════════════════════════════════╗//
 // ║                                                                         ║//
@@ -65,18 +55,46 @@ containerBuild {
     imageName = "eda-compute"
 
   }
+}
 
-  generateJaxRS {
-    // List of custom arguments to use in the jax-rs code generation command
-    // execution.
-    arguments = listOf(/*arg1, arg2, arg3*/)
+// ╔═════════════════════════════════════════════════════════════════════════╗//
+// ║                                                                         ║//
+// ║  JVM & Compile Configuration                                            ║//
+// ║                                                                         ║//
+// ╚═════════════════════════════════════════════════════════════════════════╝//
 
-    // Map of custom environment variables to set for the jax-rs code generation
-    // command execution.
-    environment = mapOf(/*Pair("env-key", "env-val"), Pair("env-key", "env-val")*/)
+java {
+  toolchain {
+    languageVersion.set(JavaLanguageVersion.of(17))
   }
 }
 
+kotlin {
+  jvmToolchain {
+    languageVersion.set(JavaLanguageVersion.of(17))
+  }
+}
+
+tasks.withType<KotlinCompile> {
+  kotlinOptions {
+    jvmTarget = "17"
+    freeCompilerArgs = listOf(
+      "-Xjvm-default=all"
+    )
+  }
+}
+
+
+// ╔═════════════════════════════════════════════════════════════════════════╗//
+// ║                                                                         ║//
+// ║  Task Configurations                                                    ║//
+// ║                                                                         ║//
+// ╚═════════════════════════════════════════════════════════════════════════╝//
+
+tasks.shadowJar {
+  exclude("**/Log4j2Plugins.dat")
+  archiveFileName.set("service.jar")
+}
 
 // ╔═════════════════════════════════════════════════════════════════════════╗//
 // ║                                                                         ║//
@@ -97,14 +115,49 @@ repositories {
   }
 }
 
+// project versions
+val containerCore = "6.13.2"
+val edaCommon =     "10.3.1"
+
+// use local EdaCommon compiled schema if project exists, else use released version;
+//    this mirrors the way we use local EdaCommon code if available
+val edaCommonLocalProjectDir = findProject(":edaCommon")?.projectDir
+val commonRamlOutFileName = "$projectDir/schema/eda-common-lib.raml"
+
+tasks.named("merge-raml") {
+  // Hook into merge-raml to download or fetch EDA Common RAML before merging
+  doFirst {
+    val commonRamlOutFile = File(commonRamlOutFileName)
+    commonRamlOutFile.delete()
+
+    // use local EdaCommon compiled schema if project exists, else use released version;
+    // this mirrors the way we use local EdaCommon code if available
+    if (edaCommonLocalProjectDir != null) {
+      val commonRamlFile = File("${edaCommonLocalProjectDir}/schema/library.raml")
+      logger.lifecycle("Copying file from ${commonRamlFile.path} to ${commonRamlOutFile.path}")
+      commonRamlFile.copyTo(commonRamlOutFile);
+    } else {
+      commonRamlOutFile.createNewFile();
+      val edaCommonRamlUrl = "https://raw.githubusercontent.com/VEuPathDB/EdaCommon/v${edaCommon}/schema/library.raml"
+      logger.lifecycle("Downloading file contents from $edaCommonRamlUrl")
+      URL(edaCommonRamlUrl).openStream().use { it.transferTo(FileOutputStream(commonRamlOutFile)) }
+    }
+  }
+
+  // After merge is complete, delete the EDA Common RAML from this project.
+  doLast {
+    logger.lifecycle("Deleting file $commonRamlOutFileName")
+    File(commonRamlOutFileName).delete()
+  }
+}
+
+// ensures changing and dynamic modules are never cached
 configurations.all {
   resolutionStrategy {
     cacheChangingModulesFor(0, TimeUnit.SECONDS)
     cacheDynamicVersionsFor(0, TimeUnit.SECONDS)
   }
 }
-
-val containerCore = "6.13.2"
 
 dependencies {
 
@@ -113,7 +166,7 @@ dependencies {
   implementation(kotlin("stdlib-jdk8"))
 
   implementation("org.veupathdb.lib:jaxrs-container-core:${containerCore}")
-  implementation(findProject(":edaCommon") ?: "org.veupathdb.service.eda:eda-common:$EdaCommonVersion")
+  implementation(findProject(":edaCommon") ?: "org.veupathdb.service.eda:eda-common:${edaCommon}")
   implementation("org.veupathdb.lib:compute-platform:1.3.4")
 
   // Jersey
@@ -149,62 +202,4 @@ dependencies {
 
   // Mockito Test Mocking
   testImplementation("org.mockito:mockito-core:4.11.0")
-}
-
-
-// ╔═════════════════════════════════════════════════════════════════════════╗//
-// ║                                                                         ║//
-// ║  JVM & Compile Configuration                                            ║//
-// ║                                                                         ║//
-// ╚═════════════════════════════════════════════════════════════════════════╝//
-
-
-java {
-  toolchain {
-    languageVersion.set(JavaLanguageVersion.of(17))
-  }
-}
-
-kotlin {
-  jvmToolchain {
-    languageVersion.set(JavaLanguageVersion.of(17))
-  }
-}
-
-tasks.withType<KotlinCompile> {
-  kotlinOptions {
-    jvmTarget = "17"
-    freeCompilerArgs = listOf(
-      "-Xjvm-default=all"
-    )
-  }
-}
-
-
-// ╔═════════════════════════════════════════════════════════════════════════╗//
-// ║                                                                         ║//
-// ║  Task Configurations                                                    ║//
-// ║                                                                         ║//
-// ╚═════════════════════════════════════════════════════════════════════════╝//
-
-
-tasks.shadowJar {
-  exclude("**/Log4j2Plugins.dat")
-  archiveFileName.set("service.jar")
-}
-
-/**
- * Fetch EDA Common Schema
- *
- * Custom task that fetches the contents of the EDA Common RAML library file and
- * spits it out on STDOUT.
- */
-tasks.register("fetch-eda-common-schema") {
-  // use local EdaCommon compiled schema if project exists, else use released version;
-  //    this mirrors the way we use local EdaCommon code library if available
-  val edaCommonLocalProjectDir = findProject(":edaCommon")?.projectDir
-  if (edaCommonLocalProjectDir != null)
-    File("${edaCommonLocalProjectDir}/schema/library.raml").inputStream().use { it.transferTo(System.out) }
-  else
-    URL(EdaCommonRAMLURL).openStream().use { it.transferTo(System.out) }
 }
