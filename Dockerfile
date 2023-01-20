@@ -17,8 +17,6 @@ RUN apk add --no-cache git sed findutils coreutils make npm curl gawk jq \
 
 RUN npm install -gs raml2html raml2html-modern-theme
 
-ENV DOCKER=build
-
 # download gradle
 COPY gradlew ./
 COPY gradle gradle
