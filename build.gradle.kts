@@ -116,8 +116,8 @@ repositories {
 }
 
 // project versions
-val containerCore = "6.13.2"
-val edaCommon =     "10.3.1"
+val containerCore = "6.14.1"
+val edaCommon =     "10.3.2"
 
 // use local EdaCommon compiled schema if project exists, else use released version;
 //    this mirrors the way we use local EdaCommon code if available
