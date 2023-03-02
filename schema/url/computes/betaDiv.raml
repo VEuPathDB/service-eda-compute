@@ -10,9 +10,9 @@ types:
   BetaDivComputeConfig:
     properties:
       collectionVariable: VariableSpec
-      betaDivDistanceMethod: BetaDivDistanceMethod
+      betaDivDissimilarityMethod: BetaDivDissimilarityMethod
 
-  BetaDivDistanceMethod:
+  BetaDivDissimilarityMethod:
     type: string
     # RD: what happened to these (were in data service)? 'unifrac', 'wunifrac', 'jensen-shannon'
     enum: ['bray', 'jaccard', 'jsd']
