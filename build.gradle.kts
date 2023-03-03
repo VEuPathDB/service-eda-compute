@@ -6,7 +6,7 @@ import java.net.URL
 plugins {
   kotlin("jvm") version "1.7.0"
   java
-  id("org.veupathdb.lib.gradle.container.container-utils") version "4.8.2"
+  id("org.veupathdb.lib.gradle.container.container-utils") version "4.8.3"
   id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
@@ -116,8 +116,8 @@ repositories {
 }
 
 // project versions
-val containerCore = "6.14.1"
-val edaCommon =     "10.3.2"
+val containerCore = "6.14.2"
+val edaCommon =     "10.3.4"
 
 // use local EdaCommon compiled schema if project exists, else use released version;
 //    this mirrors the way we use local EdaCommon code if available
@@ -190,7 +190,7 @@ dependencies {
   implementation("org.veupathdb.lib:jackson-singleton:3.0.0")
 
   // FgpUtil
-  implementation("org.gusdb:fgputil-client:2.12.0-jakarta")
+  implementation("org.gusdb:fgputil-client:2.12.3-jakarta")
 
   // Prometheus Metrics
   implementation("io.prometheus:simpleclient:0.16.0")
