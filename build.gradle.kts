@@ -116,8 +116,8 @@ repositories {
 }
 
 // project versions
-val containerCore = "6.14.3"
-val edaCommon =     "10.4.0"
+val containerCore = "6.14.4"
+val edaCommon =     "10.5.0"
 
 // use local EdaCommon compiled schema if project exists, else use released version;
 //    this mirrors the way we use local EdaCommon code if available
@@ -167,13 +167,13 @@ dependencies {
 
   implementation("org.veupathdb.lib:jaxrs-container-core:${containerCore}")
   implementation(findProject(":edaCommon") ?: "org.veupathdb.service.eda:eda-common:${edaCommon}")
-  implementation("org.veupathdb.lib:compute-platform:1.3.6")
+  implementation("org.veupathdb.lib:compute-platform:1.5.0")
 
   // Jersey
-  implementation("org.glassfish.jersey.core:jersey-server:3.1.0")
+  implementation("org.glassfish.jersey.core:jersey-server:3.1.1")
 
   // Pico CLI
-  implementation("info.picocli:picocli:4.7.0")
+  implementation("info.picocli:picocli:4.7.1")
 
   // Job IDs
   implementation("org.veupathdb.lib:hash-id:1.1.0")
@@ -183,14 +183,14 @@ dependencies {
 
   // Logging
   implementation("org.slf4j:slf4j-api:1.7.36")
-  implementation("org.apache.logging.log4j:log4j-core:2.19.0")
-  runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:2.19.0")
+  implementation("org.apache.logging.log4j:log4j-core:2.20.0")
+  runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:2.20.0")
 
   // Jackson
   implementation("org.veupathdb.lib:jackson-singleton:3.0.0")
 
   // FgpUtil
-  implementation("org.gusdb:fgputil-client:2.12.3-jakarta")
+  implementation("org.gusdb:fgputil-client:2.12.6-jakarta")
 
   // Prometheus Metrics
   implementation("io.prometheus:simpleclient:0.16.0")
@@ -201,5 +201,5 @@ dependencies {
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 
   // Mockito Test Mocking
-  testImplementation("org.mockito:mockito-core:4.11.0")
+  testImplementation("org.mockito:mockito-core:5.2.0")
 }
