@@ -66,7 +66,8 @@ types:
       dataType: API_VariableType
       dataShape: API_VariableDataShape
       displayName?: string
-      displayRange?: LabeledValueRange
+      displayRangeMin?: any
+      displayRangeMax?: any
       vocabulary?: string[]
       imputeZero: boolean
       isCollection: boolean
@@ -187,7 +188,7 @@ types:
       dataShape: API_VariableDataShape
       vocabulary?: string[]
       units?: string
-      dataRange?: LabeledValueRange
+      dataRange?: Range
       #precision: number
       #binWidth?: number
       #distinctValuesCount: integer
@@ -234,13 +235,22 @@ types:
   EmptyResponse:
     type: object
     additionalProperties: false
-  LabeledValueRange:
+  Range:
     type: object
     additionalProperties: false
     properties:
-      label: string
       min: string
       max: string
+  LabeledRange:
+    type: Range
+    additionalProperties: false
+    properties:
+      label: string
+  LabeledRangeWithValue:
+    type: LabeledRange
+    additionalProperties: false
+    properties:
+      value: number
   StudiesGetResponse:
     type: object
     additionalProperties: false
