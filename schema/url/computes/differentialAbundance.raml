@@ -10,16 +10,23 @@ types:
   DifferentialAbundanceComputeConfig:
     properties:
       collectionVariable: VariableSpec
-      comparisonVariable: VariableSpec
-      differentialAbundanceGroupA: string[]
-      differentialAbundanceGroupB: string[]
+      comparator: ComparatorSpec
       differentialAbundanceMethod: DifferentialAbundanceMethod
 
   DifferentialAbundanceMethod:
     type: string
     enum: ['DESeq','ANCOMBC']
 
-  # TODO: fill in to match the code in R
+  ComparatorSpec:
+    type: object
+    properties:
+      variable: VariableSpec
+      groupA: string[]
+      groupB: string[]
+
   DifferentialAbundanceStatsResponse:
     properties:
-      someStats: object
+      log2foldChange: string[]
+      pValue: string[]
+      adjustedPValue: string[]
+      pointId: string[]
