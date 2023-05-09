@@ -149,18 +149,14 @@ uses:
         200:
           body:
             application/json: lib.JobResponse
-    /{file}:
-      uriParameters:
-        file:
-          type: string
-          description: MUST be one of "meta", "tabular", "statistics".
+    /statistics:
       post:
         body:
           application/json: lib.DifferentialAbundancePluginRequest
         responses:
           200:
             body:
-              text/plain: any
+              application/json: lib.DifferentialAbundanceStatsResponse
 
   # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
   #                                                                           #
