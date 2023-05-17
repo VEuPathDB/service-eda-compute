@@ -6,7 +6,7 @@ import java.net.URL
 plugins {
   kotlin("jvm") version "1.7.0"
   java
-  id("org.veupathdb.lib.gradle.container.container-utils") version "4.8.3"
+  id("org.veupathdb.lib.gradle.container.container-utils") version "4.8.5"
   id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
@@ -117,7 +117,7 @@ repositories {
 
 // project versions
 val containerCore = "6.14.4"
-val edaCommon =     "10.5.1"
+val edaCommon =     "10.6.1"
 
 // use local EdaCommon compiled schema if project exists, else use released version;
 //    this mirrors the way we use local EdaCommon code if available
