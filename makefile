@@ -80,6 +80,14 @@ jar: build/libs/service.jar
 docker:
 	./gradlew build-docker --stacktrace
 
+.PHONY: docker-release
+docker-release:
+	@docker build \
+		-t veupathdb/eda-compute \
+		--build-arg=GITHUB_USERNAME=${GITHUB_USERNAME} \
+		--build-arg=GITHUB_TOKEN=${GITHUB_TOKEN} \
+		.
+
 #
 # File based targets
 #
