@@ -36,4 +36,4 @@ await "${QUEUE_DB_HOST}" "${QUEUE_DB_PORT}" || exit 1
 echo "Testing connectivity to Minio"
 await "${S3_HOST}" "${S3_PORT}" || exit 1
 
-java -jar -XX:+CrashOnOutOfMemoryError $JVM_MEM_ARGS $JVM_ARGS /service.jar
+java -jar -XX:+HeapDumpOnOutOfMemoryError $JVM_MEM_ARGS $JVM_ARGS /service.jar
