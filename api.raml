@@ -11,9 +11,8 @@ uses:
   lib: schema/library.raml
 
 #
-# Example Endpoints
+# Top-level endpoint returns list of compute options and serves as a parent to plugin endpoints
 #
-
 /computes:
   displayName: Available Plugins
   get:
@@ -164,6 +163,25 @@ uses:
   #                                                                           #
   # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+/expire-compute-jobs:
+  get:
+    description: Expire jobs based on criteria
+    queryParameters:
+      job-id:
+        type: string
+      study-id:
+        type: string
+      plugin-name:
+        type: string
+      admin-auth-token:
+        type: string
+    responses:
+      200:
+        body:
+          application/json:
+            type: lib.ExpiredJobsResponse
+
+# NOTE: jobs endpoint is NOT publicly exposed for this service
 /jobs:
   /{job-id}:
     uriParameters:
