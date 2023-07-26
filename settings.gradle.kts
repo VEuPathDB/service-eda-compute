@@ -3,7 +3,7 @@ apply {
   from("https://raw.githubusercontent.com/VEuPathDB/lib-gradle-container-utils/v4.8.9/includes/common.settings.gradle.kts")
 }
 
-val edaCommon = file("../EdaCommon");
+val edaCommon = file("../EdaCommon")
 if (edaCommon.exists()) {
   include(":edaCommon")
   project(":edaCommon").projectDir = edaCommon
