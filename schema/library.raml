@@ -576,6 +576,29 @@ types:
     type: object
     properties:
       pcoaVariance: number[]
+  CorrelationPluginRequest:
+    type: ComputeRequestBase
+    properties:
+      config: CorrelationComputeConfig
+  CorrelationComputeConfig:
+    type: object
+    properties:
+      collectionVariable: VariableSpec
+      correlationMethod: CorrelationMethod
+  CorrelationMethod:
+    type: string
+    enum:
+      - spearman
+      - pearson
+  CorrelationStatsResponse: CorrelationResult[]
+  CorrelationResult:
+    type: object
+    properties:
+      var1: string
+      var2: string
+      correlationCoef: string
+      pValue: string
+      adjustedPValue: string
   DifferentialAbundancePluginRequest:
     type: ComputeRequestBase
     properties:

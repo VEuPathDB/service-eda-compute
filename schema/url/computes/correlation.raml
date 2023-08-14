@@ -1,0 +1,29 @@
+#%RAML 1.0 Library
+
+types:
+
+  CorrelationPluginRequest:
+    type: ComputeRequestBase
+    properties:
+      config: CorrelationComputeConfig
+
+  CorrelationComputeConfig:
+    properties:
+      collectionVariable: VariableSpec
+      correlationMethod: CorrelationMethod
+
+  CorrelationMethod:
+    type: string
+    enum: ['spearman','pearson']
+
+  CorrelationStatsResponse:
+    type: CorrelationResult[]
+
+  CorrelationResult:
+    type: object
+    properties:
+      var1: string
+      var2: string
+      correlationCoef: string
+      pValue: string
+      adjustedPValue: string
