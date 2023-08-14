@@ -17,12 +17,9 @@ types:
     enum: ['spearman','pearson']
 
   CorrelationStatsResponse:
-    type: CorrelationResult[]
-
-  CorrelationResult:
-    properties:
-      var1: string
-      var2: string
-      correlationCoef: string
-      pValue: string
-      adjustedPValue: string
+    properties: 
+      var1: string[]
+      var2: string[]
+      correlationCoef: string[]
+      pValue: string[]
+      adjustedPValue: string[]

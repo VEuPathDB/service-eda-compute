@@ -590,15 +590,14 @@ types:
     enum:
       - spearman
       - pearson
-  CorrelationStatsResponse: CorrelationResult[]
-  CorrelationResult:
+  CorrelationStatsResponse:
     type: object
     properties:
-      var1: string
-      var2: string
-      correlationCoef: string
-      pValue: string
-      adjustedPValue: string
+      var1: string[]
+      var2: string[]
+      correlationCoef: string[]
+      pValue: string[]
+      adjustedPValue: string[]
   DifferentialAbundancePluginRequest:
     type: ComputeRequestBase
     properties:
