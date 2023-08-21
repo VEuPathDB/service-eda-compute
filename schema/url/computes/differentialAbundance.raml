@@ -21,8 +21,8 @@ types:
     type: object
     properties:
       variable: VariableSpec
-      groupA: string[]
-      groupB: string[]
+      groupA: BinRange[]
+      groupB: BinRange[]
 
   DifferentialAbundanceStatsResponse:
     properties:
@@ -30,3 +30,12 @@ types:
       pValue: string[]
       adjustedPValue: string[]
       pointId: string[]
+
+# Not the same as LabeledRange from EdaCommon
+# Taken from data service (should move to common)
+  BinRange:
+    additionalProperties: false
+    properties:
+      binStart: string
+      binEnd: string
+      binLabel: string
