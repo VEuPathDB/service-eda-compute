@@ -6,7 +6,7 @@ import java.net.URL
 plugins {
   kotlin("jvm") version "1.7.0"
   java
-  id("org.veupathdb.lib.gradle.container.container-utils") version "4.8.5"
+  id("org.veupathdb.lib.gradle.container.container-utils") version "4.8.9"
   id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
@@ -116,8 +116,8 @@ repositories {
 }
 
 // project versions
-val containerCore = "6.15.2"
-val edaCommon =     "10.6.1"
+val containerCore = "6.16.0"
+val edaCommon =     "10.9.0"
 
 // use local EdaCommon compiled schema if project exists, else use released version;
 //    this mirrors the way we use local EdaCommon code if available
@@ -135,9 +135,9 @@ tasks.named("merge-raml") {
     if (edaCommonLocalProjectDir != null) {
       val commonRamlFile = File("${edaCommonLocalProjectDir}/schema/library.raml")
       logger.lifecycle("Copying file from ${commonRamlFile.path} to ${commonRamlOutFile.path}")
-      commonRamlFile.copyTo(commonRamlOutFile);
+      commonRamlFile.copyTo(commonRamlOutFile)
     } else {
-      commonRamlOutFile.createNewFile();
+      commonRamlOutFile.createNewFile()
       val edaCommonRamlUrl = "https://raw.githubusercontent.com/VEuPathDB/EdaCommon/v${edaCommon}/schema/library.raml"
       logger.lifecycle("Downloading file contents from $edaCommonRamlUrl")
       URL(edaCommonRamlUrl).openStream().use { it.transferTo(FileOutputStream(commonRamlOutFile)) }
@@ -173,7 +173,7 @@ dependencies {
   implementation("org.glassfish.jersey.core:jersey-server:3.1.1")
 
   // Pico CLI
-  implementation("info.picocli:picocli:4.7.1")
+  implementation("info.picocli:picocli:4.7.3")
 
   // Job IDs
   implementation("org.veupathdb.lib:hash-id:1.1.0")
@@ -190,7 +190,7 @@ dependencies {
   implementation("org.veupathdb.lib:jackson-singleton:3.0.0")
 
   // FgpUtil
-  implementation("org.gusdb:fgputil-client:2.12.6-jakarta")
+  implementation("org.gusdb:fgputil-client:2.12.9-jakarta")
 
   // Prometheus Metrics
   implementation("io.prometheus:simpleclient:0.16.0")
