@@ -116,7 +116,7 @@ repositories {
 }
 
 // project versions
-val containerCore = "6.15.3"
+val containerCore = "6.16.0"
 val edaCommon =     "11.1.0"
 
 // use local EdaCommon compiled schema if project exists, else use released version;
@@ -190,7 +190,7 @@ dependencies {
   implementation("org.veupathdb.lib:jackson-singleton:3.0.0")
 
   // FgpUtil
-  implementation("org.gusdb:fgputil-client:2.12.6-jakarta")
+  implementation("org.gusdb:fgputil-client:2.12.9-jakarta")
 
   // Prometheus Metrics
   implementation("io.prometheus:simpleclient:0.16.0")
