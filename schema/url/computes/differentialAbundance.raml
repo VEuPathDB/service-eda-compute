@@ -9,13 +9,13 @@ types:
 
   DifferentialAbundanceComputeConfig:
     properties:
-      collectionVariable: VariableSpec
+      collectionVariable: CollectionSpec
       comparator: ComparatorSpec
       differentialAbundanceMethod: DifferentialAbundanceMethod
 
   DifferentialAbundanceMethod:
     type: string
-    enum: ['DESeq','ANCOMBC']
+    enum: ['DESeq','ANCOMBC','Maaslin']
 
   ComparatorSpec:
     type: object
