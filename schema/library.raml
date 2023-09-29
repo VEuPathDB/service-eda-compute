@@ -660,13 +660,18 @@ types:
       variable: VariableSpec
       groupA: LabeledRange[]
       groupB: LabeledRange[]
-  DifferentialAbundanceStatsResponse:
+  DifferentialAbundanceStats:
     type: object
     properties:
-      log2foldChange: string[]
+      effectSize: string[]
       pValue: string[]
       adjustedPValue: string[]
       pointId: string[]
+  DifferentialAbundanceStatsResponse:
+    type: object
+    properties:
+      effectSizeLabel: string
+      statistics: DifferentialAbundanceStats
   ExamplePluginRequest:
     type: ComputeRequestBase
     properties:
