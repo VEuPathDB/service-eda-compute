@@ -9,13 +9,13 @@ types:
 
   DifferentialAbundanceComputeConfig:
     properties:
-      collectionVariable: VariableSpec
+      collectionVariable: CollectionSpec
       comparator: ComparatorSpec
       differentialAbundanceMethod: DifferentialAbundanceMethod
 
   DifferentialAbundanceMethod:
     type: string
-    enum: ['DESeq','ANCOMBC']
+    enum: ['DESeq','ANCOMBC','Maaslin']
 
   ComparatorSpec:
     type: object
@@ -24,9 +24,14 @@ types:
       groupA: LabeledRange[]
       groupB: LabeledRange[]
 
-  DifferentialAbundanceStatsResponse:
+  DifferentialAbundanceStats:
     properties:
-      log2foldChange: string[]
+      effectSize: string[]
       pValue: string[]
       adjustedPValue: string[]
       pointId: string[]
+
+  DifferentialAbundanceStatsResponse:
+    properties:
+      effectSizeLabel: string
+      statistics: DifferentialAbundanceStats
