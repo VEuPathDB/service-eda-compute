@@ -113,6 +113,8 @@ getWorkspace().openReader("foobar")
 getWorkspace().readAsString("foobar")
 ----
 
+==== Validating Inputs ====
+Compute plugins may want to declare constraints on the types of inputs they can take. This can be declared in the plugin's `PluginProvider` implementation in the `getConstraintSpec` method. These constraints get exposed in the `/computes` endpoint which enables clients to determine validity of inputs.
 
 === Output Data
 

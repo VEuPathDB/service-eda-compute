@@ -213,6 +213,10 @@ types:
     properties:
       isRequired: boolean
       isTemporal: boolean
+      isCollection: boolean
+      isCompositional: boolean
+      isProportion: boolean
+      allowedNormalizationMethods: string[]
       minNumVars: number
       maxNumVars: number
       minNumValues: number
@@ -714,6 +718,7 @@ types:
       name: string
       displayName: string
       description: string
+      dataElementConstraints?: DataElementConstraintPattern[]
   ExpiredJobsResponse:
     type: object
     properties:
