@@ -12,6 +12,7 @@ types:
       collectionVariable: CollectionSpec
       comparator: ComparatorSpec
       differentialAbundanceMethod: DifferentialAbundanceMethod
+      pValueFloor: string
 
   DifferentialAbundanceMethod:
     type: string
@@ -35,3 +36,9 @@ types:
     properties:
       effectSizeLabel: string
       statistics: DifferentialAbundanceStats
+      pvalueFloor: 
+        type: string
+        required: false
+      adjustedPValueFloor: 
+        type: string
+        required: false
