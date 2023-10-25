@@ -656,6 +656,9 @@ types:
       collectionVariable: CollectionSpec
       comparator: ComparatorSpec
       differentialAbundanceMethod: DifferentialAbundanceMethod
+      pValueFloor:
+        type: string
+        required: false
   DifferentialAbundanceMethod:
     type: string
     enum:
@@ -680,6 +683,12 @@ types:
     properties:
       effectSizeLabel: string
       statistics: DifferentialAbundanceStats
+      pvalueFloor:
+        type: string
+        required: false
+      adjustedPValueFloor:
+        type: string
+        required: false
   ExamplePluginRequest:
     type: ComputeRequestBase
     properties:
