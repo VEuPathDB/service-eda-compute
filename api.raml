@@ -165,7 +165,7 @@ uses:
           required: false
           default: true
       body:
-        application/json: lib.CorrelationPluginRequest
+        application/json: lib.CorrelationAssayMetadataPluginRequest
       responses:
         200:
           body:
@@ -173,7 +173,7 @@ uses:
     /statistics:
       post:
         body:
-          application/json: lib.CorrelationPluginRequest
+          application/json: lib.CorrelationAssayMetadataPluginRequest
         responses:
           200:
             body:

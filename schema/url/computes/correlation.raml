@@ -2,29 +2,36 @@
 
 types:
 
-  CorrelationPluginRequest:
-    type: ComputeRequestBase
-    properties:
-      config: CorrelationComputeConfig
-
   CorrelationComputeConfig:
     properties:
-      collectionVariable1: 
-        type: CollectionSpec
-        required: false
-      collectionVariable2:
-        type: CollectionSpec
-        required: false
       correlationMethod: CorrelationMethod
 
   CorrelationMethod:
     type: string
     enum: ['spearman','pearson']
 
+  Correlation1Collection:
+    type: CorrelationComputeConfig
+    properties: 
+      collectionVariable: CollectionSpec
+
+  Correlation2Collections:
+    type: CorrelationComputeConfig
+    properties: 
+      collectionVariable1: CollectionSpec
+      collectionVariable2: CollectionSpec
+
+  CorrelationAssayMetadataPluginRequest:
+    type: ComputeRequestBase
+    properties:
+      config: Correlation1Collection
+
   CorrelationStatsResponse:
-    type: array
-    items:
-      type: CorrelationPoint
+    additionalProperties: false
+    properties:
+      statistics: CorrelationPoint[]
+      data1Metadata: string
+      data2Metadata: string
 
   CorrelationPoint:
     properties: 
