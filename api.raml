@@ -157,6 +157,28 @@ uses:
             body:
               application/json: lib.DifferentialAbundanceStatsResponse
 
+  /correlationassaymetadata:
+    post:
+      queryParameters:
+        autostart:
+          type: boolean
+          required: false
+          default: true
+      body:
+        application/json: lib.CorrelationAssayMetadataPluginRequest
+      responses:
+        200:
+          body:
+            application/json: lib.JobResponse
+    /statistics:
+      post:
+        body:
+          application/json: lib.CorrelationAssayMetadataPluginRequest
+        responses:
+          200:
+            body:
+              application/json: lib.CorrelationStatsResponse
+
   # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
   #                                                                           #
   #  End Plugin Endpoint Definitions                                          #
