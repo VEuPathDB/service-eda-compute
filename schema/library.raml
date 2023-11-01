@@ -256,6 +256,7 @@ types:
     additionalProperties: false
     properties:
       value: number
+  DynamicDataSpec: CollectionSpec | VariableSpec
   StudiesGetResponse:
     type: object
     additionalProperties: false
@@ -298,6 +299,7 @@ types:
     properties:
       id: string
       isUserStudy: boolean
+      hasMap: boolean
       rootEntity: API_Entity
   API_Entity:
     type: EntityIdGetResponse
@@ -317,6 +319,8 @@ types:
         format: int64
       memberVariableIds: string[]
       imputeZero: boolean
+      hasStudyDependentVocabulary?: boolean
+      variableSpecToImputeZeroesFor?: VariableSpec
       normalizationMethod: string
       isCompositional: boolean
       isProportion: boolean
@@ -695,6 +699,9 @@ types:
       collectionVariable: CollectionSpec
       comparator: ComparatorSpec
       differentialAbundanceMethod: DifferentialAbundanceMethod
+      pValueFloor:
+        type: string
+        required: false
   DifferentialAbundanceMethod:
     type: string
     enum:
@@ -719,6 +726,12 @@ types:
     properties:
       effectSizeLabel: string
       statistics: DifferentialAbundanceStats
+      pvalueFloor:
+        type: string
+        required: false
+      adjustedPValueFloor:
+        type: string
+        required: false
   ExamplePluginRequest:
     type: ComputeRequestBase
     properties:
@@ -761,6 +774,7 @@ types:
       name: string
       displayName: string
       description: string
+      dataElementConstraints?: DataElementConstraintPattern[]
   ExpiredJobsResponse:
     type: object
     properties:
