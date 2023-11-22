@@ -157,6 +157,29 @@ uses:
             body:
               application/json: lib.DifferentialAbundanceStatsResponse
 
+  /correlationassayassay:
+    post:
+      queryParameters:
+        autostart:
+          type: boolean
+          required: false
+          default: true
+      body:
+        application/json: lib.CorrelationAssayAssayPluginRequest
+      responses:
+        200:
+          body:
+            application/json: lib.JobResponse
+    /statistics:
+      post:
+        body:
+          application/json: lib.CorrelationAssayAssayPluginRequest
+        responses:
+          200:
+            body:
+              application/json: lib.CorrelationStatsResponse
+
+
   /correlationassaymetadata:
     post:
       queryParameters:
