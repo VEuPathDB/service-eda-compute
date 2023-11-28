@@ -4,7 +4,7 @@ import java.io.FileOutputStream
 import java.net.URL
 
 plugins {
-  kotlin("jvm") version "1.7.0"
+  kotlin("jvm") version "1.9.20"
   java
   id("org.veupathdb.lib.gradle.container.container-utils") version "4.8.9"
   id("com.github.johnrengelman.shadow") version "7.1.2"
@@ -167,7 +167,7 @@ dependencies {
 
   implementation("org.veupathdb.lib:jaxrs-container-core:${containerCore}")
   implementation(findProject(":edaCommon") ?: "org.veupathdb.service.eda:eda-common:${edaCommon}")
-  implementation("org.veupathdb.lib:compute-platform:1.5.3")
+  implementation("org.veupathdb.lib:compute-platform:1.6.1")
 
   // Jersey
   implementation("org.glassfish.jersey.core:jersey-server:3.1.1")
