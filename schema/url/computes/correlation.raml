@@ -21,6 +21,23 @@ types:
       collectionVariable1: CollectionSpec
       collectionVariable2: CollectionSpec
 
+  # for future use, but so we think about it now
+  CorrelationAssaySelfPluginRequest:
+    type: ComputeRequestBase
+    properties:
+      config: Correlation1Collection
+
+  # for future use, but so we think about it now
+  CorrelationMetadataSelfPluginRequest:
+    type: ComputeRequestBase
+    properties:
+      config: CorrelationComputeConfig
+
+  CorrelationAssayAssayPluginRequest:
+    type: ComputeRequestBase
+    properties:
+      config: Correlation2Collections
+
   CorrelationAssayMetadataPluginRequest:
     type: ComputeRequestBase
     properties:
