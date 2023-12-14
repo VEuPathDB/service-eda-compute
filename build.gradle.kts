@@ -167,7 +167,7 @@ dependencies {
 
   implementation("org.veupathdb.lib:jaxrs-container-core:${containerCore}")
   implementation(findProject(":edaCommon") ?: "org.veupathdb.service.eda:eda-common:${edaCommon}")
-  implementation("org.veupathdb.lib:compute-platform:1.6.1")
+  implementation("org.veupathdb.lib:compute-platform:1.6.2")
 
   // Jersey
   implementation("org.glassfish.jersey.core:jersey-server:3.1.1")
