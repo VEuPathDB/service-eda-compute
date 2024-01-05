@@ -8,3 +8,12 @@ if (edaCommon.exists()) {
   include(":edaCommon")
   project(":edaCommon").projectDir = edaCommon
 }
+
+//val libComputePlatform = file("../lib-compute-platform")
+//val libComputePlatformLib = file("../lib-compute-platform/lib")
+//if (libComputePlatform.exists()) {
+//  include(":libComputePlatform")
+//  project(":libComputePlatform").projectDir = libComputePlatform
+//  include(":libComputePlatformLib")
+//  project(":libComputePlatformLib").projectDir =libComputePlatformLib
+//}
