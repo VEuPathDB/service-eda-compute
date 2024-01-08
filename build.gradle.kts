@@ -116,7 +116,7 @@ repositories {
 }
 
 // project versions
-val containerCore = "6.16.0"
+val containerCore = "6.20.0"
 val edaCommon =     "11.6.6"
 
 // use local EdaCommon compiled schema if project exists, else use released version;
@@ -167,7 +167,7 @@ dependencies {
 
   implementation("org.veupathdb.lib:jaxrs-container-core:${containerCore}")
   implementation(findProject(":edaCommon") ?: "org.veupathdb.service.eda:eda-common:${edaCommon}")
-  implementation("org.veupathdb.lib:compute-platform:1.6.2")
+  implementation(findProject(":libComputePlatform") ?: "org.veupathdb.lib:compute-platform:1.7.0")
 
   // Jersey
   implementation("org.glassfish.jersey.core:jersey-server:3.1.1")

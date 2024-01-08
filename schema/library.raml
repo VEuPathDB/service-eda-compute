@@ -778,6 +778,15 @@ types:
     additionalProperties: false
     properties:
       isCutoff: boolean
+  InternalJob:
+    type: object
+    properties:
+      jobId: JobID
+      status: JobStatus
+      owned: boolean
+      created: datetime
+      grabbed: datetime
+      finished: datetime
   PluginOverview:
     displayName: Plugin Overview
     type: object
