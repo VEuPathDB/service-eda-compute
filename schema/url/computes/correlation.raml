@@ -2,9 +2,21 @@
 
 types:
 
+  FeaturePrefilterThresholds:
+    additionalProperties: false
+    properties:
+      proportionNonZero: 
+        type: number # should be between 0 and 1 inclusive
+      variance:
+        type: number # should be 0 or greater
+      standardDeviation:
+        type: number # should be 0 or greater
+
   CorrelationComputeConfig:
     properties:
       correlationMethod: CorrelationMethod
+      prefilterThresholds: FeaturePrefilterThresholds
+
 
   CorrelationMethod:
     type: string
