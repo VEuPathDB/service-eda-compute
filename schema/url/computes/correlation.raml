@@ -5,17 +5,17 @@ types:
   FeaturePrefilterThresholds:
     additionalProperties: false
     properties:
-      proportionNonZero: 
+      proportionNonZero?: 
         type: number # should be between 0 and 1 inclusive
-      variance:
+      variance?:
         type: number # should be 0 or greater
-      standardDeviation:
+      standardDeviation?:
         type: number # should be 0 or greater
 
   CorrelationComputeConfig:
     properties:
       correlationMethod: CorrelationMethod
-      prefilterThresholds: FeaturePrefilterThresholds
+      prefilterThresholds?: FeaturePrefilterThresholds
 
 
   CorrelationMethod:

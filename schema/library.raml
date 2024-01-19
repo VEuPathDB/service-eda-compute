@@ -650,14 +650,14 @@ types:
     type: object
     additionalProperties: false
     properties:
-      proportionNonZero: number
-      variance: number
-      standardDeviation: number
+      proportionNonZero?: number
+      variance?: number
+      standardDeviation?: number
   CorrelationComputeConfig:
     type: object
     properties:
       correlationMethod: CorrelationMethod
-      prefilterThresholds: FeaturePrefilterThresholds
+      prefilterThresholds?: FeaturePrefilterThresholds
   CorrelationMethod:
     type: string
     enum:
