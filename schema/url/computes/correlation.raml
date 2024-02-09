@@ -17,6 +17,13 @@ types:
       correlationMethod: CorrelationMethod
       prefilterThresholds?: FeaturePrefilterThresholds
 
+  CorrelationAssaySelfConfig:
+    properties:
+      correlationMethod: 
+        type: string
+        enum: ['spearman','pearson','sparcc']
+      prefilterThresholds?: FeaturePrefilterThresholds
+      collectionVariable: CollectionSpec
 
   CorrelationMethod:
     type: string
@@ -33,11 +40,10 @@ types:
       collectionVariable1: CollectionSpec
       collectionVariable2: CollectionSpec
 
-  # for future use, but so we think about it now
   CorrelationAssaySelfPluginRequest:
     type: ComputeRequestBase
     properties:
-      config: Correlation1Collection
+      config: CorrelationAssaySelfConfig
 
   # for future use, but so we think about it now
   CorrelationMetadataSelfPluginRequest:
