@@ -202,6 +202,28 @@ uses:
             body:
               application/json: lib.CorrelationStatsResponse
 
+  /correlationassayself:
+    post:
+      queryParameters:
+        autostart:
+          type: boolean
+          required: false
+          default: true
+      body:
+        application/json: lib.CorrelationAssaySelfPluginRequest
+      responses:
+        200:
+          body:
+            application/json: lib.JobResponse
+    /statistics:
+      post:
+        body:
+          application/json: lib.CorrelationAssaySelfPluginRequest
+        responses:
+          200:
+            body:
+              application/json: lib.CorrelationStatsResponse
+
   # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
   #                                                                           #
   #  End Plugin Endpoint Definitions                                          #
