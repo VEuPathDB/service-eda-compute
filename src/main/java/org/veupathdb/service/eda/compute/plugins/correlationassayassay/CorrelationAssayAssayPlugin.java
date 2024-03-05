@@ -6,6 +6,7 @@ import org.gusdb.fgputil.ListBuilder;
 import org.gusdb.fgputil.json.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 import org.veupathdb.service.eda.common.client.spec.StreamSpec;
+import org.veupathdb.service.eda.common.model.CollectionDef;
 import org.veupathdb.service.eda.common.model.EntityDef;
 import org.veupathdb.service.eda.common.model.ReferenceMetadata;
 import org.veupathdb.service.eda.common.model.VariableDef;
@@ -132,6 +133,8 @@ public class CorrelationAssayAssayPlugin extends AbstractPlugin<CorrelationAssay
     VariableDef parentEntityIdVarSpec = util.getEntityIdVarSpec(parentEntity.getId());
     VariableSpec computeEntityIdVarSpec = isSameEntity ? entity1IdVarSpec : parentEntityIdVarSpec;
     String computeEntityIdColName = util.toColNameOrEmpty(computeEntityIdVarSpec);
+    CollectionDef collection1 = metadata.getCollection(assay1).orElseThrow();
+    CollectionDef collection2 = metadata.getCollection(assay2).orElseThrow();
 
     // Get record id columns
     List<VariableDef> entity1AncestorIdColumns = new ArrayList<>();
@@ -173,41 +176,60 @@ public class CorrelationAssayAssayPlugin extends AbstractPlugin<CorrelationAssay
       List<String> dotNotatedEntity2IdColumns = entity2AncestorIdColumns.stream().map(VariableDef::toDotNotation).toList();
       String dotNotatedEntity2IdColumnsString = util.listToRVector(dotNotatedEntity2IdColumns);
             
-      
-      // Format inputs for R
-      // !!!!!!! TEMPORARY HACK !!!!!!!
-      // This to let the negative values seen in wgcna eigengenes play in mbio-land until we get a better solution
-      // see https://github.com/VEuPathDB/microbiomeComputations/issues/81
-      connection.voidEval("assay1DataIdColNames <- names(assay1Data)[grepl('stable_id', names(assay1Data))]");
-      connection.voidEval("assay1DataIds <- assay1Data[,assay1DataIdColNames, with=FALSE]");
-      connection.voidEval("assay1Data <- plyr::numcolwise(veupathUtils::shiftToNonNeg)(assay1Data)");      
-      connection.voidEval("assay1Data[,assay1DataIdColNames] <- assay1DataIds");
-      
-      connection.voidEval("assay2DataIdColNames <- names(assay2Data)[grepl('stable_id', names(assay2Data))]");
-      connection.voidEval("assay2DataIds <- assay2Data[,assay2DataIdColNames, with=FALSE]");
-      connection.voidEval("assay2Data <- plyr::numcolwise(veupathUtils::shiftToNonNeg)(assay2Data)");
-      connection.voidEval("assay2Data[,assay2DataIdColNames] <- assay2DataIds");
+      // are we mbio stuffs or eigengene?
+      // presumably as we support more types in the future, this logic will become more complicated?
+      // might even involve subclassing plugins?
+      // i think we cross that bridge when we get there and know more.. 
+      // NOTE: getMember tells us the member type, rather than gives us a literal member
+      String collection1MemberType = collection1.getMember() == null ? "unknown" : collection1.getMember();
+      String collection2MemberType = collection2.getMember() == null ? "unknown" : collection2.getMember();
+      boolean isEigengene = false;
+      // If either collection is an eigengene, we'll use our base correlation function in veupathUtils,
+      // so we want to set the isEigengene flag to true.
+      if (collection1MemberType.contains("Eigengene") || collection2MemberType.contains("Eigengene")) {
+        isEigengene = true;
+      }      
 
-      connection.voidEval("data1 <- AbundanceData(data=assay1Data" + 
-                                ", recordIdColumn=" + singleQuote(computeEntityIdColName) +
-                                ", ancestorIdColumns=as.character(" + dotNotatedEntity1IdColumnsString + ")" +
-                                ", imputeZero=TRUE)");
-      
-      connection.voidEval("data2 <- AbundanceData(data = assay2Data" +
-                                ", recordIdColumn=" + singleQuote(computeEntityIdColName) +
-                                ", ancestorIdColumns=as.character(" + dotNotatedEntity2IdColumnsString + ")" +
-                                ", imputeZero=TRUE)");
-      
-      // Run correlation!
-      connection.voidEval("computeResult <- microbiomeComputations::correlation(data1=data1, data2=data2" +
-                                                          ", method=" + singleQuote(method) +
-                                                          proportionNonZeroThresholdRParam +
-                                                          varianceThresholdRParam +
-                                                          stdDevThresholdRParam +
-                                                          ", verbose=TRUE)");
+      // Prep data and run correlation
+      if (isEigengene) {
+        // If we have eigenegene data, we'll use our base correlation function in veupathUtils, so we
+        // only need to make data frames for the assay data and sample metadata.
+        connection.voidEval("data1 <- assay1Data; " + 
+          "data1 <- data1[order(" + computeEntityIdColName + ")]; " + 
+          "data1 <- data1[, -as.character(" + dotNotatedEntity1IdColumnsString + "), with=FALSE];" +
+          "data1 <- data1[, -" + singleQuote(computeEntityIdColName) + ", with=FALSE]");
 
+        connection.voidEval("data2 <- assay2Data; " +
+          "data2 <- data2[order(" + computeEntityIdColName + ")]; " + 
+          "data2 <- data2[, -as.character(" + dotNotatedEntity2IdColumnsString + "), with=FALSE];" +
+          "data2 <- data2[, -" + singleQuote(computeEntityIdColName) + ", with=FALSE]");
 
-      String statsCmd = "writeStatistics(computeResult, NULL, TRUE)";
+        connection.voidEval("computeResult <- veupathUtils::correlation(data1=data1, data2=data2" +
+                                                            ", method=" + singleQuote(method) +
+                                                            ", verbose=TRUE)");
+      } else {
+        // If we don't have eigengene data, for now we can assume the data is abundance data.
+        // Abundance data can go through our microbiomeComputations pipeline.
+        connection.voidEval("data1 <- microbiomeComputations::AbundanceData(data=assay1Data" + 
+                                  ", recordIdColumn=" + singleQuote(computeEntityIdColName) +
+                                  ", ancestorIdColumns=as.character(" + dotNotatedEntity1IdColumnsString + ")" +
+                                  ", imputeZero=TRUE)");
+      
+        connection.voidEval("data2 <- microbiomeComputations::AbundanceData(data = assay2Data" +
+                                  ", recordIdColumn=" + singleQuote(computeEntityIdColName) +
+                                  ", ancestorIdColumns=as.character(" + dotNotatedEntity2IdColumnsString + ")" +
+                                  ", imputeZero=TRUE)");
+
+        // Run correlation!
+        connection.voidEval("computeResult <- veupathUtils::correlation(data1=data1, data2=data2" +
+                                                            ", method=" + singleQuote(method) +
+                                                            proportionNonZeroThresholdRParam +
+                                                            varianceThresholdRParam +
+                                                            stdDevThresholdRParam +
+                                                            ", verbose=TRUE)");
+      }
+      
+      String statsCmd = "veupathUtils::writeStatistics(computeResult, NULL, TRUE)";
 
       getWorkspace().writeStatisticsResult(connection, statsCmd);
     });
