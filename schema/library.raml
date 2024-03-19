@@ -648,6 +648,11 @@ types:
     type: object
     properties:
       pcoaVariance: number[]
+  CorrelationMethod:
+    type: string
+    enum:
+      - spearman
+      - pearson
   FeaturePrefilterThresholds:
     type: object
     additionalProperties: false
@@ -655,52 +660,30 @@ types:
       proportionNonZero?: number
       variance?: number
       standardDeviation?: number
-  CorrelationComputeConfig:
+  BaseCorrelationComputeConfig:
     type: object
     properties:
       correlationMethod: CorrelationMethod
       prefilterThresholds?: FeaturePrefilterThresholds
-  CorrelationAssaySelfConfig:
-    type: object
-    properties:
-      correlationMethod:
-        type: string
-        enum:
-          - spearman
-          - pearson
-          - sparcc
-      prefilterThresholds?: FeaturePrefilterThresholds
-      collectionVariable: CollectionSpec
-  CorrelationMethod:
-    type: string
-    enum:
-      - spearman
-      - pearson
   Correlation1Collection:
-    type: CorrelationComputeConfig
+    type: BaseCorrelationComputeConfig
     properties:
       collectionVariable: CollectionSpec
   Correlation2Collections:
-    type: CorrelationComputeConfig
+    type: BaseCorrelationComputeConfig
     properties:
       collectionVariable1: CollectionSpec
       collectionVariable2: CollectionSpec
-  CorrelationAssaySelfPluginRequest:
+  CorrelationConfig: Correlation1Collection | Correlation2Collections
+  CorrelationPluginRequest:
     type: ComputeRequestBase
     properties:
-      config: CorrelationAssaySelfConfig
-  CorrelationMetadataSelfPluginRequest:
+      config: CorrelationConfig
+  SelfCorrelationConfig: Correlation1Collection
+  SelfCorrelationPluginRequest:
     type: ComputeRequestBase
     properties:
-      config: CorrelationComputeConfig
-  CorrelationAssayAssayPluginRequest:
-    type: ComputeRequestBase
-    properties:
-      config: Correlation2Collections
-  CorrelationAssayMetadataPluginRequest:
-    type: ComputeRequestBase
-    properties:
-      config: Correlation1Collection
+      config: SelfCorrelationConfig
   CorrelationStatsResponse:
     type: object
     additionalProperties: false
