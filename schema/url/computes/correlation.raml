@@ -2,6 +2,10 @@
 
 types:
 
+  CorrelationMethod:
+    type: string
+    enum: ['spearman','pearson']
+
   FeaturePrefilterThresholds:
     additionalProperties: false
     properties:
@@ -12,54 +16,37 @@ types:
       standardDeviation?:
         type: number # should be 0 or greater
 
-  CorrelationComputeConfig:
+  BaseCorrelationComputeConfig:
     properties:
       correlationMethod: CorrelationMethod
       prefilterThresholds?: FeaturePrefilterThresholds
 
-  CorrelationAssaySelfConfig:
-    properties:
-      correlationMethod: 
-        type: string
-        enum: ['spearman','pearson','sparcc']
-      prefilterThresholds?: FeaturePrefilterThresholds
-      collectionVariable: CollectionSpec
-
-  CorrelationMethod:
-    type: string
-    enum: ['spearman','pearson']
-
   Correlation1Collection:
-    type: CorrelationComputeConfig
+    type: BaseCorrelationComputeConfig
     properties: 
       collectionVariable: CollectionSpec
 
   Correlation2Collections:
-    type: CorrelationComputeConfig
+    type: BaseCorrelationComputeConfig
     properties: 
       collectionVariable1: CollectionSpec
       collectionVariable2: CollectionSpec
 
-  CorrelationAssaySelfPluginRequest:
-    type: ComputeRequestBase
-    properties:
-      config: CorrelationAssaySelfConfig
+  CorrelationConfig: Correlation1Collection | Correlation2Collections
 
-  # for future use, but so we think about it now
-  CorrelationMetadataSelfPluginRequest:
+  # if one collection is passed, assume the second thing is metadata
+  CorrelationPluginRequest:
     type: ComputeRequestBase
     properties:
-      config: CorrelationComputeConfig
+      config: CorrelationConfig
 
-  CorrelationAssayAssayPluginRequest:
-    type: ComputeRequestBase
-    properties:
-      config: Correlation2Collections
+  SelfCorrelationConfig: Correlation1Collection # | BaseCorrelationComputeConfig when we have metadata by self
 
-  CorrelationAssayMetadataPluginRequest:
+  # if no collection is passed, assume its a metadata self correlation
+  SelfCorrelationPluginRequest:
     type: ComputeRequestBase
     properties:
-      config: Correlation1Collection
+      config: SelfCorrelationConfig
 
   CorrelationStatsResponse:
     additionalProperties: false
