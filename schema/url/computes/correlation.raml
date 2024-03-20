@@ -21,18 +21,11 @@ types:
       correlationMethod: CorrelationMethod
       prefilterThresholds?: FeaturePrefilterThresholds
 
-  Correlation1Collection:
+  CorrelationConfig:
     type: BaseCorrelationComputeConfig
     properties: 
       collectionVariable: CollectionSpec
-
-  Correlation2Collections:
-    type: BaseCorrelationComputeConfig
-    properties: 
-      collectionVariable1: CollectionSpec
-      collectionVariable2: CollectionSpec
-
-  CorrelationConfig: Correlation1Collection | Correlation2Collections
+      collectionVariable2?: CollectionSpec
 
   # if one collection is passed, assume the second thing is metadata
   CorrelationPluginRequest:
@@ -40,7 +33,10 @@ types:
     properties:
       config: CorrelationConfig
 
-  SelfCorrelationConfig: Correlation1Collection # | BaseCorrelationComputeConfig when we have metadata by self
+  SelfCorrelationConfig:
+    type: BaseCorrelationComputeConfig
+    properties:
+      collectionVariable?: CollectionSpec
 
   # if no collection is passed, assume its a metadata self correlation
   SelfCorrelationPluginRequest:
