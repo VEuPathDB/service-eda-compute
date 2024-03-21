@@ -665,21 +665,19 @@ types:
     properties:
       correlationMethod: CorrelationMethod
       prefilterThresholds?: FeaturePrefilterThresholds
-  Correlation1Collection:
+  CorrelationConfig:
     type: BaseCorrelationComputeConfig
     properties:
       collectionVariable: CollectionSpec
-  Correlation2Collections:
-    type: BaseCorrelationComputeConfig
-    properties:
-      collectionVariable1: CollectionSpec
-      collectionVariable2: CollectionSpec
-  CorrelationConfig: Correlation1Collection | Correlation2Collections
+      collectionVariable2?: CollectionSpec
   CorrelationPluginRequest:
     type: ComputeRequestBase
     properties:
       config: CorrelationConfig
-  SelfCorrelationConfig: Correlation1Collection
+  SelfCorrelationConfig:
+    type: BaseCorrelationComputeConfig
+    properties:
+      collectionVariable?: CollectionSpec
   SelfCorrelationPluginRequest:
     type: ComputeRequestBase
     properties:
