@@ -36,7 +36,7 @@ types:
   SelfCorrelationConfig:
     type: BaseCorrelationComputeConfig
     properties:
-      collectionVariable?: CollectionSpec
+      collectionVariable: CollectionSpec #someday if we do metadata X metadata, make this optional
 
   # if no collection is passed, assume its a metadata self correlation
   SelfCorrelationPluginRequest:

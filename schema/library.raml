@@ -677,7 +677,7 @@ types:
   SelfCorrelationConfig:
     type: BaseCorrelationComputeConfig
     properties:
-      collectionVariable?: CollectionSpec
+      collectionVariable: CollectionSpec #someday if we do metadata X metadata, make this optional
   SelfCorrelationPluginRequest:
     type: ComputeRequestBase
     properties:
