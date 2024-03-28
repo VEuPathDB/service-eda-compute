@@ -14,7 +14,7 @@ import java.util.Map;
     "prefilterThresholds",
     "collectionVariable"
 })
-public class Correlation1CollectionImpl implements Correlation1Collection {
+public class SelfCorrelationConfigImpl implements SelfCorrelationConfig {
   @JsonProperty("correlationMethod")
   private CorrelationMethod correlationMethod;
 

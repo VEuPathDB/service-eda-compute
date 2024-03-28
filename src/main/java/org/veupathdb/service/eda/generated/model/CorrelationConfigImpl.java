@@ -12,11 +12,12 @@ import java.util.Map;
 @JsonPropertyOrder({
     "correlationMethod",
     "prefilterThresholds",
-    "collectionVariable"
+    "collectionVariable",
+    "collectionVariable2"
 })
-public class CorrelationAssaySelfConfigImpl implements CorrelationAssaySelfConfig {
+public class CorrelationConfigImpl implements CorrelationConfig {
   @JsonProperty("correlationMethod")
-  private CorrelationAssaySelfConfig.CorrelationMethodType correlationMethod;
+  private CorrelationMethod correlationMethod;
 
   @JsonProperty("prefilterThresholds")
   private FeaturePrefilterThresholds prefilterThresholds;
@@ -24,17 +25,19 @@ public class CorrelationAssaySelfConfigImpl implements CorrelationAssaySelfConfi
   @JsonProperty("collectionVariable")
   private CollectionSpec collectionVariable;
 
+  @JsonProperty("collectionVariable2")
+  private CollectionSpec collectionVariable2;
+
   @JsonIgnore
   private Map<String, Object> additionalProperties = new ExcludingMap();
 
   @JsonProperty("correlationMethod")
-  public CorrelationAssaySelfConfig.CorrelationMethodType getCorrelationMethod() {
+  public CorrelationMethod getCorrelationMethod() {
     return this.correlationMethod;
   }
 
   @JsonProperty("correlationMethod")
-  public void setCorrelationMethod(
-      CorrelationAssaySelfConfig.CorrelationMethodType correlationMethod) {
+  public void setCorrelationMethod(CorrelationMethod correlationMethod) {
     this.correlationMethod = correlationMethod;
   }
 
@@ -56,6 +59,16 @@ public class CorrelationAssaySelfConfigImpl implements CorrelationAssaySelfConfi
   @JsonProperty("collectionVariable")
   public void setCollectionVariable(CollectionSpec collectionVariable) {
     this.collectionVariable = collectionVariable;
+  }
+
+  @JsonProperty("collectionVariable2")
+  public CollectionSpec getCollectionVariable2() {
+    return this.collectionVariable2;
+  }
+
+  @JsonProperty("collectionVariable2")
+  public void setCollectionVariable2(CollectionSpec collectionVariable2) {
+    this.collectionVariable2 = collectionVariable2;
   }
 
   @JsonAnyGetter

@@ -1,4 +1,4 @@
-package org.veupathdb.service.eda.compute.plugins.correlationassayself;
+package org.veupathdb.service.eda.compute.plugins.selfcorrelation;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,8 +14,8 @@ import org.veupathdb.service.eda.common.plugin.util.PluginUtil;
 import org.veupathdb.service.eda.compute.RServe;
 import org.veupathdb.service.eda.compute.plugins.AbstractPlugin;
 import org.veupathdb.service.eda.compute.plugins.PluginContext;
-import org.veupathdb.service.eda.generated.model.CorrelationAssaySelfConfig;
-import org.veupathdb.service.eda.generated.model.CorrelationAssaySelfPluginRequest;
+import org.veupathdb.service.eda.generated.model.SelfCorrelationConfig;
+import org.veupathdb.service.eda.generated.model.SelfCorrelationPluginRequest;
 import org.veupathdb.service.eda.generated.model.FeaturePrefilterThresholds;
 import org.veupathdb.service.eda.generated.model.VariableSpec;
 import org.veupathdb.service.eda.generated.model.APIVariableDataShape;
@@ -30,12 +30,12 @@ import java.util.List;
 
 import static org.veupathdb.service.eda.common.plugin.util.PluginUtil.singleQuote;
 
-public class CorrelationAssaySelfPlugin extends AbstractPlugin<CorrelationAssaySelfPluginRequest, CorrelationAssaySelfConfig> {
-  private static final Logger LOG = LogManager.getLogger(CorrelationAssaySelfPlugin.class);
+public class SelfCorrelationPlugin extends AbstractPlugin<SelfCorrelationPluginRequest, SelfCorrelationConfig> {
+  private static final Logger LOG = LogManager.getLogger(SelfCorrelationPlugin.class);
 
   private static final String ASSAY_DATA = "assayData";
 
-  public CorrelationAssaySelfPlugin(@NotNull PluginContext<CorrelationAssaySelfPluginRequest, CorrelationAssaySelfConfig> context) {
+  public SelfCorrelationPlugin(@NotNull PluginContext<SelfCorrelationPluginRequest, SelfCorrelationConfig> context) {
     super(context);
   }
 
@@ -43,7 +43,7 @@ public class CorrelationAssaySelfPlugin extends AbstractPlugin<CorrelationAssayS
   @Override
   public List<StreamSpec> getStreamSpecs() {
     // Get the collection variable and its entity
-    CorrelationAssaySelfConfig computeConfig = getConfig();
+    SelfCorrelationConfig computeConfig = getConfig();
     CollectionSpec assay = computeConfig.getCollectionVariable();
 
     return List.of(
@@ -55,7 +55,7 @@ public class CorrelationAssaySelfPlugin extends AbstractPlugin<CorrelationAssayS
   @Override
   protected void execute() {
 
-    CorrelationAssaySelfConfig computeConfig = getConfig();
+    SelfCorrelationConfig computeConfig = getConfig();
     PluginUtil util = getUtil();
     ReferenceMetadata metadata = getContext().getReferenceMetadata();
 
