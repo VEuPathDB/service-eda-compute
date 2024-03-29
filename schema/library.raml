@@ -665,11 +665,21 @@ types:
     properties:
       correlationMethod: CorrelationMethod
       prefilterThresholds?: FeaturePrefilterThresholds
+  CorrelationInputDataTypes:
+    type: string
+    enum:
+      - metadata
+      - collection
+  CorrelationInputData:
+    type: object
+    properties:
+      dataType: CorrelationInputDataTypes
+      collectionSpec?: CollectionSpec
   CorrelationConfig:
     type: BaseCorrelationComputeConfig
     properties:
-      collectionVariable: CollectionSpec
-      collectionVariable2?: CollectionSpec
+      data1: CorrelationInputData
+      data2: CorrelationInputData
   CorrelationPluginRequest:
     type: ComputeRequestBase
     properties:

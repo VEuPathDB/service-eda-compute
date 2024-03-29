@@ -21,11 +21,23 @@ types:
       correlationMethod: CorrelationMethod
       prefilterThresholds?: FeaturePrefilterThresholds
 
+
+  CorrelationInputDataTypes:
+    type: string
+    enum: ["metadata","collection"]
+
+# If metadata isn't a collection, then we shouldn't be forcing correlation to use collections
+# as the input. It should be an option of a data type.
+  CorrelationInputData:
+    properties: 
+      dataType: CorrelationInputDataTypes
+      collectionSpec?: CollectionSpec
+
   CorrelationConfig:
     type: BaseCorrelationComputeConfig
     properties: 
-      collectionVariable: CollectionSpec
-      collectionVariable2?: CollectionSpec
+      data1: CorrelationInputData
+      data2: CorrelationInputData
 
   # if one collection is passed, assume the second thing is metadata
   CorrelationPluginRequest:
