@@ -3,7 +3,6 @@ package org.veupathdb.service.eda.compute.plugins.betadiv;
 import org.gusdb.fgputil.ListBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.veupathdb.service.eda.common.client.spec.StreamSpec;
-import org.veupathdb.service.eda.common.model.CollectionDef;
 import org.veupathdb.service.eda.common.model.EntityDef;
 import org.veupathdb.service.eda.common.model.ReferenceMetadata;
 import org.veupathdb.service.eda.common.model.VariableDef;
@@ -44,8 +43,6 @@ public class BetaDivPlugin extends AbstractPlugin<BetaDivPluginRequest, BetaDivC
     BetaDivComputeConfig computeConfig = getConfig();
     PluginUtil util = getUtil();
     ReferenceMetadata meta = getContext().getReferenceMetadata();
-    CollectionDef collection = meta.getCollection(computeConfig.getCollectionVariable()).orElseThrow();
-    String collectionMemberType = collection.getMember() == null ? "unknown" : collection.getMember();
     String entityId = computeConfig.getCollectionVariable().getEntityId();
     EntityDef entity = meta.getEntity(entityId).orElseThrow();
     VariableDef computeEntityIdVarSpec = util.getEntityIdVarSpec(entityId);
@@ -79,7 +76,7 @@ public class BetaDivPlugin extends AbstractPlugin<BetaDivPluginRequest, BetaDivC
       }
       dotNotatedIdColumnsString = dotNotatedIdColumnsString + ")";
 
-      connection.voidEval("abundDT <- microbiomeData::AbundanceData(name=" + singleQuote(collectionMemberType) + ",data=" + INPUT_DATA + 
+      connection.voidEval("abundDT <- microbiomeData::AbundanceData(data=" + INPUT_DATA + 
                                                                           ",recordIdColumn=" + singleQuote(computeEntityIdColName) +
                                                                           ",ancestorIdColumns=as.character(" + dotNotatedIdColumnsString + ")" +
                                                                           ",imputeZero=TRUE)");
