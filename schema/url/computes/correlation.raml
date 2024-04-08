@@ -6,6 +6,10 @@ types:
     type: string
     enum: ['spearman','pearson']
 
+  SelfCorrelationMethod:
+    type: string
+    enum: ['spearman','pearson','sparcc']
+
   FeaturePrefilterThresholds:
     additionalProperties: false
     properties:
@@ -18,16 +22,14 @@ types:
 
   BaseCorrelationComputeConfig:
     properties:
-      correlationMethod: CorrelationMethod
       prefilterThresholds?: FeaturePrefilterThresholds
-
 
   CorrelationInputDataTypes:
     type: string
     enum: ["metadata","collection"]
 
-# If metadata isn't a collection, then we shouldn't be forcing correlation to use collections
-# as the input. It should be an option of a data type.
+  # If metadata isn't a collection, then we shouldn't be forcing correlation to use collections
+  # as the input. It should be an option of a data type.
   CorrelationInputData:
     properties: 
       dataType: CorrelationInputDataTypes
@@ -36,6 +38,7 @@ types:
   CorrelationConfig:
     type: BaseCorrelationComputeConfig
     properties: 
+      correlationMethod: CorrelationMethod
       data1: CorrelationInputData
       data2: CorrelationInputData
 
@@ -48,9 +51,9 @@ types:
   SelfCorrelationConfig:
     type: BaseCorrelationComputeConfig
     properties:
-      collectionVariable: CollectionSpec #someday if we do metadata X metadata, make this optional
+      correlationMethod: SelfCorrelationMethod
+      data1: CollectionSpec #someday if we do metadata X metadata, make this CorrelationInputData
 
-  # if no collection is passed, assume its a metadata self correlation
   SelfCorrelationPluginRequest:
     type: ComputeRequestBase
     properties:
