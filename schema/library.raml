@@ -653,6 +653,12 @@ types:
     enum:
       - spearman
       - pearson
+  SelfCorrelationMethod:
+    type: string
+    enum:
+      - spearman
+      - pearson
+      - sparcc
   FeaturePrefilterThresholds:
     type: object
     additionalProperties: false
@@ -663,7 +669,6 @@ types:
   BaseCorrelationComputeConfig:
     type: object
     properties:
-      correlationMethod: CorrelationMethod
       prefilterThresholds?: FeaturePrefilterThresholds
   CorrelationInputDataTypes:
     type: string
@@ -678,6 +683,7 @@ types:
   CorrelationConfig:
     type: BaseCorrelationComputeConfig
     properties:
+      correlationMethod: CorrelationMethod
       data1: CorrelationInputData
       data2: CorrelationInputData
   CorrelationPluginRequest:
@@ -687,7 +693,8 @@ types:
   SelfCorrelationConfig:
     type: BaseCorrelationComputeConfig
     properties:
-      collectionVariable: CollectionSpec #someday if we do metadata X metadata, make this optional
+      correlationMethod: SelfCorrelationMethod
+      data1: CollectionSpec #someday if we do metadata X metadata, make this CorrelationInputData
   SelfCorrelationPluginRequest:
     type: ComputeRequestBase
     properties:
