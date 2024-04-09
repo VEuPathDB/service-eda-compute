@@ -2,6 +2,14 @@
 
 types:
 
+  CorrelationMethod:
+    type: string
+    enum: ['spearman','pearson']
+
+  SelfCorrelationMethod:
+    type: string
+    enum: ['spearman','pearson','sparcc']
+
   FeaturePrefilterThresholds:
     additionalProperties: false
     properties:
@@ -12,54 +20,44 @@ types:
       standardDeviation?:
         type: number # should be 0 or greater
 
-  CorrelationComputeConfig:
+  BaseCorrelationComputeConfig:
     properties:
-      correlationMethod: CorrelationMethod
       prefilterThresholds?: FeaturePrefilterThresholds
 
-  CorrelationAssaySelfConfig:
-    properties:
-      correlationMethod: 
-        type: string
-        enum: ['spearman','pearson','sparcc']
-      prefilterThresholds?: FeaturePrefilterThresholds
-      collectionVariable: CollectionSpec
-
-  CorrelationMethod:
+  CorrelationInputDataTypes:
     type: string
-    enum: ['spearman','pearson']
+    enum: ["metadata","collection"]
 
-  Correlation1Collection:
-    type: CorrelationComputeConfig
+  # If metadata isn't a collection, then we shouldn't be forcing correlation to use collections
+  # as the input. It should be an option of a data type.
+  CorrelationInputData:
     properties: 
-      collectionVariable: CollectionSpec
+      dataType: CorrelationInputDataTypes
+      collectionSpec?: CollectionSpec
 
-  Correlation2Collections:
-    type: CorrelationComputeConfig
+  CorrelationConfig:
+    type: BaseCorrelationComputeConfig
     properties: 
-      collectionVariable1: CollectionSpec
-      collectionVariable2: CollectionSpec
+      correlationMethod: CorrelationMethod
+      data1: CorrelationInputData
+      data2: CorrelationInputData
 
-  CorrelationAssaySelfPluginRequest:
+  # if one collection is passed, assume the second thing is metadata
+  CorrelationPluginRequest:
     type: ComputeRequestBase
     properties:
-      config: CorrelationAssaySelfConfig
+      config: CorrelationConfig
 
-  # for future use, but so we think about it now
-  CorrelationMetadataSelfPluginRequest:
+  SelfCorrelationConfig:
+    type: BaseCorrelationComputeConfig
+    properties:
+      correlationMethod: SelfCorrelationMethod
+      data1: CollectionSpec #someday if we do metadata X metadata, make this CorrelationInputData
+
+  SelfCorrelationPluginRequest:
     type: ComputeRequestBase
     properties:
-      config: CorrelationComputeConfig
-
-  CorrelationAssayAssayPluginRequest:
-    type: ComputeRequestBase
-    properties:
-      config: Correlation2Collections
-
-  CorrelationAssayMetadataPluginRequest:
-    type: ComputeRequestBase
-    properties:
-      config: Correlation1Collection
+      config: SelfCorrelationConfig
 
   CorrelationStatsResponse:
     additionalProperties: false

@@ -7,15 +7,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.Map;
 
 @JsonDeserialize(
-    as = CorrelationComputeConfigImpl.class
+    as = BaseCorrelationComputeConfigImpl.class
 )
-public interface CorrelationComputeConfig {
-  @JsonProperty("correlationMethod")
-  CorrelationMethod getCorrelationMethod();
-
-  @JsonProperty("correlationMethod")
-  void setCorrelationMethod(CorrelationMethod correlationMethod);
-
+public interface BaseCorrelationComputeConfig {
   @JsonProperty("prefilterThresholds")
   FeaturePrefilterThresholds getPrefilterThresholds();
 
