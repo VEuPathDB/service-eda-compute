@@ -15,6 +15,11 @@ endif::[]
 Elizabeth Paige Harper <epharper@upenn.edu>
 v1.0.0
 
+[IMPORTANT]
+--
+The EDA Compute service is now part of the merged https://github.com/VEuPathDB/service-eda[EDA Service]
+--
+
 
 == Plugin Development
 
